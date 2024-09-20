@@ -1,0 +1,356 @@
+---
+title: "VitaSpec_huiles"
+author: "ME"
+date: "2024-05-10"
+output: html_document
+---
+
+Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les acides gras
+
+Mise en forme des données et save csv
+```{r eval=FALSE, include=FALSE}
+library(plyr)
+library(nirsextra)
+AG=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Matrice Acides Gras Amel_avril2024.csv", sep=";", header=TRUE, dec=",")
+CAROT=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv", sep=";", header=TRUE, dec=",")
+TOCO=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv", sep=";", header=TRUE, dec=",")
+AGL=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/teneur en acides gras libres.csv", sep=";", header=TRUE, dec=",")[,-1]
+ref = join_all(list(AG,CAROT,TOCO,AGL), by = 'ech', type = 'full')
+ref=subset(ref, select=-c(ech0))
+ref$carotenes=ref$alpha.carotène+ref$beta.carotène
+ref$aT3_aT=ref$aT3/ref$aT
+
+vitaspec_merge=function(ASD) {
+  d=paste0("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
+  sp=asd_read_dir(d)
+    sp=sp2df(sp)
+    colnames(sp)[1]=paste0("x",ASD)
+    sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
+    return(sp)
+  }
+  
+    sp=merge(vitaspec_merge("AGAP"),ref,by="ech")
+    sp=merge(vitaspec_merge("DIADE"),sp,by="ech")
+    s# sp = join_all(list(vitaspec_merge("AGAP"),vitaspec_merge("DIADE"),ref), by = 'ech', type = 'full')
+    sp$rep=as.numeric(substr(rownames(sp$xAGAP),nchar(rownames(sp$xAGAP))-4,nchar(rownames(sp$xAGAP))))
+  save(sp,file="vitaspec_oil")
+  # write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
+}
+```
+
+
+Chargement des données
+```{r setup, include=FALSE}
+library(nirsextra)
+library(rnirs)
+library(plyr)
+
+
+vitaspec_load=function(d) {
+AG=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Matrice Acides Gras Amel_avril2024.csv", sep=";", header=TRUE, dec=",")
+CAROT=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv", sep=";", header=TRUE, dec=",")
+TOCO=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv", sep=";", header=TRUE, dec=",")
+AGL=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/teneur en acides gras libres.csv", sep=";", header=TRUE, dec=",")[,-1]
+ref = join_all(list(AG,CAROT,TOCO,AGL), by = 'ech', type = 'full')
+ref=subset(ref, select=-c(ech0))
+ref$carotenes=ref$alpha.carotène+ref$beta.carotène
+ref$aT3_aT=ref$aT3/ref$aT
+
+sp=asd_read_dir(d)
+sp=sp2df(sp)
+sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
+sp=merge(sp,ref,by="ech")
+sp$rep=as.numeric(substr(rownames(sp$x),nchar(rownames(sp$x))-4,nchar(rownames(sp$x))))
+
+list_pre=list(rbind(list('adj','')),
+# rbind(list('adj',''),list('red',c(950,750,1)),list('snv','')),
+rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15))),
+rbind(list('adj',''),list('snv','')),
+# # rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
+# # rbind(list('adj',''),list('red',c(1,1700,1)),list('snv','')))
+# # rbind(list('adj',''),list('red',c(1,1900,1))),
+# # rbind(list('adj',''),list('red',c(1,1500,1)),list('snv','')),
+rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')),
+rbind(list('adj',''),list('red',c(1,1900,1)),list('snv','')),
+# # rbind(list('adj',''),list('red',c(1,2080,1)),list('sder',c(1,3,31))),
+rbind(list('adj',''),list('red',c(1,2080,1)),list('sder',c(1,3,51))),
+# # rbind(list('adj',''),list('red',c(10,2050,1)),list('sder',c(1,3,41))),
+rbind(list('adj',''),list('red',c(1,2050,1)),list('sder',c(1,3,31))),
+# # rbind(list('adj',''),list('red',c(1,1800,1)),list('snv',''),list('sder',c(1,3,15))),
+# # rbind(list('adj',''),list('red',c(1,2000,1)),list('sder',c(2,3,15))),
+# # rbind(list('adj',''),list('red',c(1120,950,1)),list('snv','')),
+# # rbind(list('adj',''),list('red',c(1120,950,1)),list('sder',c(1,3,15))),
+# # rbind(list('adj',''),list('red',c(1,1800,1)),list('sder',c(1,3,15))),
+# # rbind(list('adj',''),list('red',c(1,1700,1)),list('ref2abs','')),
+# # rbind(list('adj',''),list('red',c(1,1500,1)),list('snv',''),list('sder',c(1,3,15))))
+# # rbind(list('adj',''),list('red',c(850,750,1)),list('snv',''),list('sder',c(2,3,15))),
+rbind(list('adj',''),list('red',c(650,20,1)),list('snv',''),list('sder',c(2,3,51))),
+# # rbind(list('adj',''),list('red',c(650,750,1)),list('snv',''),list('sder',c(2,3,31))),
+# # rbind(list('adj',''),list('red',c(350,750,1)),list('snv',''),list('sder',c(2,3,15))),
+# # rbind(list('adj',''),list('red',c(50,750,1)),list('snv',''),list('sder',c(2,3,15))),
+# # rbind(list('adj',''),list('red',c(50,750,1)),list('snv',''),list('sder',c(2,3,51))),
+# # rbind(list('adj',''),list('red',c(50,700,1)),list('snv',''),list('sder',c(2,3,51))))
+rbind(list('adj',''),list('red',c(1,1900,1)),list('snv',''),list('sder',c(2,3,51))),
+# # rbind(list('adj',''),list('red',c(1,600,1))),
+# # rbind(list('adj',''),list('red',c(1,600,1)),list('snv',''),list('sder',c(2,3,51))),
+rbind(list('adj',''),list('red',c(1,1000,1)),list('snv','')))
+
+# sp$xp=pre(sp$x,p)
+
+# library("PerformanceAnalytics")
+# chart.Correlation(ref[,-1])
+return(list(sp=sp,list_pre=list_pre, ref=ref))
+}
+```
+
+
+# Calibrations sur spectres moyen
+```{r}
+x=vitaspec_load("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_DIADE/") # 20240424_VitaSPEC_HR_DIADE/
+sp=x$sp; list_pre=x$list_pre; ref=x$ref[,c(10:14,16)]
+ag=colnames(ref)#[-1]
+options(warn=-1)
+
+for (i in 1:length(ag)) {  #
+ag1=ag[i]
+print(ag1)
+pftot=NULL
+ncomp=10
+
+# nseq=20
+# seqlo=seq(1,2150,nseq)
+# nseq=length(seqlo)
+
+r2_tt=matrix(nrow=ncomp+1,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-6)  #
+fmtt=list()
+
+dat=aggregate(sp,by=list(sp$ech), mean)
+dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+dat$ech=dat$Group.1; dat=dat[,-1]
+
+
+for (j in 1:length(list_pre)) {  # 1:
+  # print(paste0("j=",j))
+  # p=rbind(list('adj',''),list('red',c(seqlo[j],2151-seqlo[j+6],1)),list('sder',c(1,3,15)))
+  # print(seqlo[j])
+  # print(2151-seqlo[j+4])
+  # dat$xp=pre(dat$x,p)
+  dat$xp=pre(dat$x,list_pre[[j]])
+  iout=which(dat$x[,1650] < 0.4 | is.na(dat[,colnames(dat)==ag1])) # which(fm1$fit$y1 < 0) # Probablement un échantillon contenant de l'eau  # | dat[,colnames(datok)==ag1] > 100
+  #iout=c(iout,c(8,9,10,17,18,19,20,21))
+  
+  datok=dat[-iout,]
+  K=5
+  
+  # generate sgm list for Leave-one-out
+  segm <- list(rep1 = as.list(1:nrow(datok)))
+  # segm <- segmkf(n = nrow(datok), K = nrow(datok))
+  fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=ncomp)
+  fmtt=append(fmtt, list(fm))  #
+  r2_tt[,j] = mse(fm, ~ ncomp)$cor2
+  pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4]) 
+  dim(pf)=c(1,2*ncol(pf))
+  pf=paste0(pf, collapse = "_")
+  pftot=c(pftot,pf)
+}
+best_pre_lo=which(r2_tt[-1,] == max(r2_tt[-c(1,2),]), arr.ind = TRUE)[1,]
+matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variable Latentes")  # ,ylim= c(0,100)
+title(ag1)
+# legend("topright", legend = paste("Colonne", 1:ncol(r2_tt)), col = 1:ncol(r2_tt), lty = 1, cex = 0.8)
+# legend("bottomleft", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.6)
+  fm=fmtt[[best_pre_lo[2]]]
+  print(pftot[best_pre_lo[2]])
+  print("R2")
+  print(mse(fm, ~ ncomp)$cor2)
+  print("SEP")
+  print(mse(fm, ~ ncomp)$sep)
+  fm1=lapply(fm[1:3],function (x) {x[x$ncomp==best_pre_lo[1],]})
+  plot(fm1$fit$y1,fm1$y$y1, xlab="CValidation", ylab="Reference")
+  abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
+  fit <- lm(fm1$y$y1 ~ fm1$fit$y1)
+  abline(fit, col = "blue") 
+  summary_fit <- summary(fit)
+  r_squared <- summary_fit$r.squared
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]]))), col = c("red", "blue", "white", "white"),lty = c(2, 1),bty = "n")
+  # legend("topleft",      legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2)))), col = c("red", "blue"),lty = c(2, 1),bty = "n")
+  title(ag1)
+
+# save(r2_tt,list_pre,file=paste0("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/r2_CV_",ag1))
+  
+# x <- 1:nrow(r2_tt)
+# y <- 1:ncol(r2_tt)
+# data <- expand.grid(X=x, Y=y)
+# data$Z <- c(r2_tt)
+# 
+# # Heatmap
+# ggplot(data, aes(X, Y, fill= Z)) +
+#   geom_tile()
+  
+  
+}
+```
+
+## Résultats ASD AGAP
+<pre>
+AG;nVL;R2CV;SEP
+C14:0;7;0.494;0.163
+C16.0;8;0.915;0.692
+C18.0;4;0.170;0.582
+C18.1n9;7;0.937;0.573
+C18.1n7;4;0.269;0.058
+C18.2;7;0.757;0.363
+</pre>
+
+## Résultats ASD DIADE
+<pre>
+AG;nVL;R2CV;SEP
+C14:0;8;0.357;0.201
+C16.0;7;0.868;0.860
+C18.0;4;0.114;0.600
+C18.1n9;7;0.905;0.705
+C18.1n7;4;0.103;0.065
+C18.2;7;0.610;0.462
+</pre>
+
+Graphiques pour Amel
+```{r eval=FALSE, include=FALSE}
+plotsp(pre(datok$x,rbind(list('adj',''))))
+title("Spectre Brut")
+
+plotsp(pre(datok$x,list_pre[[1]]))
+title("Spectre Tronqué")
+
+plotsp(pre(datok$x,list_pre[[2]]))
+title("Spectre Tronqué + SNV")
+
+plotsp(pre(datok$x,list_pre[[3]]))
+title("Spectre Tronqué + SNV + Dérivée 1ère")
+
+plotsp(pre(datok$x,list_pre[[4]]))
+title("Spectre Tronqué + SNV + Dérivée 2nde")
+
+
+```
+
+Pour M Lesnoff
+```{r eval=FALSE, include=FALSE}
+# X=datok$xp
+# Y=datok$C16.0
+# save(X,Y,file="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/XY")
+
+load(file = "XY")
+ncomp=20
+
+segm <- segmkf(n = nrow(X), K = nrow(X))
+fm_rnirs=cvfit(X, Y,fun=plsr,segm=segm, ncomp=ncomp)
+fm_rchemo=gridcvlv(X,Y, segm, score = msep,fun = plskern,nlv= 0:ncomp, verb = F)
+
+msep_rnirs=mse(fm_rnirs, ~ ncomp)$msep
+msep_rchemo=fm_rchemo$val
+
+yfit_rnirs=lapply(fm_rnirs[1:3],function (x) {x[x$ncomp==15,]})$fit$y1
+yfit_rchemo=fm_rchemo$val_rep[fm_rchemo$val_rep$nlv==15,]$y1
+
+```
+
+# Test: On applique un modèle fait sur un spectro sur les spectres d'un autre
+```{r }
+xAGAP=vitaspec_load("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_AGAP/") # 20240424_VitaSPEC_HR_DIADE/
+spA=xAGAP$sp; list_pre=xAGAP$list_pre; ref=xAGAP$ref
+xDIADE=vitaspec_load("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_DIADE/") # 20240424_VitaSPEC_HR_DIADE/
+spD=xDIADE$sp
+LVA=9 #c(7,8,4,7,4,7)
+ag=colnames(ref)[14]  # ag=colnames(ref)[-1]
+
+p = rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15)))
+
+
+moy_pre=function(sp,p) {
+  options(warn=-1)
+  dat=aggregate(sp,by=list(sp$ech), mean)
+  dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+  dat$ech=dat$Group.1; dat=dat[,-1]
+  dat$xp=pre(dat$x,p)
+  iout=which(dat$x[,1650] < 0.4) # which(fm1$fit$y1 < 0) # Probablement un échantillon contenant de l'eau
+  datok=dat[-iout,]
+  return(datok)
+}
+
+datM=moy_pre(spA, p)
+datE=moy_pre(spD, p)
+
+for (i in 1:length(ag)) {
+  ag1=ag[i]
+  datMok=datM[!is.na(datM[,colnames(datM)==ag1]),]
+  datEok=datM[!is.na(datE[,colnames(datE)==ag1]),]
+  fmcv = cvfit(datMok$xp,datMok[,colnames(datMok)==ag1] ,fun=plsr,segm=list(rep1 = as.list(1:nrow(datMok))), ncomp=LVA[i])
+  fm=plsr(datMok$xp, datMok[,colnames(datMok)==ag1], datEok$xp, datEok[,colnames(datMok)==ag1], ncomp=LVA[i])
+  print(paste0("Acide Gras : ",ag1,"  R2 = ",mse(fm, ~ ncomp)$cor2[LVA[i]],"  SEP = ",mse(fm, ~ ncomp)$sep[LVA[i]]))
+}
+
+
+plotsp(datM$x, xlab = "Longueur d'onde (nm)", ylab = "Reflectance")
+title("Spectre Brut - AGAP")
+plotsp(datE$x, xlab = "Longueur d'onde (nm)", ylab = "Reflectance")
+title("Spectre Brut - DIADE")
+plotsp(datM$xp, xlab = "Longueur d'onde (nm)", ylab = "Reflectance")
+title("Spectre Prétraité - AGAP")
+plotsp(datE$xp, xlab = "Longueur d'onde (nm)", ylab = "Reflectance")
+title("Spectre Prétraité - DIADE")
+
+fmcv1=lapply(fmcv[1:3],function (x) {x[x$ncomp==9,]})
+plot(fmcv1$fit$y1,fmcv1$y$y1, xlab="CValidation", ylab="Reference")
+abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
+fit <- lm(fmcv1$y$y1 ~ fmcv1$fit$y1)
+abline(fit, col = "blue") 
+summary_fit <- summary(fit)
+r_squared <- summary_fit$r.squared
+legend("topleft",      legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2)))), col = c("red", "blue"),lty = c(2, 1),bty = "n")
+title(paste(ag1, " - AGAP / Validation Croisée"))
+
+fm1=lapply(fm[1:3],function (x) {x[x$ncomp==9,]})
+plot(fm1$fit$y1,fm1$y$y1, xlab="Valeur prédite", ylab="Reference")
+abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
+fit <- lm(fm1$y$y1 ~ fm1$fit$y1)
+abline(fit, col = "blue") 
+summary_fit <- summary(fit)
+r_squared <- summary_fit$r.squared
+legend("topleft",      legend = c("y = x", bquote(Prédiction: ~ R^2 == .(round(r_squared, 2)))), col = c("red", "blue"),lty = c(2, 1),bty = "n")
+title(paste(ag1, " - Calibration AGAP appl. sur spectres DIADE"))
+
+```
+
+
+
+RChemo
+```{r eval=FALSE, include=FALSE}
+library(rchemo)
+
+```
+
+
+# Correlation entre les composés
+library("PerformanceAnalytics")
+chart.Correlation(ref[,-1], histogram=TRUE, pch=19)
+
+
+# ACP 
+```{r}
+fm=pca(pre(dat$x,list_pre[[6]]),ncomp = 4)
+plotxy(fm$Tr[,1:2], labels =TRUE)
+plotsp(pre(dat$x,list_pre[[6]]))
+print("Nom des échantillons à droite sur l'ACP")
+print(dat$ech[c(8,9,10,17,18,19,20,21)])
+
+```
+
+
+dat$xp=pre(dat$x,rbind(list('red',c(300,500,1)),list('detr','')))
+datok=dat[-iout,]
+fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=20)
+mse(fm, ~ ncomp)
+fm1=lapply(fm[1:3],function (x) {x[x$ncomp==7,]})
+plot(fm1$fit$y1,fm1$y$y1, xlab="CValidation", ylab="Reference")
+
+
+

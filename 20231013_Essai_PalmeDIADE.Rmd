@@ -1,0 +1,252 @@
+---
+title: "20231013_Essai_PalmeDIADE"
+author: "ME"
+date: "2023-10-13"
+output: html_document
+---
+Le 13/10/2023 à ARCAD, 3 éch de fruit de palmier frais + 2 morceaux sechés + 2 éch. d'huiles ont été mesurés avec les spectro ASD Labspec
+Récoltés le 9/10/2023 au Benin.
+Fruits frais + secs: une tranche coupée, on scanne l'intérieur avec fibre bifurquée
+Huile: mesures nirs huile palme. On remplit Vial 5mL ou mini-coupelle, puis on plonge la sonde. Les 5 spectres sont à ces distances tete_fibreb-fond du vial:
+0-1-10-0-0 mm
+
+
+Chargement des données
+```{r, echo=FALSE}
+library(nirsextra)
+library(rnirs)
+library(ggplot2)
+library(cowplot)
+ncmp=10
+dates=c("20231013","20231020","20231023","20231107", "20231219", "20240221", "20240305")
+sp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[1],"_palmeIRD/")); dates_rep=rep(dates[1],nrow(sp))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[2],"_palmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[2],nrow(sptmp)))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[3],"_PalmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[3],nrow(sptmp)))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[4],"_PalmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[4],nrow(sptmp)))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[5],"_PalmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[5],nrow(sptmp)))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[6],"_PalmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[6],nrow(sptmp)))
+sptmp=asd_read_dir(paste0("~/Documents/INRA/Projets/VitaSPEC/",dates[7],"_PalmeIRD/")); sp=rbind(sp,sptmp); dates_rep=c(dates_rep, rep(dates[7],nrow(sptmp)))
+
+sp=sp2df(sp)
+sp$traitement=NA
+sp$support=NA
+sp$spectralon=NA
+sp$date_spectre=dates_rep
+sp$ech=NA
+sp$ech=substr(rownames(sp),1,3)
+sp$traitement[grepl("ff",rownames(sp)) & sp$date_spectre %in% dates[1]]="Fruit_Frais"; 
+positions <- regexpr("_[^_]*$", rownames(sp)); # position du dernier "_"
+sp$traitement[! sp$date_spectre %in% dates[1]]= substr(rownames(sp),5,positions-1)[! sp$date_spectre %in% dates[1]]
+sp$traitement[41:78]="s3j?"
+sp$traitement[76:90]=substr(rownames(sp)[76:90],5,7)
+sp$traitement[91:105]=substr(rownames(sp)[91:105],5,7)
+
+sp$support[grep("minicoupelle",rownames(sp))]="minicoupelle_Quartz"; sp$support[c(1:10,grep("plastique",rownames(sp)))]="Parafilm"; sp$support[grep("vial",rownames(sp))]="Vial_5mL"; sp$support[grep("fondNoir",rownames(sp))]="fondNoir"
+sp$spectralon[grep("AVEC_spectralon",rownames(sp))]="AVEC_spectralon"; sp$spectralon[c(1:10,grep("SANS_spectralon",rownames(sp)))]="SANS_spectralon"; sp$spectralon[grep("huile",rownames(sp))]="AVEC_spectralon"
+
+# Prétraitement
+p=rbind(list('adj',''),list('snv',''))
+sp$xp=pre(sp$x,p)
+
+loess_fit <- apply(sp$xp, 1, function(s) loess(s ~ as.integer(colnames(sp$xp)), span = 0.05))
+sp$xp2 <- I(t(sapply(loess_fit, function(t) t$fitted)))
+wl=attributes(sp$x)$dimnames[2][[1]]
+```
+
+# Effet du Parafilm sur Fruit Frais
+```{r, echo=FALSE}
+ff=sp[sp$traitement=="Fruit_Frais",]
+col=rep("red",nrow(ff))
+col[ff$spectralon=="AVEC_spectralon"]="black"
+plotsp(ff$x,col=col)
+legend(x="topright",legend=c("SANS_spectralon","AVEC_spectralon"), col = c("red","black"),lty=1)
+
+
+#p=list('adj','')
+p=rbind(list('adj',''),list('snv',''))
+fm=pca(pre(ff$x,p),ncomp = 10)
+plotxy(fm$Tr[,1:2], group = ff$spectralon, legend.title = "Effet du Parafilm")
+```
+
+# Fruit Frais/deshydraté
+```{r, echo=FALSE}
+ff=sp[grep("ff",sp$ech),]
+col=rep("red",nrow(ff))
+col[ff$traitement=="Fruit_Frais"]="black"
+plotsp(ff$x,col=col)
+legend(x="topright",legend=c("Frais","Seché"), col = c("red","black"),lty=1)
+
+
+#p=list('adj','')
+p=rbind(list('adj',''),list('snv',''))
+fm=pca(pre(ff$x,p),ncomp = 4)
+ff$traitement=substr(ff$traitement,1,15)
+plotxy(fm$Tr[,1:2], group = ff$traitement, legend.title = "Frais/Seché")
+```
+
+# 20231023_PalmeIRD seulement - Test Fond Noir
+```{r, echo=FALSE}
+sp1=sp[sp$date_spectre=="20231023",]
+col=rep("red",nrow(sp1))
+col[sp1$support=="fondNoir"]="black"
+plotsp(sp1$x,col=col)
+legend(x="topright",legend=c("Minicoup_quartz","Fond_noir"), col = c("red","black"),lty=1)
+
+
+fm=pca(sp1$xp,ncomp = 10)
+plotxy(fm$Tr[,7:8], group = sp1$support, legend.title = "Effet du Fonc Noir")
+```
+
+# Effet du stockage après lyophilisation
+```{r, echo=FALSE}
+# sp1=sp[sp$date_spectre=="20231023" | sp$date_spectre=="20231107",]
+# col=rep("red",nrow(sp1))
+# col[sp1$traitement=="15j"]="blue"
+# plotsp(sp1$xp,col=col)
+# 
+# fm=pca(sp1$xp,ncomp = 10)
+# plotxy(fm$Tr[,1:2], group = sp1$traitement, legend.title = "Effet du stockage")
+
+sp1=sp[grepl("L",sp$traitement) & !grepl("L4m",sp$traitement),]
+sp1$traitement = gsub("_minicoupelle_AVEC","",sp1$traitement)
+sp1$JafterL="0"
+sp1$JafterL[grepl("15",sp1$traitement)]="15"
+sp1$JafterL[grepl("57",sp1$traitement)]="57"
+
+
+# ACP globale
+fm=pca(sp1$xp2,ncomp = ncmp)
+dt=data.frame(fm$Tr)
+p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$JafterL, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - ACP globale ",x = "comp1", y = "comp2") + scale_color_manual(values = c("red","blue","black"))
+plot(p1)
+
+# # ACP globale, présentée par échantillon
+# sp1=sp[sp$date_spectre=="20231020" | sp$date_spectre=="20231023",]
+# fm=pca(sp1$xp2,ncomp = ncmp)
+# dt=data.frame(fm$Tr)
+# dt$ech=sp1$ech
+# p2 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir",x = "comp1", y = "comp2") 
+# p3 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir (ACP Totale / ech. séparés",x = "comp1", y = "comp2") + facet_wrap(~ech, ncol = 3) 
+# plot(p3)
+
+# ACP par echantillon
+dt1=data.frame()
+uech=unique(sp1$ech)
+for (i in 1:length(uech)) {
+  iech=sp1$ech==uech[i]
+  fm=pca(sp1$xp2[iech,],ncomp = 5)
+  dt1=rbind(dt1,cbind(fm$Tr, sp1$ech[iech], sp1$JafterL[iech]))
+}
+colnames(dt1)[6:7]=c("ech","traitement")
+dt1[,1:5] <- apply(dt1[,1:5], c(1,2), as.numeric)
+
+p3 = ggplot(data = dt1, aes(x = comp1, y = comp2, color =traitement)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir (ACP par échantillon)",x = "comp1", y = "comp2") + facet_wrap(~ech, ncol = 3) + scale_color_manual(values = c("red","blue","black"))
+plot(p3)
+```
+
+# Effet Lyoph sur minicoupelle - 20/10/2023 et 23/10/2023
+```{r, echo=FALSE}
+sp1=sp[sp$date_spectre=="20231020" | sp$date_spectre=="20231023",]
+sp1=sp1[-which(sp1$support=="fondNoir"),]
+# col=rep("red",nrow(sp1))
+# col[grep("_L",sp1$traitement)]="blue"
+# plotsp(sp1$xp,col=col)
+
+fm=pca(sp1$xp2,ncomp = ncmp)
+# plotxy(fm$Tr[,1:2], group = sp1$traitement)
+dt=data.frame(fm$Tr)
+p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles",x = "comp1", y = "comp2")  #+geom_text(aes(label=rownames(spm$x)),hjust=0, vjust=0)
+plot(p1)
+
+# Minicoupelle + Fond noir à 7j-11j
+sp1=sp[sp$date_spectre=="20231020" | sp$date_spectre=="20231023",]
+fm=pca(sp1$xp2,ncomp = ncmp)
+dt=data.frame(fm$Tr)
+dt$ech=sp1$ech
+p2 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir",x = "comp1", y = "comp2") 
+p3 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir (ACP Totale / ech. séparés",x = "comp1", y = "comp2") + facet_wrap(~ech, ncol = 3) 
+plot(p3)
+
+# ACP par echantillon
+dt1=data.frame()
+uech=unique(sp1$ech)
+for (i in 1:length(uech)) {
+  iech=sp1$ech==uech[i]
+  fm=pca(sp1$xp2[iech,],ncomp = 5)
+  dt1=rbind(dt1,cbind(fm$Tr, sp1$ech[iech], sp1$traitement[iech]))
+}
+colnames(dt1)[6:7]=c("ech","traitement")
+dt1[,1:5] <- apply(dt1[,1:5], c(1,2), as.numeric)
+
+p3 = ggplot(data = dt1, aes(x = comp1, y = comp2, shape =traitement)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles + FondNoir (ACP par échantillon)",x = "comp1", y = "comp2") + facet_wrap(~ech, ncol = 3)
+plot(p3)
+```
+
+# Effet Nettoyage sur spectralon
+```{r, echo=FALSE}
+sp1=sp[sp$date_spectre=="20240221",]
+sp1=sp1[grep("spectral",rownames(sp1)),]
+sp1$precedent="RIEN"
+sp1$precedent[grep("HR",rownames(sp1))]="HR"
+sp1$nett=substr(rownames(sp1),nchar(rownames(sp1))-8,nchar(rownames(sp1))-5)
+
+# col=rep("red",nrow(sp1))
+# col[grep("_L",sp1$traitement)]="blue"
+# plotsp(sp1$xp,col=col)
+
+fm=pca(sp1$xp2,ncomp = ncmp)
+# plotxy(fm$Tr[,1:2], group = sp1$traitement)
+dt=data.frame(fm$Tr)
+# p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles",x = "comp1", y = "comp2")  #+geom_text(aes(label=rownames(spm$x)),hjust=0, vjust=0)
+p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$precedent, shape = sp1$nett)) + geom_point(size=3) + labs(title = "Effet du précédent et du nettoyage - FRUIT",x = "comp1", y = "comp2")  + scale_color_manual(values = c("red","black"))
+
+plot(p1)
+```
+
+# Effet Broyage
+```{r, echo=FALSE}
+# sp1=sp[sp$date_spectre=="20231219",]
+# sp1=sp1[grep("spectral",rownames(sp1)),]
+# sp1$precedent="RIEN"
+# sp1$precedent[grep("HR",rownames(sp1))]="HR"
+# sp1$nett=substr(rownames(sp1),nchar(rownames(sp1))-8,nchar(rownames(sp1))-5)
+# 
+# # col=rep("red",nrow(sp1))
+# # col[grep("_L",sp1$traitement)]="blue"
+# # plotsp(sp1$xp,col=col)
+# 
+# fm=pca(sp1$xp2,ncomp = ncmp)
+# # plotxy(fm$Tr[,1:2], group = sp1$traitement)
+# dt=data.frame(fm$Tr)
+# # p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$traitement, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - MiniCoupelles",x = "comp1", y = "comp2")  #+geom_text(aes(label=rownames(spm$x)),hjust=0, vjust=0)
+# p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$precedent, shape = sp1$nett)) + geom_point(size=3) + labs(title = "Effet du précédent et du nettoyage - FRUIT",x = "comp1", y = "comp2")  + scale_color_manual(values = c("red","black"))
+# 
+# plot(p1)
+
+```
+
+# Effet Nettoyage sur spectralon - 05 mars 2024 / 3 Nettoyages
+```{r, echo=FALSE}
+sp1=sp[sp$date_spectre=="20240305",]
+sp1=sp1[grep("spectral",rownames(sp1)),]
+sp1$precedent="FRUIT"
+sp1$precedent[grep("AVANT",rownames(sp1))]="AVANT"
+sp1$nett=substr(rownames(sp1),18,nchar(rownames(sp1))-5)
+sp1$nett[sp1$nett=="FRUIT"]="AVANT_FRUIT"
+
+fm=pca(sp1$xp2,ncomp = ncmp)
+dt=data.frame(fm$Tr)
+p1 = ggplot(data = dt, aes(x = comp5, y = comp6, color=sp1$precedent, shape = sp1$nett)) + geom_point(size=3) + labs(title = "Effet du précédent et du nettoyage - FRUIT",x = "comp1", y = "comp2")  + scale_color_manual(values = c("red","black"))
+plot(p1)
+
+col=rep("red",nrow(sp1))
+col[sp1$precedent=="FRUIT"]="black"
+unett=unique(sp1$nett)
+#par(mfrow=c(2,2))
+for (i in 1:(length(unett)-1)) {
+  iok=sp1$nett=="AVANT_FRUIT" | sp1$nett==unett[i+1]
+  plotsp(sp1$xp[iok,],col=col[iok], ylab="Spectre Prétraité SNV")
+  # plt[i]=matplot(wl,t(sp1$xp[iok,]),font.axis=2,main="",col=col[iok],lty=1, xlab="",ylab="",type="l")
+  legend(x="bottomright",legend=c("AVANT_FRUIT",unett[i+1]), col = c("red","black"),lty=1) 
+}
+```
