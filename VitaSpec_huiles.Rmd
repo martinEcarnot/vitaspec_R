@@ -9,12 +9,12 @@ Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les ac
 
 Mise en forme des données et save csv
 ```{r eval=FALSE, include=FALSE}
-library(plyr)
 library(nirsextra)
-AG=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Matrice Acides Gras Amel_avril2024.csv", sep=";", header=TRUE, dec=",")
-CAROT=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv", sep=";", header=TRUE, dec=",")
-TOCO=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv", sep=";", header=TRUE, dec=",")
-AGL=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/teneur en acides gras libres.csv", sep=";", header=TRUE, dec=",")[,-1]
+d0="/media/ecarnot/797E-F059/VitaSPEC/"
+AG=read.table(paste0(d0,"Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
+CAROT=read.table(paste0(d0,"/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")
+TOCO=read.table(paste0(d0,"Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv"), sep=";", header=TRUE, dec=",")
+AGL=read.table(paste0(d0,"teneur en acides gras libres.csv"), sep=";", header=TRUE, dec=",")[,-1]
 ref = join_all(list(AG,CAROT,TOCO,AGL), by = 'ech', type = 'full')
 ref=subset(ref, select=-c(ech0))
 ref$carotenes=ref$alpha.carotène+ref$beta.carotène
@@ -24,21 +24,20 @@ vitaspec_merge=function(ASD) {
   # d=paste0("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
   d=paste0("/media/ecarnot/797E-F059/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
   sp=asd_read_dir(d)
-    sp=sp2df(sp)
-    colnames(sp)[1]=paste0("x",ASD)
-    sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
-    return(sp)
-  }
+  sp=sp2df(sp)
+  colnames(sp)[1]=paste0("x",ASD)
+  sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
+  sp$spname=rownames(sp$x)
+  return(sp)
+}
   
-    sp=merge(vitaspec_merge("AGAP"),ref,by="ech")
-    sp=merge(vitaspec_merge("DIADE"),sp,by="ech")
-    
-        spm=merge(vitaspec_merge("AGAP"),merge(vitaspec_merge("DIADE"),ref,by="ech"),by="ech")
-
-    spj = join_all(list(vitaspec_merge("AGAP"),vitaspec_merge("DIADE"),ref), by = 'ech', type = 'inner')
-    sp$rep=as.numeric(substr(rownames(sp$xAGAP),nchar(rownames(sp$xAGAP))-4,nchar(rownames(sp$xAGAP))))
-  save(sp,file="vitaspec_oil")
-  # write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
+spAD=merge(vitaspec_merge("AGAP"),vitaspec_merge("DIADE"),by="spname")
+colnames(spAD)[colnames(spAD)=="ech.x"]="ech"
+spAD$ech.y=NULL
+sp=merge(spAD,ref,by="ech")
+sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
+save(sp,file="vitaspec_oil")
+# write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
 }
 ```
 
