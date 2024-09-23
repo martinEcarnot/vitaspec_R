@@ -7,7 +7,7 @@ output: html_document
 
 Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les acides gras
 
-Mise en forme des données et save csv
+# Mise en forme des données et save csv
 ```{r eval=FALSE, include=FALSE}
 library(nirsextra)
 d0="/media/ecarnot/797E-F059/VitaSPEC/"
@@ -38,38 +38,17 @@ sp=merge(spAD,ref,by="ech")
 sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
 save(sp,file="vitaspec_oil")
 # write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
-}
 ```
 
-
-Chargement des données
+# Chargement des prétraitements
 ```{r setup, include=FALSE}
-library(nirsextra)
-library(rnirs)
-library(plyr)
-
-
-vitaspec_load=function(d) {
-AG=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Matrice Acides Gras Amel_avril2024.csv", sep=";", header=TRUE, dec=",")
-CAROT=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv", sep=";", header=TRUE, dec=",")
-TOCO=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv", sep=";", header=TRUE, dec=",")
-AGL=read.table("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/teneur en acides gras libres.csv", sep=";", header=TRUE, dec=",")[,-1]
-ref = join_all(list(AG,CAROT,TOCO,AGL), by = 'ech', type = 'full')
-ref=subset(ref, select=-c(ech0))
-ref$carotenes=ref$alpha.carotène+ref$beta.carotène
-ref$aT3_aT=ref$aT3/ref$aT
-
-sp=asd_read_dir(d)
-sp=sp2df(sp)
-sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
-sp=merge(sp,ref,by="ech")
-sp$rep=as.numeric(substr(rownames(sp$x),nchar(rownames(sp$x))-4,nchar(rownames(sp$x))))
-
 list_pre=list(rbind(list('adj','')),
-# rbind(list('adj',''),list('red',c(950,750,1)),list('snv','')),
+rbind(list('adj',''),list('red',c(950,750,1)),list('snv','')),
 rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15))),
+rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15))),
+rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,41))),
 rbind(list('adj',''),list('snv','')),
-# # rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
+rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
 # # rbind(list('adj',''),list('red',c(1,1700,1)),list('snv','')))
 # # rbind(list('adj',''),list('red',c(1,1900,1))),
 # # rbind(list('adj',''),list('red',c(1,1500,1)),list('snv','')),
@@ -97,28 +76,21 @@ rbind(list('adj',''),list('red',c(1,1900,1)),list('snv',''),list('sder',c(2,3,51
 # # rbind(list('adj',''),list('red',c(1,600,1))),
 # # rbind(list('adj',''),list('red',c(1,600,1)),list('snv',''),list('sder',c(2,3,51))),
 rbind(list('adj',''),list('red',c(1,1000,1)),list('snv','')))
-
-# sp$xp=pre(sp$x,p)
-
-# library("PerformanceAnalytics")
-# chart.Correlation(ref[,-1])
-return(list(sp=sp,list_pre=list_pre, ref=ref))
-}
 ```
-
 
 # Calibrations sur spectres moyen
 ```{r}
-x=vitaspec_load("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_DIADE/") # 20240424_VitaSPEC_HR_DIADE/
-sp=x$sp; list_pre=x$list_pre; ref=x$ref[,c(10:14,16)]
-ag=colnames(ref)#[-1]
+load('vitaspec_oil')
+sp$x=sp$xAGAP;
+sp$TT=sp$aT+sp$aT3+sp$gT3+sp$dT3
+ag=colnames(sp)[22] #[c(13:16,19)]
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
 ag1=ag[i]
 print(ag1)
 pftot=NULL
-ncomp=10
+ncomp=25
 
 # nseq=20
 # seqlo=seq(1,2150,nseq)
