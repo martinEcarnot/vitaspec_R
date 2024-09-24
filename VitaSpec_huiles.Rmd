@@ -10,7 +10,9 @@ Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les ac
 # Mise en forme des données et save csv
 ```{r eval=FALSE, include=FALSE}
 library(nirsextra)
-d0="/media/ecarnot/797E-F059/VitaSPEC/"
+library(plyr)
+# d0="/media/ecarnot/797E-F059/VitaSPEC/"
+d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 AG=read.table(paste0(d0,"Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
 CAROT=read.table(paste0(d0,"/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")
 TOCO=read.table(paste0(d0,"Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv"), sep=";", header=TRUE, dec=",")
@@ -21,8 +23,8 @@ ref$carotenes=ref$alpha.carotène+ref$beta.carotène
 ref$aT3_aT=ref$aT3/ref$aT
 
 vitaspec_merge=function(ASD) {
-  # d=paste0("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
-  d=paste0("/media/ecarnot/797E-F059/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
+  d=paste0("~/Documents/INRA/Projets/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
+  # d=paste0("/media/ecarnot/797E-F059/VitaSPEC/20240424_VitaSPEC_HR_",ASD)
   sp=asd_read_dir(d)
   sp=sp2df(sp)
   colnames(sp)[1]=paste0("x",ASD)

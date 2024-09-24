@@ -13,23 +13,28 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(nirsextra)
 library(rnirs)
-d="/media/ecarnot/797E-F059/VitaSPEC/"
+# d="/media/ecarnot/797E-F059/VitaSPEC/"
+d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp=sp2df(asd_read_dir(paste0(d,"20240325_Vitaspec_Pobe/")))
 sp$ech=sub("-[^-]*$", "", rownames(sp))
-ref=read.table(paste0(d,"Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ".")
+ref=read.table(paste0(d,"Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ",")
 ref$ech=paste0(ref$Identifiant,"-",ref$Code.arbre)
 colnames(ref)[colnames(ref) == "TE1...MF."] = "Eau"
 sp=merge(sp, ref,by="ech")
+save(sp,file="vitaspec_fruits_frais_Mars2024")
 ```
 
-```{r}
+```{r, warning=FALSE}
+source("vitaspec_preCV.R")
+load("vitaspec_fruits_frais_Mars2024")
 
-
-res=vitaspec_preCV(sp$x,sp$Eau,list_pre,15) 
-
-mse(fm, ~ ncomp)
-
-
+# Sur tous les spectres (sans moy)
+vitaspec_preCV(sp$x,sp$Eau,list_pre,15, titl="Teneur en eau. Tous points de mesure") 
+# En moyennant les rép
+spm=aggregate(sp,by=list(sp$ech), mean)
+spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+spm$ech=spm$Group.1; spm=spm[,-1]
+vitaspec_preCV(spm$x,spm$Eau,list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
 
 ```
 

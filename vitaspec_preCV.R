@@ -1,10 +1,12 @@
-vitaspec_preCV = function(x,y,list_pre,ncomp)  {
+vitaspec_preCV = function(x,y,list_pre,ncomp,titl)  {
+
+# From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
   
 r2_tt=matrix(nrow=ncomp+1,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-6)  #
 fmtt=list()
 pftot=NULL
   
-  for (j in 1:length(list_pre)) {
+for (j in 1:length(list_pre)) {
   xp=pre(x,list_pre[[j]])
   # iout=which(dat$x[,1650] < 0.4 | is.na(dat[,colnames(dat)==ag1])) 
   # datok=dat[-iout,]
@@ -17,11 +19,11 @@ pftot=NULL
   dim(pf)=c(1,2*ncol(pf))
   pf=paste0(pf, collapse = "_")
   pftot=c(pftot,pf)
-  }
+}
 
 best_pre_lo=which(r2_tt[-1,] == max(r2_tt[-c(1,2),]), arr.ind = TRUE)[1,]
 matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variable Latentes")  # ,ylim= c(0,100)
-#title(ag1)
+title(titl)
 # legend("topright", legend = paste("Colonne", 1:ncol(r2_tt)), col = 1:ncol(r2_tt), lty = 1, cex = 0.8)
 # legend("bottomleft", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.6)
 fm=fmtt[[best_pre_lo[2]]]
@@ -39,5 +41,5 @@ summary_fit <- summary(fit)
 r_squared <- summary_fit$r.squared
 legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]]))), col = c("red", "blue", "white", "white"),lty = c(2, 1),bty = "n")
 # legend("topleft",      legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2)))), col = c("red", "blue"),lty = c(2, 1),bty = "n")
-#title(ag1)
+title(titl)
 }
