@@ -14,7 +14,7 @@ library(plyr)
 d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
 #d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 AG=read.table(paste0(d0,"Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
-# CAROT=read.table(paste0(d0,"/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")
+# CAROT=read.table(paste0(d0,"/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")  # Echantillons mélangés
 CAROT=read.table(paste0(d0,"/carotenes révisés février 2025.csv"), sep=",", header=TRUE, dec=".")
 TOCO=read.table(paste0(d0,"Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv"), sep=";", header=TRUE, dec=",")
 AGL=read.table(paste0(d0,"teneur en acides gras libres.csv"), sep=";", header=TRUE, dec=",")[,-1]
@@ -23,18 +23,17 @@ ref=subset(ref, select=-c(ech0))
 ref$carotenes=ref$alpha.carotene+ref$beta.carotene
 ref$aT3_aT=ref$aT3/ref$aT
 
-vitaspec_load=function(d0) {
-  #d=paste0("~/Documents/INRA/Projets/VitaSPEC/",d0)
-  d=paste0("C:/Users/guest/Documents/Martin/VitaSPEC/",d0)
+vitaspec_load=function(d0,d1) {
+  d=paste0(d0,d1)
   sp=asd_read_dir(d)
   sp=sp2df(sp)
-  colnames(sp)[1]=paste0("x",sub(".*_(.*)$", "\\1", d0))
+  colnames(sp)[1]=paste0("x",sub(".*_(.*)$", "\\1", d1))
   sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
   sp$spname=rownames(sp$x)
   return(sp)
 }
   
-spAD=merge(vitaspec_load("20240424_VitaSPEC_HR_AGAP"),vitaspec_load("20240424_VitaSPEC_HR_DIADE"),by="spname")
+spAD=merge(vitaspec_load(d0,"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
 colnames(spAD)[colnames(spAD)=="ech.x"]="ech"
 spAD$ech.y=NULL
 sp=merge(spAD,ref,by="ech")
