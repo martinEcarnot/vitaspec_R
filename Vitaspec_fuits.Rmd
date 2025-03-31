@@ -13,8 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(nirsextra)
 library(rnirs)
-# d="/media/ecarnot/797E-F059/VitaSPEC/"
-d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+d="C:/Users/guest/Documents/Martin/VitaSPEC/"
+# d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp=sp2df(asd_read_dir(paste0(d,"20240325_Vitaspec_Pobe/")))
 sp$ech=sub("-[^-]*$", "", rownames(sp))
 ref=read.table(paste0(d,"Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ",")
@@ -60,5 +60,48 @@ spm=aggregate(sp,by=list(sp$ech), mean)
 spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
 spm$ech=spm$Group.1; spm=spm[,-1]
 vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures moy. par fruit.  Meso séché - DIADE") 
+```
+
+
+Explore 2 years on fresh fruits
+```{r, warning=FALSE}
+d="C:/Users/guest/Documents/Martin/VitaSPEC/"
+# d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+sp24=sp2df(asd_read_dir(paste0(d,"20240325_Vitaspec_Pobe/")))
+sp24$annee=24
+sp25=sp2df(asd_read_dir(paste0(d,"20250224_Vitaspec_Pobe/")))
+sp25$annee=25
+sp=rbind(sp24,sp25)
+# Excude exocarp spectra
+sp=sp[!grepl("FX",rownames(sp)),]
+
+sp$ech=sub("-[^-]*$", "", rownames(sp))
+# Average spectra
+spm=aggregate(sp,by=list(sp$ech), mean)
+spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+spm$ech=spm$Group.1; spm=spm[,-1]
+
+p=rbind(list('adj',''),list('snv',''))
+spm$xp=pre(spm$x,p)
+loess_fit <- apply(spm$xp, 1, function(s) loess(s ~ as.integer(colnames(spm$xp)), span = 0.05))
+spm$xp2 <- I(t(sapply(loess_fit, function(t) t$fitted)))
+
+col=rep("red",nrow(spm))
+col[spm$annee==24]="black"
+plotsp(spm$x,col=col)
+
+fm <- pca(spm$xp2, ncomp = 10)
+plotxy(fm$Tr[, c(1,2)], group = spm$annee)
+
+
+
+#plot from VS
+couleur <- brewer.pal(n = length(levels(as.factor(nirs.list.ade4$raw$info$Bloc))),
+                      name = "Set1")
+for (i in (1:length(pca.nirs))){
+  s.class(dfxy = pca.nirs[[i]]$li,
+          fac = as.factor(nirs.list.ade4[[i]]$info$Bloc), xax = 1, yax = 2,
+          clabel = 0.7, col = couleur, sub = names(pca.nirs)[i], csub=2, possub="topleft")
+}
 ```
 
