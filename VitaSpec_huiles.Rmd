@@ -11,32 +11,36 @@ Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les ac
 ```{r eval=FALSE, include=FALSE}
 library(nirsextra)
 library(plyr)
-d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
-#d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
-AG=read.table(paste0(d0,"Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
-# CAROT=read.table(paste0(d0,"/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")  # Echantillons mélangés
-CAROT=read.table(paste0(d0,"/carotenes révisés février 2025.csv"), sep=",", header=TRUE, dec=".")
-TOCO=read.table(paste0(d0,"Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv"), sep=";", header=TRUE, dec=",")
-AGL=read.table(paste0(d0,"teneur en acides gras libres.csv"), sep=";", header=TRUE, dec=",")[,-1]
+# d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
+d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+# AG=read.table(paste0(d0,"analyses_ref/","Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
+AG=read.table(paste0(d0,"analyses_ref/","Matrice Acide gras- Huile de palme rouges Amel Joualli.csv"), sep=";", header=TRUE, dec=",")
+# CAROT=read.table(paste0(d0,"analyses_ref","/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")  # Echantillons mélangés
+CAROT=read.table(paste0(d0,"analyses_ref/","/carotenes révisés février 2025.csv"), sep=",", header=TRUE, dec=".")
+TOCO=read.table(paste0(d0,"analyses_ref/","Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E) pour Martin V2.csv"), sep=";", header=TRUE, dec=",")
+AGL=read.table(paste0(d0,"analyses_ref/","teneur en acides gras libres.csv"), sep=";", header=TRUE, dec=",")[,-1]
 ref = join_all(list(AG,CAROT,TOCO,AGL), by = 'ech', type = 'full')
 ref=subset(ref, select=-c(ech0))
 ref$carotenes=ref$alpha.carotene+ref$beta.carotene
-ref$aT3_aT=ref$aT3/ref$aT
+# ref$aT3_aT=ref$aT3/ref$aT
 
 vitaspec_load=function(d0,d1) {
   d=paste0(d0,d1)
   sp=asd_read_dir(d)
   sp=sp2df(sp)
-  colnames(sp)[1]=paste0("x",sub(".*_(.*)$", "\\1", d1))
-  sp$ech=substr(rownames(sp$x),1,nchar(rownames(sp$x))-5)
+  colnames(sp)[1]=paste0("x",substr(d1,1,9),sub(".*_(.*)$", "\\1", d1))
   sp$spname=rownames(sp$x)
   return(sp)
 }
   
-spAD=merge(vitaspec_load(d0,"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
-colnames(spAD)[colnames(spAD)=="ech.x"]="ech"
-spAD$ech.y=NULL
-sp=merge(spAD,ref,by="ech")
+sp=merge(vitaspec_load(d0,"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
+sp=merge(sp,vitaspec_load(d0,"20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"20241209_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp$ech=substr(sp$spname,1,nchar(sp$spname)-5)
+
+sp=merge(sp,ref,by="ech")
 sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
 save(sp,file="vitaspec_oil")
 # write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
@@ -86,9 +90,10 @@ rbind(list('adj',''),list('red',c(1,1800,1)),list('snv',''),list('sder',c(2,3,51
 library(rnirs)
 library(nirsextra)
 load('vitaspec_oil')
-sp$x=sp$xDIADE;
-sp$TT=sp$aT3+sp$gT3+sp$dT3 # sp$aT+sp$aT3+sp$gT3+sp$dT3
-ag=colnames(sp)[18] #[c(13:16,19)]
+sp$x=sp$x20250317_DIADE;
+sp=sp[!is.na(sp$x[,1]),]
+
+ag=colnames(sp)[9:21]
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -292,8 +297,10 @@ title(paste(ag1, " - Calibration AGAP appl. sur spectres DIADE"))
 library(rnirs)
 load('vitaspec_oil')
 sp$x=sp$xAGAP
-spred=vitaspec_load("20241209_Vitaspec_HR_AGAP") 
-AG2=read.table(paste0(d0,"Matrice Acide gras- Huile de palme rouges Amel Joualli.csv"), sep=";", header=TRUE, dec=",")
+spred=vitaspec_load(d0,"20241209_Vitaspec_HR_AGAP") 
+spred$x=spred$x20241209_AGAP
+spred$ech=substr(spred$spname,1,nchar(spred$spname)-5)
+AG2=read.table(paste0(d0,"analyses_ref/","Matrice Acide gras- Huile de palme rouges Amel Joualli.csv"), sep=";", header=TRUE, dec=",")
 LVA=8 #c(7,8,4,7,4,7)
 ag=colnames(sp)[6]  # ag=colnames(ref)[-1]
 
