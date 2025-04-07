@@ -7,6 +7,8 @@ output: html_document
 
 Huiles achetées au Bénin en mars 2024. Analysées par Amel Joualli pour les acides gras
 
+Dans les spectres, manquent les échantillons 34 et 87
+
 # Mise en forme des données et save csv
 ```{r eval=FALSE, include=FALSE}
 library(nirsextra)
@@ -42,7 +44,7 @@ sp$ech=substr(sp$spname,1,nchar(sp$spname)-5)
 
 sp=merge(sp,ref,by="ech")
 sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
-save(sp,file="vitaspec_oil")
+# save(sp,file="vitaspec_oil")
 # write.csv(sp=sp$x,file="vitaspec_oil_DIADE")
 ```
 
@@ -93,7 +95,7 @@ load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:21]
+ag=colnames(sp)[9:23]
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -121,7 +123,7 @@ for (j in 1:length(list_pre)) {  # 1:
   # print(2151-seqlo[j+4])
   # dat$xp=pre(dat$x,p)
   dat$xp=pre(dat$x,list_pre[[j]])
-  iout=which(dat$x[,1650] < 0.4 | is.na(dat[,colnames(dat)==ag1])) # which(fm1$fit$y1 < 0) # Probablement un échantillon contenant de l'eau  # | dat[,colnames(datok)==ag1] > 100
+  iout=which(dat$x[,1650] < 0.1 | is.na(dat[,colnames(dat)==ag1])) # which(fm1$fit$y1 < 0) # Probablement un échantillon contenant de l'eau  # | dat[,colnames(datok)==ag1] > 100
 
   iout=c(iout,which(dat$carotenes > 600))
   datok=dat[-iout,]
@@ -138,7 +140,7 @@ for (j in 1:length(list_pre)) {  # 1:
   pf=paste0(pf, collapse = "_")
   pftot=c(pftot,pf)
 }
-best_pre_lo=which(r2_tt[-1,] == max(r2_tt[-c(1,2),]), arr.ind = TRUE)[1,]
+best_pre_lo=which(r2_tt[-1,] == max(r2_tt[3:14,]), arr.ind = TRUE)[1,]
 matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variable Latentes")  # ,ylim= c(0,100)
 title(ag1)
 # legend("topright", legend = paste("Colonne", 1:ncol(r2_tt)), col = 1:ncol(r2_tt), lty = 1, cex = 0.8)
@@ -156,7 +158,7 @@ title(ag1)
   abline(fit, col = "blue") 
   summary_fit <- summary(fit)
   r_squared <- summary_fit$r.squared
-  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]]))), col = c("red", "blue", "white", "white"),lty = c(2, 1),bty = "n")
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$fit$y1)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
   # legend("topleft",      legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2)))), col = c("red", "blue"),lty = c(2, 1),bty = "n")
   title(ag1)
 }
