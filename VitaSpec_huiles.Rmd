@@ -107,11 +107,12 @@ Prétraitement C: "350-1200nm + SNV"
 ```{r echo=FALSE, warning=FALSE}
 suppressPackageStartupMessages(library(rnirs))
 library(nirsextra)
+library(data.table)
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:32]
+ag=colnames(sp)[9:12] # 32
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -145,7 +146,9 @@ for (j in 1:length(list_pre)) {  # 1:
   # generate sgm list for Leave-one-out
   segm <- list(rep1 = as.list(1:nrow(datok)))  # segm <- segmkf(n = nrow(datok), K = 5)
   fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=ncomp)
-  fmtt=append(fmtt, list(fm))
+  fmc = gcvlv(datok$xp, datok[,colnames(datok)==ag1],segm,score = cor2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+              
+  fmtt=append(fmtt, list(fmc$ypred))  # fmtt=append(fmtt, list(fm))
   r2_tt[,j] = mse(fm, ~ ncomp)$cor2
   pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])
   dim(pf)=c(1,2*ncol(pf))
