@@ -401,8 +401,6 @@ write.xlsx(pred_stats, file = paste0(basename(f),"_pred_stats.xlsx"))
 iout=which(T[,1]>20)
 which(rownames(spnew)=="139-HR-29-400006")
 iout=which(spnew[,1]>0.6)
-
-"fin"
 ```
 
 
