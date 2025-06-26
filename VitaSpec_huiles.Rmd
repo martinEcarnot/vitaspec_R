@@ -105,7 +105,8 @@ Prétraitement B: "350-2500 nm + SNV + DERIV.2nde";
 Prétraitement C: "350-1200nm + SNV"
 
 ```{r echo=FALSE, warning=FALSE}
-suppressPackageStartupMessages(library(rnirs))
+# suppressPackageStartupMessages(library(rnirs))
+library(rchemo)
 library(nirsextra)
 library(data.table)
 load('vitaspec_oil')
@@ -146,11 +147,10 @@ for (j in 1:length(list_pre)) {  # 1:
 
   # generate sgm list for Leave-one-out
   segm <- list(rep1 = as.list(1:nrow(datok)))  # segm <- segmkf(n = nrow(datok), K = 5)
-  fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=ncomp)
+  # fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=ncomp)
   fmc = gcvlv(datok$xp, datok[,colnames(datok)==ag1],segm,score = r2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
               
-  fmtt=append(fmtt, list(fmc))
-  fmttn=append(fmttn, list(fm))
+  fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
   r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
   pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])
   dim(pf)=c(1,2*ncol(pf))
@@ -163,18 +163,15 @@ title(ag1)
 
 pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
   legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8)  #cex = 0.6
-  fm=fmtt[[best_pre_lo[2]]]
-  fmn=fmttn[[best_pre_lo[2]]]
+  fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
   print(pftot[best_pre_lo[2]], 2)
   print("R2")
-  print(round(mse(fmn, ~ ncomp)$cor2[-1], 2))
-  print(round(mser(fm)$cor2,2))
+  print(round(mser(fm)$cor2,2))  # print(round(mse(fmn, ~ ncomp)$cor2[-1], 2))
   print("SEP")
-  print(round(mse(fmn, ~ ncomp)$sep[-1],2))
-  print(round(mser(fm)$sep,2))
+  print(round(mser(fm)$sep,2))    # print(round(mse(fmn, ~ ncomp)$sep[-1],2))
   cat("\n")
   cat("\n")
-# 
+
   # fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
   # plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
   # abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
@@ -244,7 +241,7 @@ disp_pre=function(x,pre1) {
 
 # Resultat des Cross-Validation avec les bons paramètres (PRE+nVL)
 ```{r echo=FALSE, warning=FALSE}
-library(rnirs)
+# library(rnirs)
 library(nirsextra)
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
@@ -253,8 +250,9 @@ sp=sp[!is.na(sp$x[,1]),]
 ag=colnames(sp)[9:32]
 options(warn=-1)
 
-outtxt=list()
-betas=list()
+# outtxt=list()
+# betas=list()
+fm_all=list()
 itxt=1
 
 for (i in 1:length(ag)) {
@@ -276,29 +274,32 @@ for (i in 1:length(ag)) {
 
   # generate sgm list for Leave-one-out
   segm <- list(rep1 = as.list(1:nrow(datok)))
-  fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=param[idparam,]$nVL+1)
+  # fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=param[idparam,]$nVL+1)
+  fm = gcvlv(datok$xp, datok[,colnames(datok)==ag1],segm, score=sep, fun = plskern, nlv = 1:param[idparam,]$nVL, verb = F)  # !!! pas cor2 avec LOO 
+
 
   print(disp_pre(datok$xp,param[idparam,]$pre[[1]]))
-  print(paste0("R2 = ",mse(fm, ~ ncomp)$cor2[param[idparam,]$nVL+1]))
-  print(paste0("SEP = ",mse(fm, ~ ncomp)$sep[param[idparam,]$nVL+1]))
+  print(paste0("R2 = ",round(mser(fm)$cor2[param[idparam,]$nVL],2)))
+  print(paste0("SEP = ",round(mser(fm)$sep[param[idparam,]$nVL],2)))
 
-  fm1=lapply(fm[1:3],function (x) {x[x$ncomp==param[idparam,]$nVL,]})
-  plot(fm1$fit$y1,fm1$y$y1, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
+  fm1=fm$y[fm$y$nlv==param[idparam,]$nVL,]   #fm1=lapply(fm[1:3],function (x) {x[x$ncomp==param[idparam,]$nVL,]})
+  plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
   abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
-  fit <- lm(fm1$y$y1 ~ fm1$fit$y1)
+  fit <- lm(fm1$yp ~ fm1$yref)
   abline(fit, col = "blue")
   summary_fit <- summary(fit)
   r_squared <- summary_fit$r.squared
-  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(param[idparam,]$nVL)),bquote(n_ech : .(length(fm1$fit$y1)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(param[idparam,]$nVL)),bquote(n_ech : .(length(fm1$yp)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
   title(ag1)
 
-  fm_finale = plsr(datok$xp, datok[,colnames(datok)==ag1],datok$xp,ncomp=param[idparam,]$nVL)
-  betas[[ag[i]]] = bcoef(fm_finale, ncomp = param[idparam,]$nVL)
+  fm_finale = plskern(datok$xp, datok[,colnames(datok)==ag1],nlv=param[idparam,]$nVL)
+  betas[[ag[i]]] = coef(fm_finale)$B  # default: if no nlv, nlv=nlv_max
 
-  outtxt[[itxt]] = c(paste0(ag1,"_CV"),fm1$fit$y1)
-  itxt=itxt+1
-  outtxt[[itxt]] = c(paste0(ag1,"_ref"),fm1$y$y1)
-  itxt=itxt+1
+  # outtxt[[itxt]] = c(paste0(ag1,"_CV"),fm1$yp)
+  # itxt=itxt+1
+  # outtxt[[itxt]] = c(paste0(ag1,"_ref"),fm1$yref)
+  # itxt=itxt+1
+  fm_all=append(fm_all,list(fm_finale))
   writeLines(as.character(outtxt), "huiles_CV.txt")
 }
 save(betas,file="Vitaspec_oil_betas")
@@ -339,7 +340,74 @@ ggplot(df, aes(x = x, y = y, color = AG)) +
 ```
 
 
-<!-- Graphiques Specrtes pour Amel -->
+# Prédiction de nouveaux échantillons
+```{r}
+library(nirsextra)
+library(rchemo)
+load('vitaspec_oil')
+sp$x=sp$x20250317_DIADE;
+sp=sp[!is.na(sp$x[,1]),]
+
+f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/20250603_Vitaspec_HR_DIADE/"
+spnew=asd_read_dir(f)
+
+# PCA
+fm=pcaeigen(sp$x, nlv = 10)
+Ttrain=fm$T
+Ttest <- transform(fm, spnew)
+T <- rbind(Ttrain, Ttest)
+group <- c(rep("Training", nrow(sp)), rep("Test", nrow(spnew)))
+i=1
+plotxy(T[, i:(i+1)], group = group, pch = 16, zeroes = TRUE, cex = 1.3, main = "scores")
+
+# Prédiction
+pred=data.frame(spectrum=rownames(spnew))
+nag=dim(param)[1]
+
+for (i in 1:nag) {
+spnx=pre(spnew,param[i,]$pre[[1]])
+pred=cbind(pred,predict(fm_all[[i]], spnx)$pred)
+}
+colnames(pred)[2:2:(nag+1)]=param$Propriete
+
+# Moyenne par échantillon
+library(dplyr)
+library(tidyr)
+pred$ech=substr(pred$spectrum,1,nchar(pred$spectrum)-5)
+group_col <- "ech"
+
+pred_moy <- select(pred,-spectrum) %>%
+  group_by(ech) %>%
+  summarise(across(where(is.numeric), mean), .groups = "drop")
+
+pred_stats <- select(pred,-spectrum) %>%
+  pivot_longer(cols = -all_of(group_col), names_to = "Variable", values_to = "Valeur") %>%
+  group_by(across(all_of(group_col)), Variable) %>%
+  reframe(
+    Stat = c("mean", "sd", "min", "max"),
+    Valeur = c(mean(Valeur), sd(Valeur), min(Valeur), max(Valeur))
+  ) %>%
+  pivot_wider(names_from = Stat, values_from = Valeur)
+
+library(openxlsx)
+write.xlsx(pred, file = paste0(basename(f),"_pred.xlsx"))
+write.xlsx(pred_moy, file = paste0(basename(f),"_pred_moy.xlsx"))
+write.xlsx(pred_stats, file = paste0(basename(f),"_pred_stats.xlsx"))
+
+# library("PerformanceAnalytics") 
+# chart.Correlation(pred_moy[,-1], histogram=TRUE, pch=19)
+
+# Ech outlier
+iout=which(T[,1]>20)
+which(rownames(spnew)=="139-HR-29-400006")
+iout=which(spnew[,1]>0.6)
+
+```
+
+
+
+
+<!-- Graphiques Spectres pour Amel -->
 <!-- ```{r eval=FALSE, include=FALSE} -->
 <!-- plotsp(pre(datok$x,rbind(list('adj','')))) -->
 <!-- title("Spectre Brut") -->
@@ -511,17 +579,9 @@ ggplot(df, aes(x = x, y = y, color = AG)) +
 
 
 
-<!-- RChemo -->
-<!-- ```{r eval=FALSE, include=FALSE} -->
-<!-- library(rchemo) -->
-
-<!-- ``` -->
-
-
 <!-- # Correlation entre les composés -->
 <!-- library("PerformanceAnalytics") -->
 <!-- chart.Correlation(ref[,-1], histogram=TRUE, pch=19) -->
-
 
 <!-- # ACP -->
 <!-- ```{r} -->
@@ -532,21 +592,5 @@ ggplot(df, aes(x = x, y = y, color = AG)) +
 <!-- print(dat$ech[c(8,9,10,17,18,19,20,21)]) -->
 
 <!-- ``` -->
-
-
-<!-- dat$xp=pre(dat$x,rbind(list('red',c(300,500,1)),list('detr',''))) -->
-<!-- datok=dat[-iout,] -->
-<!-- fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=20) -->
-<!-- mse(fm, ~ ncomp) -->
-<!-- fm1=lapply(fm[1:3],function (x) {x[x$ncomp==7,]}) -->
-<!-- plot(fm1$fit$y1,fm1$y$y1, xlab="CValidation", ylab="Reference") -->
-
-
-
-<!-- AG=read.table("/media/ecarnot/797E-F059/VitaSPEC/Matrice Acides Gras Amel_avril2024.csv", sep=";", header=TRUE, dec=",") -->
-<!-- CAROT=read.table("/media/ecarnot/797E-F059/VitaSPEC/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv", sep=";", header=TRUE, dec=",") -->
-<!-- TOCO=read.table("/media/ecarnot/797E-F059/VitaSPEC/Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E).csv", sep=";", header=TRUE, dec=",") -->
-<!-- AGL=read.table("/media/ecarnot/797E-F059/VitaSPEC/teneur en acides gras libres.csv", sep=";", header=TRUE, dec=",")[,-1] -->
-
 
 
