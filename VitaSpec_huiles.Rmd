@@ -370,7 +370,7 @@ pred=cbind(pred,predict(fm_all[[i]], spnx)$pred)
 }
 colnames(pred)[2:2:(nag+1)]=param$Propriete
 
-# Moyenne par échantillon
+# Stats par échantillon
 library(dplyr)
 library(tidyr)
 pred$ech=substr(pred$spectrum,1,nchar(pred$spectrum)-5)
@@ -397,7 +397,7 @@ write.xlsx(pred_stats, file = paste0(basename(f),"_pred_stats.xlsx"))
 # library("PerformanceAnalytics") 
 # chart.Correlation(pred_moy[,-1], histogram=TRUE, pch=19)
 
-# Ech outlier
+# outliers
 iout=which(T[,1]>20)
 which(rownames(spnew)=="139-HR-29-400006")
 iout=which(spnew[,1]>0.6)
