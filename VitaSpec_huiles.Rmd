@@ -26,12 +26,12 @@ library(plyr)
 # d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 # AG=read.table(paste0(d0,"analyses_ref/","Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
-AG=read.table(paste0(d0,"analyses_ref/","Matrice Acide gras- Huile de palme rouges Amel Joualli.csv"), sep=";", header=TRUE, dec=",")
+AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","Matrice Acide gras- Huile de palme rouges Amel Joualli.csv"), sep=";", header=TRUE, dec=",")
 # CAROT=read.table(paste0(d0,"analyses_ref","/Résutats_VitaPalm_Amel_Joualli_Caroténoïdes.csv"), sep=";", header=TRUE, dec=",")  # Echantillons mélangés
-CAROT=read.table(paste0(d0,"analyses_ref/","/Résultats caroténoïdes_Alternance_AmelJoualli_HuilesRouge_VitaSpec.csv"), sep=";", header=TRUE, dec=",")
-TOCO=read.table(paste0(d0,"analyses_ref/","Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E) pour Martin V2.csv"), sep=";", header=TRUE, dec=",")
-AGL=read.table(paste0(d0,"analyses_ref/","Résultats FFA - alternance 111 échantillons validés.csv"), sep=";", header=TRUE, dec=",")
-COLOR=read.table(paste0(d0,"analyses_ref/","Colorimeter_data.csv"), sep=";", header=TRUE, dec=",")
+CAROT=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","/Résultats caroténoïdes_Alternance_AmelJoualli_HuilesRouge_VitaSpec.csv"), sep=";", header=TRUE, dec=",")
+TOCO=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","Résultats Vitaspec_Amel Joualli_Tocochromanols ( vitamine E) pour Martin V2.csv"), sep=";", header=TRUE, dec=",")
+AGL=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","Résultats FFA - alternance 111 échantillons validés.csv"), sep=";", header=TRUE, dec=",")
+COLOR=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","Colorimeter_data.csv"), sep=";", header=TRUE, dec=",")
 ref = join_all(list(AG,CAROT,TOCO,AGL,COLOR), by = 'ech', type = 'full')
 # ref$carotenes=ref$alpha.carotene+ref$beta.carotene
 # ref$aT3_aT=ref$aT3/ref$aT
@@ -45,11 +45,11 @@ vitaspec_load=function(d0,d1) {
   return(sp)
 }
 
-sp=merge(vitaspec_load(d0,"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
-sp=merge(sp,vitaspec_load(d0,"20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"20241209_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp=merge(vitaspec_load(d0,"spectres/20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
+sp=merge(sp,vitaspec_load(d0,"spectres/20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"spectres/20241209_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"spectres/20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(d0,"spectres/20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
 sp$ech=substr(sp$spname,1,nchar(sp$spname)-5)
 
 sp=merge(sp,ref,by="ech")
