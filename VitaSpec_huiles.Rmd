@@ -38,6 +38,7 @@ ref = join_all(list(AG,CAROT,TOCO,AGL,COLOR), by = 'ech', type = 'full')
 
 vitaspec_load=function(d0,d1) {
   d=paste0(d0,d1)
+  print(d)
   sp=asd_read_dir(d)
   sp=sp2df(sp)
   colnames(sp)[1]=paste0("x",substr(d1,1,9),sub(".*_(.*)$", "\\1", d1))
@@ -45,11 +46,11 @@ vitaspec_load=function(d0,d1) {
   return(sp)
 }
 
-sp=merge(vitaspec_load(d0,"spectres/20240424_VitaSPEC_HR_AGAP"),vitaspec_load(d0,"20240424_VitaSPEC_HR_DIADE"),by="spname")
-sp=merge(sp,vitaspec_load(d0,"spectres/20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"spectres/20241209_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"spectres/20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
-sp=merge(sp,vitaspec_load(d0,"spectres/20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp=merge(vitaspec_load(paste0(d0,"spectres/"),"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(paste0(d0,"spectres/"),"20240424_VitaSPEC_HR_DIADE"),by="spname")
+sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20241209_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
+sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
 sp$ech=substr(sp$spname,1,nchar(sp$spname)-5)
 
 sp=merge(sp,ref,by="ech")
