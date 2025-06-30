@@ -247,11 +247,11 @@ load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:32]
+ag=colnames(sp)[9:12]
 options(warn=-1)
 
-# outtxt=list()
-# betas=list()
+outtxt=list()
+betas=list()
 fm_all=list()
 itxt=1
 
@@ -344,11 +344,12 @@ ggplot(df, aes(x = x, y = y, color = AG)) +
 ```{r}
 library(nirsextra)
 library(rchemo)
+library(openxlsx)
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/20250603_Vitaspec_HR_DIADE/"
+f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250603_Vitaspec_HR_DIADE/"
 spnew=asd_read_dir(f)
 
 # PCA
