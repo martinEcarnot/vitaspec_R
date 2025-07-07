@@ -113,7 +113,7 @@ load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:12] # 32
+ag=colnames(sp)[9:32] # 32
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -293,16 +293,15 @@ for (i in 1:length(ag)) {
   title(ag1)
 
   fm_finale = plskern(datok$xp, datok[,colnames(datok)==ag1],nlv=param[idparam,]$nVL)
-  betas[[ag[i]]] = coef(fm_finale)$B  # default: if no nlv, nlv=nlv_max
+  fm_all=append(fm_all,list(fm_finale))   # betas[[ag[i]]] = coef(fm_finale)$B  # default: if no nlv, nlv=nlv_max
 
   # outtxt[[itxt]] = c(paste0(ag1,"_CV"),fm1$yp)
   # itxt=itxt+1
   # outtxt[[itxt]] = c(paste0(ag1,"_ref"),fm1$yref)
   # itxt=itxt+1
-  fm_all=append(fm_all,list(fm_finale))
-  writeLines(as.character(outtxt), "huiles_CV.txt")
+  # writeLines(as.character(outtxt), "huiles_CV.txt")
 }
-save(betas,file="Vitaspec_oil_betas")
+save(param,fm_all,file="Vitaspec_oil_betas")
 ```
 \newpage
 
