@@ -51,25 +51,36 @@ sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20241209_Vitaspec_HR_DIADE"),b
 sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20250317_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
 sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20250317_Vitaspec_HR_DIADE"),by="spname",all=TRUE)
 sp$ech=substr(sp$spname,1,nchar(sp$spname)-5)
-
-sp=merge(sp,ref,by="ech")
 sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
+
+raman=rbind(vitaspec_load_Raman(paste0(d0,"spectres/202050317_Raman_HR_1to42/")),vitaspec_load_Raman(paste0(d0,"spectres/20250318_Raman_HR_43to117/")))
+raman$ech=vitaspec_noms_ech_Raman(rownames(raman),ref$ech)
+raman$rep=substr(rownames(raman),nchar(rownames(raman)),nchar(rownames(raman)))
+
+sp=merge(sp,raman,by=c("ech","rep"),all=TRUE)
+sp=merge(sp,ref,by="ech",all.y=TRUE)
 # save(sp,file="vitaspec_oil")
 ```
 
 # Chargement des prétraitements
 ```{r include=FALSE}
-list_pre=list(rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15))),
+list_pre=list(rbind(list('snv',''),list('sder',c(2,3,15))),
+rbind(list('sder',c(2,3,15))),
+rbind(list('sder',c(1,3,9))))
+
+## 3 pretraitement les plus efficaces
+# rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15))),
+# rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
+# rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')))
+
 # rbind(list('adj',''),list('ref2abs',''),list('snv',''),list('sder',c(2,3,15))),
 # rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15))),
 # rbind(list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15))),
 # rbind(list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15))),
-rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
 
 # rbind(list('adj',''),list('red',c(1,1000,1)),list('snv','')),
 # rbind(list('adj',''),list('red',c(1,1300,1)),list('snv',''),list('sder',c(2,3,15))),
 # rbind(list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15))),
-rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')))
 
 # rbind(list('adj',''),list('red',c(1,1900,1)),list('snv','')),
 # rbind(list('adj',''),list('red',c(1,2080,1)),list('sder',c(1,3,31))),
@@ -109,11 +120,11 @@ Prétraitement C: "350-1200nm + SNV"
 library(rchemo)
 library(nirsextra)
 library(data.table)
-load('vitaspec_oil')
-sp$x=sp$x20250317_DIADE;
+# load('vitaspec_oil')
+sp$x=sp$ram
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:32] # 32
+ag=colnames(sp)[21:27] # 32
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -141,7 +152,7 @@ for (j in 1:length(list_pre)) {  # 1:
   # dat$xp=pre(dat$x,p)
   dat$xp=pre(dat$x,list_pre[[j]])
   iout=which(is.na(dat[,colnames(dat)==ag1]))
-  iout=c(iout,which(dat$x[,1150] < 0.6))  # Probablement un échantillon contenant de l'eau  # | dat[,colnames(datok)==ag1] > 100
+  if (ncol(dat$x) > 1150) {iout=c(iout,which(dat$x[,1150] < 0.6))}  # Probablement un échantillon contenant de l'eau  # | dat[,colnames(datok)==ag1] > 100
   iout=c(iout,which(dat$ech=="73-HR-18-1"))  # Echantillon Olifera
   if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
 
