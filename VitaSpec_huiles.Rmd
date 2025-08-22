@@ -6,8 +6,8 @@ date: "2024-05-10"
 #   pdf_document:
 #     latex_engine: xelatex
 output:
-  html_document: default
   pdf_document: default
+  #html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -23,6 +23,7 @@ Dans les spectres, manquent les échantillons 34 et 87
 ```{r eval=FALSE, include=FALSE}
 library(nirsextra)
 library(plyr)
+source("vitaspec_load.R")
 # d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 # AG=read.table(paste0(d0,"analyses_ref/","Matrice Acides Gras Amel_avril2024.csv"), sep=";", header=TRUE, dec=",")
@@ -35,15 +36,6 @@ COLOR=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/","Colorimeter_data.csv"
 ref = join_all(list(AG,CAROT,TOCO,AGL,COLOR), by = 'ech', type = 'full')
 # ref$carotenes=ref$alpha.carotene+ref$beta.carotene
 # ref$aT3_aT=ref$aT3/ref$aT
-
-vitaspec_load=function(d0,d1) {
-  d=paste0(d0,d1)
-  sp=asd_read_dir(d)
-  sp=sp2df(sp)
-  colnames(sp)[1]=paste0("x",substr(d1,1,9),sub(".*_(.*)$", "\\1", d1))
-  sp$spname=rownames(sp$x)
-  return(sp)
-}
 
 sp=merge(vitaspec_load(paste0(d0,"spectres/"),"20240424_VitaSPEC_HR_AGAP"),vitaspec_load(paste0(d0,"spectres/"),"20240424_VitaSPEC_HR_DIADE"),by="spname")
 sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),"20241209_Vitaspec_HR_AGAP"),by="spname",all=TRUE)
@@ -59,13 +51,17 @@ raman$rep=substr(rownames(raman),nchar(rownames(raman)),nchar(rownames(raman)))
 
 sp=merge(sp,raman,by=c("ech","rep"),all=TRUE)
 sp=merge(sp,ref,by="ech",all.y=TRUE)
-# save(sp,file="vitaspec_oil")
+save(sp,file="vitaspec_oil")
 ```
 
 # Chargement des prétraitements
 ```{r include=FALSE}
-list_pre=list(rbind(list('snv',''),list('sder',c(2,3,15))),
-rbind(list('sder',c(2,3,15))),
+list_pre=list(rbind(list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1))),
+# rbind(list('sder',c(2,3,15))),
+# rbind(list('snv',''),list('sder',c(2,3,7)))
+rbind(list('snv',''),list('sder',c(1,3,9)),list('red',c(25,30,1))),
+rbind(list('sder',c(1,3,9)),list('red',c(250,25,1))),
+rbind(list('sder',c(1,3,9)),list('red',c(25,250,1))),
 rbind(list('sder',c(1,3,9))))
 
 ## 3 pretraitement les plus efficaces
@@ -111,20 +107,19 @@ rbind(list('sder',c(1,3,9))))
 
 # Calibrations sur spectres moyen
 
-Prétraitement A: "1300-1750nm + SNV + DERIV.2nde";
-Prétraitement B: "350-2500 nm + SNV + DERIV.2nde";
-Prétraitement C: "350-1200nm + SNV"
+<!-- Prétraitement A: "1300-1750nm + SNV + DERIV.2nde"; -->
+<!-- Prétraitement B: "350-2500 nm + SNV + DERIV.2nde"; -->
+<!-- Prétraitement C: "350-1200nm + SNV" -->
 
 ```{r echo=FALSE, warning=FALSE}
-# suppressPackageStartupMessages(library(rnirs))
-library(rchemo)
+suppressPackageStartupMessages(library(rchemo))
 library(nirsextra)
 library(data.table)
-# load('vitaspec_oil')
+load('vitaspec_oil')
 sp$x=sp$ram
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[21:27] # 32
+ag=colnames(sp)[13]#:30] # 32
 options(warn=-1)
 
 for (i in 1:length(ag)) {  #
@@ -172,7 +167,7 @@ best_pre_lo=which(r2_tt == max(r2_tt[2:14,]), arr.ind = TRUE)[1,]
 matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
 title(ag1)
 
-pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
+# pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
   legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8)  #cex = 0.6
   fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
   print(pftot[best_pre_lo[2]], 2)
@@ -183,21 +178,21 @@ pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport
   cat("\n")
   cat("\n")
 
-  # fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
-  # plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
-  # abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
-  # fit <- lm(fm1$yp ~ fm1$yref)
-  # abline(fit, col = "blue")
-  # summary_fit <- summary(fit)
-  # r_squared <- summary_fit$r.squared
-  # legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$fit$y1)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
-  # title(ag1)
+  fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
+  plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
+  abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
+  fit <- lm(fm1$yp ~ fm1$yref)
+  abline(fit, col = "blue")
+  summary_fit <- summary(fit)
+  r_squared <- summary_fit$r.squared
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$fit$y1)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  title(ag1)
 }
 ```
 \newpage
 
 ## Résultats ASD DIADE (défini manuellement après observation des courbes de CV)
-```{r echo=FALSE}
+```{r echo=FALSE,include = FALSE}
 library(tibble)
 
 param <- tribble(
@@ -251,7 +246,7 @@ disp_pre=function(x,pre1) {
 \newpage
 
 # Resultat des Cross-Validation avec les bons paramètres (PRE+nVL)
-```{r echo=FALSE, warning=FALSE}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 # library(rnirs)
 library(nirsextra)
 load('vitaspec_oil')
@@ -317,7 +312,7 @@ save(param,fm_all,file="Vitaspec_oil_betas")
 \newpage
 
 # Graphique des Coefficients Beta
-```{r echo=FALSE}
+```{r eval=FALSE, include=FALSE}
 load("Vitaspec_oil_betas")
 for (i in 1:length(betas)) {
   caract=names(betas)[i]
@@ -331,7 +326,7 @@ for (i in 1:length(betas)) {
 \newpage
 
 # Coefficient beta pour 16:0, 18:1 et 18:2n9 avec Pré 1600-1750nm + SNV + Der2, et 8VL
-```{r echo=FALSE}
+```{r echo=FALSE,include = FALSE}
 library(ggplot2)
 load("Vitaspec_oil_betas_acides_ras_1600-1750nm_8LV")
 
@@ -351,7 +346,7 @@ ggplot(df, aes(x = x, y = y, color = AG)) +
 
 
 # Prédiction de nouveaux échantillons
-```{r}
+```{r eval=FALSE, include=FALSE}
 library(nirsextra)
 library(rchemo)
 library(openxlsx)
