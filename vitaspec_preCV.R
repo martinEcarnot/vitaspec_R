@@ -18,14 +18,11 @@ for (j in 1:length(list_pre)) {  # 1:
   # print(seqlo[j])
   # print(2151-seqlo[j+4])
   # dat$xp=pre(dat$x,p)
-  dat$xp=pre(dat$x,list_pre[[j]])
-  iout=which(is.na(dat[,colnames(dat)==ag1]))
-  if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
-  
+  xp=pre(x,list_pre[[j]])
+
   # generate sgm list for Leave-one-out
-  segm <- list(rep1 = as.list(1:nrow(datok)))  # segm <- segmkf(n = nrow(datok), K = 5)
-  # fm = cvfit(datok$xp, datok[,colnames(datok)==ag1],fun=plsr,segm=segm, ncomp=ncomp)
-  fmc = gcvlv(datok$xp, datok[,colnames(datok)==ag1],segm,score = r2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+  segm <- list(rep1 = as.list(1:nrow(xp)))  # segm <- segmkf(n = nrow(datok), K = 5)
+  fmc = gcvlv(xp, y,segm,score = r2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
   
   fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
   r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2

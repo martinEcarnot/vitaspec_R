@@ -35,7 +35,7 @@ sp=merge(sp,ref,by="ech",all.y=TRUE)
 save(sp,file="vitaspec_fruit")
 ```
 
-
+# Cross-Val
 ```{r, warning=FALSE}
 suppressPackageStartupMessages(library(rchemo))
 library(nirsextra)
@@ -61,13 +61,16 @@ for (i in 1:length(ag)) {
   dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
   dat$ech=dat$Group.1; dat=dat[,-1]
   
-  vitaspec_preCV(dat$x,dat$Eau,list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
+  iout=which(is.na(dat[,colnames(dat)==ag1]))
+  if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
+  
+  vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
 }
 
 ```
 
 
-# Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
+# Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
 ```{r, warning=FALSE}
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp=sp2df(asd_read_dir(paste0(d,"spectres/20240405_VitaSPEC_S_AGAP/")))
@@ -131,6 +134,6 @@ plotxy(fm$Tr[, c(1,2)], group = spm$annee)
 #   s.class(dfxy = pca.nirs[[i]]$li,
 #           fac = as.factor(nirs.list.ade4[[i]]$info$Bloc), xax = 1, yax = 2,
 #           clabel = 0.7, col = couleur, sub = names(pca.nirs)[i], csub=2, possub="topleft")
-}
+
 ```
 
