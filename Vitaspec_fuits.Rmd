@@ -9,19 +9,29 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# Load data
+# Load & Save data
 ```{r}
 library(nirsextra)
-library(rnirs)
-d="C:/Users/guest/Documents/Martin/VitaSPEC/"
-# d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
-sp=sp2df(asd_read_dir(paste0(d,"20240325_Vitaspec_Pobe/")))
-sp$ech=sub("-[^-]*$", "", rownames(sp))
-ref=read.table(paste0(d,"Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ",")
-ref$ech=paste0(ref$Identifiant,"-",ref$Code.arbre)
-colnames(ref)[colnames(ref) == "TE1...MF."] = "Eau"
-sp=merge(sp, ref,by="ech")
-save(sp,file="vitaspec_fruits_frais_Mars2024")
+library(plyr)
+source("vitaspec_load.R")
+# d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
+d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Résultats VitaSpec Méso AG serie 1 (61 échantillons).csv"), sep=";", header=TRUE, dec=",")
+meso=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"), sep=";", header=TRUE, dec=",")
+ref = join_all(list(meso,AG), by = 'ech', type = 'full')
+
+# Load spectra
+dirs=basename(list.dirs(paste0(d0,"spectres/"), recursive = FALSE))
+dirs_vita <- grep("_Vita", dirs, value = TRUE)  # Garder ceux qui contiennent "Vita"
+dirs <- grep("HR", dirs_vita, value = TRUE, invert = TRUE) # Enlever ceux qui contiennent "HR"
+sp=merge(vitaspec_load(paste0(d0,"spectres/"),dirs[1]),vitaspec_load(paste0(d0,"spectres/"),dirs[2]),by="spname")
+for (i in 3:(length(dirs))) {sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),dirs[i]),by="spname",all=TRUE)}
+sp= sp[-grep("Spectrum", sp$spname),]
+sp$ech=sub("-.*", "", sp$spname)
+sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
+
+sp=merge(sp,ref,by="ech",all.y=TRUE)
+save(sp,file="vitaspec_fruit")
 ```
 
 ```{r, warning=FALSE}
@@ -42,9 +52,9 @@ vitaspec_preCV(spm$x,spm$Eau,list_pre,15, titl="Teneur en eau. Pts de mesures mo
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
 ```{r, warning=FALSE}
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
-sp=sp2df(asd_read_dir(paste0(d,"20240405_VitaSPEC_S_AGAP/")))
+sp=sp2df(asd_read_dir(paste0(d,"spectres/20240405_VitaSPEC_S_AGAP/")))
 sp$ech=sub("-[^-]*$", "", rownames(sp))
-ref=read.table(paste0(d,"Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ",")
+ref=read.table(paste0(d,"analyses_ref/Données_pour_NIRS_TEmeso.csv"), sep=";",header=TRUE, dec = ",")
 ref$ech=paste0(ref$Identifiant,"-",ref$Code.arbre)
 colnames(ref)[colnames(ref) == "TE1...MF."] = "Eau"
 sp=merge(sp, ref,by="ech")
@@ -53,7 +63,7 @@ spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
 spm$ech=spm$Group.1; spm=spm[,-1]
 vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures moy. par fruit. Meso séché - AGAP") 
 
-sp=sp2df(asd_read_dir(paste0(d,"20240405_VitaSPEC_S_DIADE/")))
+sp=sp2df(asd_read_dir(paste0(d,"spectres/20240405_VitaSPEC_S_DIADE/")))
 sp$ech=sub("-[^-]*$", "", rownames(sp))
 sp=merge(sp, ref,by="ech")
 spm=aggregate(sp,by=list(sp$ech), mean)
@@ -65,11 +75,11 @@ vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures mo
 
 Explore 2 years on fresh fruits
 ```{r, warning=FALSE}
-d="C:/Users/guest/Documents/Martin/VitaSPEC/"
-# d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
-sp24=sp2df(asd_read_dir(paste0(d,"20240325_Vitaspec_Pobe/")))
+# d="C:/Users/guest/Documents/Martin/VitaSPEC/"
+d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+sp24=sp2df(asd_read_dir(paste0(d,"spectres/20240325_Vitaspec_Pobe/")))
 sp24$annee=24
-sp25=sp2df(asd_read_dir(paste0(d,"20250224_Vitaspec_Pobe/")))
+sp25=sp2df(asd_read_dir(paste0(d,"spectres/20250224_Vitaspec_Pobe/")))
 sp25$annee=25
 sp=rbind(sp24,sp25)
 # Excude exocarp spectra
@@ -96,12 +106,13 @@ plotxy(fm$Tr[, c(1,2)], group = spm$annee)
 
 
 #plot from VS
-couleur <- brewer.pal(n = length(levels(as.factor(nirs.list.ade4$raw$info$Bloc))),
-                      name = "Set1")
-for (i in (1:length(pca.nirs))){
-  s.class(dfxy = pca.nirs[[i]]$li,
-          fac = as.factor(nirs.list.ade4[[i]]$info$Bloc), xax = 1, yax = 2,
-          clabel = 0.7, col = couleur, sub = names(pca.nirs)[i], csub=2, possub="topleft")
+# library(RColorBrewer)
+# couleur <- brewer.pal(n = length(levels(as.factor(nirs.list.ade4$raw$info$Bloc))),
+#                       name = "Set1")
+# for (i in (1:length(pca.nirs))){
+#   s.class(dfxy = pca.nirs[[i]]$li,
+#           fac = as.factor(nirs.list.ade4[[i]]$info$Bloc), xax = 1, yax = 2,
+#           clabel = 0.7, col = couleur, sub = names(pca.nirs)[i], csub=2, possub="topleft")
 }
 ```
 
