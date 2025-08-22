@@ -18,13 +18,14 @@ source("vitaspec_load.R")
 d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Résultats VitaSpec Méso AG serie 1 (61 échantillons).csv"), sep=";", header=TRUE, dec=",")
 meso=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"), sep=";", header=TRUE, dec=",")
+names(meso)[names(meso) == "TE1...MF."] <- "eau"
 ref = join_all(list(meso,AG), by = 'ech', type = 'full')
 
 # Load spectra
 dirs=basename(list.dirs(paste0(d0,"spectres/"), recursive = FALSE))
 dirs_vita <- grep("_Vita", dirs, value = TRUE)  # Garder ceux qui contiennent "Vita"
 dirs <- grep("HR", dirs_vita, value = TRUE, invert = TRUE) # Enlever ceux qui contiennent "HR"
-sp=merge(vitaspec_load(paste0(d0,"spectres/"),dirs[1]),vitaspec_load(paste0(d0,"spectres/"),dirs[2]),by="spname")
+sp=merge(vitaspec_load(paste0(d0,"spectres/"),dirs[1]),vitaspec_load(paste0(d0,"spectres/"),dirs[2]),by="spname",all=TRUE)
 for (i in 3:(length(dirs))) {sp=merge(sp,vitaspec_load(paste0(d0,"spectres/"),dirs[i]),by="spname",all=TRUE)}
 sp= sp[-grep("Spectrum", sp$spname),]
 sp$ech=sub("-.*", "", sp$spname)
@@ -34,17 +35,34 @@ sp=merge(sp,ref,by="ech",all.y=TRUE)
 save(sp,file="vitaspec_fruit")
 ```
 
-```{r, warning=FALSE}
-source("vitaspec_preCV.R")
-load("vitaspec_fruits_frais_Mars2024")
 
-# Sur tous les spectres (sans moy)
-#vitaspec_preCV(sp$x,sp$Eau,list_pre,15, titl="Teneur en eau. Tous points de mesure") 
-# En moyennant les rép
-spm=aggregate(sp,by=list(sp$ech), mean)
-spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
-spm$ech=spm$Group.1; spm=spm[,-1]
-vitaspec_preCV(spm$x,spm$Eau,list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
+```{r, warning=FALSE}
+suppressPackageStartupMessages(library(rchemo))
+library(nirsextra)
+library(data.table)
+source("vitaspec_preCV.R")
+source("list_pre.R")
+load("vitaspec_fruit")
+# On rassemble les spectres de Pobé (frais)
+sp$x=sp$x20240325_Vitaspec_Pobe
+iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
+sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
+sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+
+ag=colnames(sp)[43:50] # c(33,43:50)] 
+options(warn=-1)
+
+for (i in 1:length(ag)) {
+  ag1=ag[i]
+  print(ag1)
+  
+  # En moyennant les rép
+  dat=aggregate(sp,by=list(sp$ech), mean)
+  dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+  dat$ech=dat$Group.1; dat=dat[,-1]
+  
+  vitaspec_preCV(dat$x,dat$Eau,list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
+}
 
 ```
 

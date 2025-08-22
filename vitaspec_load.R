@@ -4,7 +4,8 @@ vitaspec_load=function(d0,d1) {
   d=paste0(d0,d1)
   sp=asd_read_dir(d)
   sp=sp2df(sp)
-  colnames(sp)[1]=paste0("x",substr(d1,1,9),sub(".*_(.*)$", "\\1", d1))
+  colnames(sp)[1]=paste0("x",d1)
+  if (grepl("HR", d1)) {colnames(sp)[1]=paste0("x",substr(d1,1,9),sub(".*_(.*)$", "\\1", d1))}
   sp$spname=rownames(sp$x)
   return(sp)
 }
