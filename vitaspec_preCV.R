@@ -56,7 +56,7 @@ if (plotYY) {
   summary_fit <- summary(fit)
   r_squared <- summary_fit$r.squared
   legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
-  title(ag1)
+  title(paste(ag1,titl,sep=" - "))
 }
 
 }

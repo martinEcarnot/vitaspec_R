@@ -43,13 +43,20 @@ library(data.table)
 source("vitaspec_preCV.R")
 source("list_pre.R")
 load("vitaspec_fruit")
-# On rassemble les spectres de Pobé (frais)
-sp$x=sp$x20240325_Vitaspec_Pobe
-iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
-sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
-sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
 
-ag=colnames(sp)[43:50] # c(33,43:50)] 
+# On selectionne les bons spectres
+sptit="Mesocarpe Silicagel - 24-25"
+# sp$x=sp$x20240325_Vitaspec_Pobe
+# iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
+# sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
+# sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+
+sp$x=sp$x20240405_VitaSPEC_S_DIADE
+iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
+sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
+sp=sp[!is.na(sp$x[,1]),]
+
+ag=colnames(sp)[c(33,43:50)] 
 options(warn=-1)
 
 for (i in 1:length(ag)) {
@@ -64,7 +71,7 @@ for (i in 1:length(ag)) {
   iout=which(is.na(dat[,colnames(dat)==ag1]))
   if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
   
-  vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl="Teneur en eau. Pts de mesures moy. par fruit") 
+  vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=sptit) 
 }
 
 ```

@@ -11,16 +11,15 @@ list_pre=list(rbind(list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1)))
 ## 3 pretraitement les plus efficaces
 rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15))),
 rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
-rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')))
+rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')),
 
-# rbind(list('adj',''),list('ref2abs',''),list('snv',''),list('sder',c(2,3,15))),
-# rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15))),
+rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(1,3,15))),
 # rbind(list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15))),
 # rbind(list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15))),
 
 # rbind(list('adj',''),list('red',c(1,1000,1)),list('snv','')),
-# rbind(list('adj',''),list('red',c(1,1300,1)),list('snv',''),list('sder',c(2,3,15))),
-# rbind(list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15))),
+rbind(list('adj',''),list('red',c(1,1300,1)),list('snv',''),list('sder',c(2,3,15))),
+rbind(list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15))))
 
 # rbind(list('adj',''),list('red',c(1,1900,1)),list('snv','')),
 # rbind(list('adj',''),list('red',c(1,2080,1)),list('sder',c(1,3,31))),
@@ -39,7 +38,6 @@ rbind(list('adj',''),list('red',c(1,1300,1)),list('snv','')))
 # # # rbind(list('adj',''),list('red',c(650,750,1)),list('snv',''),list('sder',c(2,3,31))),
 # # # rbind(list('adj',''),list('red',c(350,750,1)),list('snv',''),list('sder',c(2,3,15))),
 # # # rbind(list('adj',''),list('red',c(50,750,1)),list('snv',''),list('sder',c(2,3,15))),
-# # # rbind(list('adj',''),list('red',c(50,750,1)),list('snv',''),list('sder',c(2,3,51))),
 # # # rbind(list('adj',''),list('red',c(50,700,1)),list('snv',''),list('sder',c(2,3,51))))
 # rbind(list('adj',''),list('red',c(1,1900,1)),list('snv',''),list('sder',c(2,3,51))),
 # # # rbind(list('adj',''),list('red',c(1,600,1))),
