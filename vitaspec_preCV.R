@@ -1,4 +1,4 @@
-vitaspec_preCV = function(x,y,list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE)  {
+vitaspec_preCV = function(x,y,list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
 
 # From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
   
@@ -13,7 +13,8 @@ r2_tt=matrix(nrow=ncomp,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-
 fmtt=list()
 fmttn=list()
 for (j in 1:length(list_pre)) {  # 1:
-  print(paste0("Prétraitement ",j, "/",length(list_pre)))
+  # print(paste0("Prétraitement ",j, "/",length(list_pre),"\n"))
+  if (verb) {cat(paste0("Prétraitement ", j, "/", length(list_pre), "\n"))}
   # p=rbind(list('adj',''),list('red',c(seqlo[j],2151-seqlo[j+6],1)),list('sder',c(1,3,15)))
   # print(seqlo[j])
   # print(2151-seqlo[j+4])
@@ -39,13 +40,12 @@ if (plotLV) {
   legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8)  #cex = 0.6
 }
 fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
-print(pftot[best_pre_lo[2]], 2)
-print("R2")
-print(round(mser(fm)$cor2,2))  # print(round(mse(fmn, ~ ncomp)$cor2[-1], 2))
-print("SEP")
-print(round(mser(fm)$sep,2))    # print(round(mse(fmn, ~ ncomp)$sep[-1],2))
-cat("\n")
-cat("\n")
+cat(
+  "Pré :", pftot[best_pre_lo[2]], "\n\n",
+  "R2     :", round(mser(fm)$cor2, 2), "\n\n",
+  "SEP    :", round(mser(fm)$sep, 2), "\n\n\n"
+)
+
 
 if (plotYY) {
   fm1=fm$y[fm$y$nlv==best_pre_lo[1],]

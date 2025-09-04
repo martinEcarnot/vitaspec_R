@@ -1,7 +1,19 @@
 ---
-title: "Vitaspec_fuits"
-output: html_document
-date: "2024-09-23"
+title: "Vitaspec_fruits"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{Ubuntu}[
+      Path = /usr/share/fonts/truetype/ubuntu/,
+      Extension = .ttf,
+      UprightFont = *-R,
+      BoldFont = *-B,
+      ItalicFont = *-RI,
+      BoldItalicFont = *-BI
+    ]
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Load & Save data
-```{r}
+```{r eval=FALSE, include=FALSE}
 library(nirsextra)
 library(plyr)
 source("vitaspec_load.R")
@@ -36,49 +48,72 @@ save(sp,file="vitaspec_fruit")
 ```
 
 # Cross-Val
-```{r, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, results='asis'}
 suppressPackageStartupMessages(library(rchemo))
-library(nirsextra)
+suppressPackageStartupMessages(library(nirsextra))
 library(data.table)
 source("vitaspec_preCV.R")
 source("list_pre.R")
-load("vitaspec_fruit")
 
-# On selectionne les bons spectres
-sptit="Mesocarpe Silicagel - 24-25"
-# sp$x=sp$x20240325_Vitaspec_Pobe
-# iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
-# sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
-# sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
+for (k in 1:length(condition_spectr)) {
+  load("vitaspec_fruit")
+  # On selectionne les bons spectres selon la condition (Meso frais, Exo)
+  if (k==1) {
+      sp$x=sp$x20240325_Vitaspec_Pobe
+      iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
+      sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
+      sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+  } else if (k==2) {
+      cat("\n\n\\pagebreak\n")
+      sp$x=sp$x20240325_Vitaspec_Pobe
+      iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
+      sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
+      sp=sp[!is.na(sp$x[,1]) & grepl("X",sp$spname),]
+  } else if (k==3) { 
+    cat("\n\n\\pagebreak\n")
+    sp$x=sp$x20240405_VitaSPEC_S_DIADE
+    iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
+    sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
+    sp=sp[!is.na(sp$x[,1]),]
+  } else if (k==4) {
+    cat("\n\n\\pagebreak\n")
+    sp$x=sp$x20250319_Vitaspec_Lyoph_DIADE
+    iokL25=which(!is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))
+    sp$x[iokL25,] = sp$x20250321_Vitaspec_Lyoph_DIADE[iokL25,]
+    sp=sp[!is.na(sp$x[,1]),]
+  }
+cat(paste0(
+  "\\begin{center}\n",
+  "\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n",
+  "\\end{center}\n",
+  "\\normalsize\n"
+))
+cat("\\par\n")  # termine le paragraphe
 
-sp$x=sp$x20240405_VitaSPEC_S_DIADE
-iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
-sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
-sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[c(33,43:50)] 
-options(warn=-1)
-
-for (i in 1:length(ag)) {
-  ag1=ag[i]
-  print(ag1)
+  ag=colnames(sp)[c(43)]#,43:50)] 
+  options(warn=-1)
   
-  # En moyennant les rép
-  dat=aggregate(sp,by=list(sp$ech), mean)
-  dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
-  dat$ech=dat$Group.1; dat=dat[,-1]
-  
-  iout=which(is.na(dat[,colnames(dat)==ag1]))
-  if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
-  
-  vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=sptit) 
+  for (i in 1:length(ag)) {
+    ag1=ag[i]
+    # print(ag1)
+    
+    # En moyennant les rép
+    dat=aggregate(sp,by=list(sp$ech), mean)
+    dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+    dat$ech=dat$Group.1; dat=dat[,-1]
+    iout=which(is.na(dat[,colnames(dat)==ag1]))
+    if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
+    
+    vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
+  }
 }
-
 ```
 
 
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
-```{r, warning=FALSE}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp=sp2df(asd_read_dir(paste0(d,"spectres/20240405_VitaSPEC_S_AGAP/")))
 sp$ech=sub("-[^-]*$", "", rownames(sp))
@@ -102,7 +137,7 @@ vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures mo
 
 
 Explore 2 years on fresh fruits
-```{r, warning=FALSE}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 # d="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp24=sp2df(asd_read_dir(paste0(d,"spectres/20240325_Vitaspec_Pobe/")))
