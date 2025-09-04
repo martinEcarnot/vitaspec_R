@@ -37,15 +37,15 @@ if (plotLV) {
   matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
   title(ag1)
   # pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
-  legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8)  #cex = 0.6
+  legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
 }
 fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
+txtpre= pftot[best_pre_lo[2]]  # txtpre= disp_pre(dat$x,list_pre[[best_pre_lo[2]]])
 cat(
-  "Pré :", pftot[best_pre_lo[2]], "\n\n",
+  "Pré :", txtpre, "\n\n",
   "R2     :", round(mser(fm)$cor2, 2), "\n\n",
   "SEP    :", round(mser(fm)$sep, 2), "\n\n\n"
 )
-
 
 if (plotYY) {
   fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
@@ -55,8 +55,27 @@ if (plotYY) {
   abline(fit, col = "blue")
   summary_fit <- summary(fit)
   r_squared <- summary_fit$r.squared
-  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(pftot[best_pre_lo[2]])),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  # legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(txtpre)),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
   title(paste(ag1,titl,sep=" - "))
 }
+}
 
+
+disp_pre=function(x,pre1) {
+  txt=NULL
+  for (i in 1:nrow(pre1)) {
+    if (pre1[i,1] == "adj") {}
+    if (pre1[i,1] == "snv") {txt=paste0(txt,"SNV")}
+    if (pre1[i,1] == "red") {
+      txt=paste0(txt,"RANGE:",min(as.numeric(attributes(x)[2]$dimnames[[2]])), "-",max(as.numeric(attributes(x)[2]$dimnames[[2]])),"nm")
+    }
+    if (pre1[i,1] == "sder") {
+      if (pre1[i,2][[1]][1] == 1) {txtorder= "1ere"}
+      if (pre1[i,2][[1]][1] == 2) {txtorder= "2nde"}
+      txt=paste0(txt,"DERIV.",txtorder, " (","poly=",pre1[i,2][[1]][2],";","window=",pre1[i,2][[1]][2],")")
+    }
+    if (length(txt)>0 & i<nrow(pre1)) {txt=paste0(txt," + ")}
+  }
+  return(txt)
 }

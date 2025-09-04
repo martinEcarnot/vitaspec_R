@@ -118,7 +118,7 @@ matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Cro
 title(ag1)
 
 # pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
-  legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8)  #cex = 0.6
+  legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8, bg = "white")  #cex = 0.6
   fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
   print(pftot[best_pre_lo[2]], 2)
   print("R2")
@@ -175,23 +175,7 @@ param <- tribble(
 
 knitr::kable(param)
 
-disp_pre=function(x,pre1) {
-  txt=NULL
-  for (i in 1:nrow(pre1)) {
-    if (pre1[i,1] == "adj") {}
-    if (pre1[i,1] == "snv") {txt=paste0(txt,"SNV")}
-    if (pre1[i,1] == "red") {
-      txt=paste0(txt,"RANGE:",min(as.numeric(attributes(x)[2]$dimnames[[2]])), "-",max(as.numeric(attributes(x)[2]$dimnames[[2]])),"nm")
-    }
-    if (pre1[i,1] == "sder") {
-      if (pre1[i,2][[1]][1] == 1) {txtorder= "1ere"}
-      if (pre1[i,2][[1]][1] == 2) {txtorder= "2nde"}
-      txt=paste0(txt,"DERIV.",txtorder, " (","poly=",pre1[i,2][[1]][2],";","window=",pre1[i,2][[1]][2],")")
-    }
-    if (length(txt)>0 & i<nrow(pre1)) {txt=paste0(txt," + ")}
-  }
-  return(txt)
-}
+
 ```
 \newpage
 
@@ -199,6 +183,7 @@ disp_pre=function(x,pre1) {
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 # library(rnirs)
 library(nirsextra)
+source("vitaspec_preCV.R")
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]

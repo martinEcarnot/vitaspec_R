@@ -58,7 +58,7 @@ source("list_pre.R")
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
 for (k in 1:length(condition_spectr)) {
   load("vitaspec_fruit")
-  # On selectionne les bons spectres selon la condition (Meso frais, Exo)
+  # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
       sp$x=sp$x20240325_Vitaspec_Pobe
       iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
@@ -83,16 +83,9 @@ for (k in 1:length(condition_spectr)) {
     sp$x[iokL25,] = sp$x20250321_Vitaspec_Lyoph_DIADE[iokL25,]
     sp=sp[!is.na(sp$x[,1]),]
   }
-cat(paste0(
-  "\\begin{center}\n",
-  "\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n",
-  "\\end{center}\n",
-  "\\normalsize\n"
-))
-cat("\\par\n")  # termine le paragraphe
+  cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
-
-  ag=colnames(sp)[c(43)]#,43:50)] 
+  ag=colnames(sp)[c(33,43:50)] 
   options(warn=-1)
   
   for (i in 1:length(ag)) {
@@ -135,8 +128,7 @@ spm$ech=spm$Group.1; spm=spm[,-1]
 vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures moy. par fruit.  Meso séché - DIADE") 
 ```
 
-
-Explore 2 years on fresh fruits
+# Explore 2 years on fresh fruits
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 # d="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
