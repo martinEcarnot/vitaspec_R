@@ -45,8 +45,8 @@ sp$rep=as.numeric(substr(sp$spname,nchar(sp$spname)-4,nchar(sp$spname)))
 
 # Set sample state
 sp$etat=NA
-sp$etat[(!is.na(sp$x20250224_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & !grepl("X",sp$spname)]="Meso_frais"
-sp$etat[(!is.na(sp$x20250224_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & grepl("X",sp$spname)]="Exo"
+sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & !grepl("X",sp$spname)]="Meso_frais"
+sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & grepl("X",sp$spname)]="Exo"
 sp$etat[(!is.na(sp$x20240405_VitaSPEC_S_DIADE[,1]) | !is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))]="Meso_Silica"
 sp$etat[(!is.na(sp$x20250319_Vitaspec_Lyoph_DIADE[,1]) | !is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))]="Meso_Lyoph"
 
@@ -118,12 +118,12 @@ for (k in 1:length(condition_spectr)) {
 load("vitaspec_fruit")
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
 cols_x <- grep("^x", names(sp), value = TRUE)
-mat_concat <- do.call(cbind, sp[cols_x])
-dim(mat_concat)=c(nrow(mat_concat)*length(cols_x),2151)
+mat_concat <- do.call(rbind, sp[cols_x])
 etat=rep(sp$etat,10)
-spcmp=mat_concat[!is.na(etat),]
-etat=etat[!is.na(etat)]
-
+spcmp=mat_concat[!is.na(mat_concat[,1]),]
+etat=etat[!is.na(mat_concat[,1])]
+# colnames(spcmp)=colnames(sp$x20240325_Vitaspec_Pobe)
+spcmpm=as.matrix(aggregate(spcmp, list(etat), mean)[,-1])
 ```
 
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
