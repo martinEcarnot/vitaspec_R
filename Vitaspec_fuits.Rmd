@@ -60,10 +60,10 @@ suppressPackageStartupMessages(library(rchemo))
 suppressPackageStartupMessages(library(nirsextra))
 library(data.table)
 source("vitaspec_preCV.R")
-source("list_pre.R")
+source("list_pre_test.R")
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
-for (k in 1:length(condition_spectr)) {
+for (k in 1){#:length(condition_spectr)) {
   load("vitaspec_fruit")
   # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
@@ -92,7 +92,7 @@ for (k in 1:length(condition_spectr)) {
   }
   cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
-  ag=colnames(sp)[c(33,43:50)] 
+  ag=colnames(sp)[43]#[c(33,43:50)] 
   options(warn=-1)
   
   for (i in 1:length(ag)) {
@@ -105,8 +105,9 @@ for (k in 1:length(condition_spectr)) {
     dat$ech=dat$Group.1; dat=dat[,-1]
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
-    if (nrow(datok<100)) {rdmsp=1:nrow(datok)} else {rdmsp=sample.int(nrow(datok),100)}
+    if (nrow(datok)<100) {rdmsp=1:nrow(datok)} else {rdmsp=sample.int(nrow(datok),100)}
     plotsp(datok$x[rdmsp,])
+    title(condition_spectr[k])
 
     vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
   }
@@ -116,6 +117,14 @@ for (k in 1:length(condition_spectr)) {
 # Comparaison des spectres selon conditions
 ```{r}
 load("vitaspec_fruit")
+
+# Set sample state !!! A supprier qd ce sera inclut dans vitaspec_fruit
+sp$etat=NA
+sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & !grepl("X",sp$spname)]="Meso_frais"
+sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & grepl("X",sp$spname)]="Exo"
+sp$etat[(!is.na(sp$x20240405_VitaSPEC_S_DIADE[,1]) | !is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))]="Meso_Silica"
+sp$etat[(!is.na(sp$x20250319_Vitaspec_Lyoph_DIADE[,1]) | !is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))]="Meso_Lyoph"
+
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
 cols_x <- grep("^x", names(sp), value = TRUE)
 mat_concat <- do.call(rbind, sp[cols_x])
@@ -123,7 +132,14 @@ etat=rep(sp$etat,10)
 spcmp=mat_concat[!is.na(mat_concat[,1]),]
 etat=etat[!is.na(mat_concat[,1])]
 # colnames(spcmp)=colnames(sp$x20240325_Vitaspec_Pobe)
-spcmpm=as.matrix(aggregate(spcmp, list(etat), mean)[,-1])
+spcmpm=aggregate(spcmp, list(etat), mean)
+etatm=spcmpm$Group.1
+spcmpm=as.matrix(spcmpm[,-1])
+
+col <- hcl.colors(n = nrow(spcmpm))
+plotsp(spcmpm,col=col)
+legend(x="topright",legend=etatm, col = col,lty=1)
+
 ```
 
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
