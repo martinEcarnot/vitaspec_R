@@ -105,7 +105,9 @@ for (k in 1:length(condition_spectr)) {
     dat$ech=dat$Group.1; dat=dat[,-1]
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
-    
+    if (nrow(datok<100)) {rdmsp=1:nrow(datok)} else {rdmsp=sample.int(nrow(datok),100)}
+    plotsp(datok$x[rdmsp,])
+
     vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
   }
 }
@@ -114,12 +116,13 @@ for (k in 1:length(condition_spectr)) {
 # Comparaison des spectres selon conditions
 ```{r}
 load("vitaspec_fruit")
-spcmp=
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
-spMF=sp$x20240325_Vitaspec_Pobe
-iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
-spMF[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
-spMF=spMF[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+cols_x <- grep("^x", names(sp), value = TRUE)
+mat_concat <- do.call(cbind, sp[cols_x])
+dim(mat_concat)=c(nrow(mat_concat)*length(cols_x),2151)
+etat=rep(sp$etat,10)
+spcmp=mat_concat[!is.na(etat),]
+etat=etat[!is.na(etat)]
 
 ```
 
