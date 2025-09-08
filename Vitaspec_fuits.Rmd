@@ -60,10 +60,10 @@ suppressPackageStartupMessages(library(rchemo))
 suppressPackageStartupMessages(library(nirsextra))
 library(data.table)
 source("vitaspec_preCV.R")
-source("list_pre_test.R")
+source("list_pre.R")
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
-for (k in 1){#:length(condition_spectr)) {
+for (k in 1:length(condition_spectr)) {
   load("vitaspec_fruit")
   # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
@@ -92,7 +92,7 @@ for (k in 1){#:length(condition_spectr)) {
   }
   cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
-  ag=colnames(sp)[43]#[c(33,43:50)] 
+  ag=colnames(sp)[c(33,43:50)] 
   options(warn=-1)
   
   for (i in 1:length(ag)) {
@@ -107,7 +107,7 @@ for (k in 1){#:length(condition_spectr)) {
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
     if (nrow(datok)<100) {rdmsp=1:nrow(datok)} else {rdmsp=sample.int(nrow(datok),100)}
     plotsp(datok$x[rdmsp,])
-    title(condition_spectr[k])
+    title(paste0(condition_spectr[k],"  spectres bruts"))
 
     vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
   }
@@ -115,7 +115,7 @@ for (k in 1){#:length(condition_spectr)) {
 ```
 
 # Comparaison des spectres selon conditions
-```{r}
+```{r echo=FALSE}
 load("vitaspec_fruit")
 
 # Set sample state !!! A supprier qd ce sera inclut dans vitaspec_fruit
@@ -141,6 +141,14 @@ plotsp(spcmpm,col=col)
 legend(x="topright",legend=etatm, col = col,lty=1)
 
 ```
+
+# Cal 2024, applied on 2025
+```{r eval=FALSE, include=FALSE}
+
+```
+
+
+
 
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
