@@ -94,20 +94,20 @@ for (k in 1:length(condition_spectr)) {
 
   ag=colnames(sp)[c(33,43:50)] 
   options(warn=-1)
+ 
+  # En moyennant les rép
+  dat=aggregate(sp,by=list(sp$ech), mean)
+  dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+  dat$ech=dat$Group.1; dat=dat[,-1] 
+  if (nrow(dat)<100) {rdmsp=1:nrow(dat)} else {rdmsp=sample.int(nrow(dat),100)}
+  plotsp(dat$x[rdmsp,])
+  title(paste0(condition_spectr[k],"  spectres bruts"))
   
   for (i in 1:length(ag)) {
     ag1=ag[i]
     # print(ag1)
-    
-    # En moyennant les rép
-    dat=aggregate(sp,by=list(sp$ech), mean)
-    dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
-    dat$ech=dat$Group.1; dat=dat[,-1]
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
-    if (nrow(datok)<100) {rdmsp=1:nrow(datok)} else {rdmsp=sample.int(nrow(datok),100)}
-    plotsp(datok$x[rdmsp,])
-    title(paste0(condition_spectr[k],"  spectres bruts"))
 
     vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
   }
