@@ -181,14 +181,14 @@ knitr::kable(param)
 
 # Resultat des Cross-Validation avec les bons paramètres (PRE+nVL)
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
-# library(rnirs)
+library(rnirs)
 library(nirsextra)
 source("vitaspec_preCV.R")
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[9:12]
+ag=colnames(sp)[12:35]
 options(warn=-1)
 
 outtxt=list()
@@ -286,6 +286,7 @@ library(nirsextra)
 library(rchemo)
 library(openxlsx)
 load('vitaspec_oil')
+load("Vitaspec_oil_betas")
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
