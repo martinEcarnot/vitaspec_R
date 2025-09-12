@@ -181,14 +181,14 @@ knitr::kable(param)
 
 # Resultat des Cross-Validation avec les bons paramètres (PRE+nVL)
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
-library(rnirs)
+library(rchemo)
 library(nirsextra)
 source("vitaspec_preCV.R")
 load('vitaspec_oil')
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-ag=colnames(sp)[12:35]
+ag=colnames(sp)[12:13] #35]
 options(warn=-1)
 
 outtxt=list()
@@ -290,7 +290,8 @@ load("Vitaspec_oil_betas")
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250603_Vitaspec_HR_DIADE/"
+# f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250603_Vitaspec_HR_DIADE/"
+f="C:/Users/guest/Documents/Martin/VitaSPEC/20250909_Vitaspec_HR_DIADE"
 spnew=asd_read_dir(f)
 
 # PCA
@@ -308,7 +309,7 @@ nag=dim(param)[1]
 
 for (i in 1:nag) {
 spnx=pre(spnew,param[i,]$pre[[1]])
-pred=cbind(pred,predict(fm_all[[i]], spnx)$pred)
+pred=cbind(pred,predict(fm_all[[i]], spnx)$pred) # les modèles sont dans le meme ordre que les ag, car construits avec "param"
 }
 colnames(pred)[2:2:(nag+1)]=param$Propriete
 
