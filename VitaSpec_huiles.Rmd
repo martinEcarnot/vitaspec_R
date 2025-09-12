@@ -332,9 +332,9 @@ pred_stats <- select(pred,-spectrum) %>%
   pivot_wider(names_from = Stat, values_from = Valeur)
 
 library(openxlsx)
-write.xlsx(pred, file = paste0(basename(f),"_pred.xlsx"))
-write.xlsx(pred_moy, file = paste0(basename(f),"_pred_moy.xlsx"))
-write.xlsx(pred_stats, file = paste0(basename(f),"_pred_stats.xlsx"))
+write.xlsx(pred, file = paste0("predictions/",basename(f),"_pred.xlsx"))
+write.xlsx(pred_moy, file = paste0("predictions/",basename(f),"_pred_moy.xlsx"))
+write.xlsx(pred_stats, file = paste0("predictions/",basename(f),"_pred_stats.xlsx"))
 
 # library("PerformanceAnalytics") 
 # chart.Correlation(pred_moy[,-1], histogram=TRUE, pch=19)
