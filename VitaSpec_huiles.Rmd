@@ -290,12 +290,12 @@ load("Vitaspec_oil_betas")
 sp$x=sp$x20250317_DIADE;
 sp=sp[!is.na(sp$x[,1]),]
 
-# f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250603_Vitaspec_HR_DIADE/"
-f="C:/Users/guest/Documents/Martin/VitaSPEC/20250909_Vitaspec_HR_DIADE"
+f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250909_Vitaspec_HR_DIADE/"
+# f="C:/Users/guest/Documents/Martin/VitaSPEC/20250909_Vitaspec_HR_DIADE"
 spnew=asd_read_dir(f)
 
 # PCA
-fm=pcaeigen(sp$x, nlv = 10)
+fm=pcaeigen(sp$x, nlv = 5)
 Ttrain=fm$T
 Ttest <- transform(fm, spnew)
 T <- rbind(Ttrain, Ttest)
