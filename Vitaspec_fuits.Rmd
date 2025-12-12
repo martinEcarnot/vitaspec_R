@@ -28,10 +28,16 @@ library(plyr)
 source("vitaspec_load.R")
 # d0="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
-AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Résultats VitaSpec Méso AG serie 1 (61 échantillons).csv"), sep=";", header=TRUE, dec=",")
+# AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Résultats VitaSpec Méso AG serie 1 (61 échantillons).csv"), sep=";", header=TRUE, dec=",")
+AG=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"), sep=";", header=TRUE, dec=",")
+AG$ech=sub("-.*", "", AG$code_nirs)
+carot=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"), sep=";", header=TRUE, dec=",")[,-2]
+carot$ech=sub("-.*", "", carot$code_nirs)
+tlip=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.4.csv"), sep=";", header=TRUE, dec=",")
+tlip$ech=sub("-.*", "", tlip$code_nirs)
 meso=read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"), sep=";", header=TRUE, dec=",")
 names(meso)[names(meso) == "TE1...MF."] <- "eau"
-ref = join_all(list(meso,AG), by = 'ech', type = 'full')
+ref = join_all(list(meso,AG, carot,tlip), by = 'ech', type = 'full')
 
 # Load spectra
 dirs=basename(list.dirs(paste0(d0,"spectres/"), recursive = FALSE))
@@ -61,10 +67,12 @@ suppressPackageStartupMessages(library(nirsextra))
 library(data.table)
 source("vitaspec_preCV.R")
 source("list_pre.R")
+load("vitaspec_fruit")
+sp0=sp
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
 for (k in 1:length(condition_spectr)) {
-  load("vitaspec_fruit")
+  sp=sp0
   # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
       sp$x=sp$x20240325_Vitaspec_Pobe
@@ -78,21 +86,21 @@ for (k in 1:length(condition_spectr)) {
       sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
       sp=sp[!is.na(sp$x[,1]) & grepl("X",sp$spname),]
   } else if (k==3) { 
-    cat("\n\n\\pagebreak\n")
-    sp$x=sp$x20240405_VitaSPEC_S_DIADE
-    iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
-    sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
-    sp=sp[!is.na(sp$x[,1]),]
+      cat("\n\n\\pagebreak\n")
+      sp$x=sp$x20240405_VitaSPEC_S_DIADE
+      iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
+      sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
+      sp=sp[!is.na(sp$x[,1]),]
   } else if (k==4) {
-    cat("\n\n\\pagebreak\n")
-    sp$x=sp$x20250319_Vitaspec_Lyoph_DIADE
-    iokL25=which(!is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))
-    sp$x[iokL25,] = sp$x20250321_Vitaspec_Lyoph_DIADE[iokL25,]
-    sp=sp[!is.na(sp$x[,1]),]
+      cat("\n\n\\pagebreak\n")
+      sp$x=sp$x20250319_Vitaspec_Lyoph_DIADE
+      iokL25=which(!is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))
+      sp$x[iokL25,] = sp$x20250321_Vitaspec_Lyoph_DIADE[iokL25,]
+      sp=sp[!is.na(sp$x[,1]),]
   }
   cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
-  ag=colnames(sp)[c(33,43:50)] 
+  ag=colnames(sp)[c(34,45:59)] 
   options(warn=-1)
  
   # En moyennant les rép
@@ -105,7 +113,7 @@ for (k in 1:length(condition_spectr)) {
   
   for (i in 1:length(ag)) {
     ag1=ag[i]
-    # print(ag1)
+    print(ag1)
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
 
@@ -116,14 +124,8 @@ for (k in 1:length(condition_spectr)) {
 
 # Comparaison des spectres selon conditions
 ```{r echo=FALSE}
+library(rchemo)
 load("vitaspec_fruit")
-
-# Set sample state !!! A supprier qd ce sera inclut dans vitaspec_fruit
-sp$etat=NA
-sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & !grepl("X",sp$spname)]="Meso_frais"
-sp$etat[(!is.na(sp$x20240325_Vitaspec_Pobe[,1]) | !is.na(sp$x20250224_Vitaspec_Pobe[,1])) & grepl("X",sp$spname)]="Exo"
-sp$etat[(!is.na(sp$x20240405_VitaSPEC_S_DIADE[,1]) | !is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))]="Meso_Silica"
-sp$etat[(!is.na(sp$x20250319_Vitaspec_Lyoph_DIADE[,1]) | !is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))]="Meso_Lyoph"
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
 cols_x <- grep("^x", names(sp), value = TRUE)
@@ -174,7 +176,9 @@ vitaspec_preCV(spm$x,spm$Eau,list_pre,10, titl="Teneur en eau. Pts de mesures mo
 ```
 
 # Explore 2 years on fresh fruits
-```{r eval=FALSE, warning=FALSE, include=FALSE}
+```{r echo=FALSE, warning=FALSE}
+library(rchemo)
+library(nirsextra)
 # d="C:/Users/guest/Documents/Martin/VitaSPEC/"
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
 sp24=sp2df(asd_read_dir(paste0(d,"spectres/20240325_Vitaspec_Pobe/")))
@@ -200,8 +204,8 @@ col=rep("red",nrow(spm))
 col[spm$annee==24]="black"
 plotsp(spm$x,col=col)
 
-fm <- pca(spm$xp2, ncomp = 10)
-plotxy(fm$Tr[, c(1,2)], group = spm$annee)
+fm <- pcaeigen(spm$xp2, nlv = 10)
+plotxy(fm$T[, c(1,2)], group = spm$annee)
 
 
 

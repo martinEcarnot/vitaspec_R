@@ -22,7 +22,8 @@ for (j in 1:length(list_pre)) {  # 1:
   xp=pre(x,list_pre[[j]])
 
   # generate sgm list for Leave-one-out
-  segm <- list(rep1 = as.list(1:nrow(xp)))  # segm <- segmkf(n = nrow(datok), K = 5)
+  segm <- list(rep1 = as.list(1:nrow(xp)))
+  # segm <- segmkf(n = nrow(xp), K = 5)
   fmc = gcvlv(xp, y,segm,score = r2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
   
   fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
