@@ -179,7 +179,7 @@ knitr::kable(param)
 ```
 \newpage
 
-# Resultat des Cross-Validation avec les bons paramètres (PRE+nVL)
+# Resultat des Cross-Validation avec les bons paramètres (PRE+nVL) + Sauvegarde des modèles
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 library(rchemo)
 library(nirsextra)

@@ -68,10 +68,15 @@ library(data.table)
 source("vitaspec_preCV.R")
 source("list_pre.R")
 load("vitaspec_fruit")
+param=read.csv("Vitaspec_fruit_param.csv")
 sp0=sp
+outtxt=list()
+fm_all=list()
+id_model=list()
+list_ag=c()
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
-for (k in 1:length(condition_spectr)) {
+for (k in 1:3) { #length(condition_spectr)) {
   sp=sp0
   # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
@@ -79,24 +84,28 @@ for (k in 1:length(condition_spectr)) {
       iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
       sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
       sp=sp[!is.na(sp$x[,1]) & !grepl("X",sp$spname),]
+      idparam="meso_frais"
   } else if (k==2) {
       cat("\n\n\\pagebreak\n")
       sp$x=sp$x20240325_Vitaspec_Pobe
       iokPobe25=which(!is.na(sp$x20250224_Vitaspec_Pobe[,1]))
       sp$x[iokPobe25,] = sp$x20250224_Vitaspec_Pobe[iokPobe25,]
       sp=sp[!is.na(sp$x[,1]) & grepl("X",sp$spname),]
+      idparam="exo_frais"
   } else if (k==3) { 
       cat("\n\n\\pagebreak\n")
       sp$x=sp$x20240405_VitaSPEC_S_DIADE
       iokS25=which(!is.na(sp$x20250313_Vitaspec_S_DIADE[,1]))
       sp$x[iokS25,] = sp$x20250313_Vitaspec_S_DIADE[iokS25,]
       sp=sp[!is.na(sp$x[,1]),]
+      idparam="meso_silica"
   } else if (k==4) {
       cat("\n\n\\pagebreak\n")
       sp$x=sp$x20250319_Vitaspec_Lyoph_DIADE
       iokL25=which(!is.na(sp$x20250321_Vitaspec_Lyoph_DIADE[,1]))
       sp$x[iokL25,] = sp$x20250321_Vitaspec_Lyoph_DIADE[iokL25,]
       sp=sp[!is.na(sp$x[,1]),]
+      idparam="meso_lyoph"
   }
   cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
@@ -108,8 +117,8 @@ for (k in 1:length(condition_spectr)) {
   dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
   dat$ech=dat$Group.1; dat=dat[,-1] 
   if (nrow(dat)<100) {rdmsp=1:nrow(dat)} else {rdmsp=sample.int(nrow(dat),100)}
-  plotsp(dat$x[rdmsp,])
-  title(paste0(condition_spectr[k],"  spectres bruts"))
+  # plotsp(dat$x[rdmsp,])
+  # title(paste0(condition_spectr[k],"  spectres bruts"))
   
   for (i in 1:length(ag)) {
     ag1=ag[i]
@@ -117,9 +126,17 @@ for (k in 1:length(condition_spectr)) {
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
 
-    vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],list_pre,15, titl=condition_spectr[k]) 
+    # vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="lwplsr",list_pre,15, titl=condition_spectr[k]) 
+    
+    # Modèle Complet après avoir choisit les meilleurs pré+nLV
+    iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
+    eval(paste0("p=",param[iokparam,]$pre))
+    fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
+    fm_all=append(fm_all,list(fm_finale))   # betas[[ag[i]]] = coef(fm_finale)$B  # default: if no nlv, nlv=nlv_max
+    id_model=rbind(id_model,c(ag1,idparam))
   }
 }
+save(fm_all,id_model,file="Vitaspec_fruit_models")
 ```
 
 # Comparaison des spectres selon conditions
@@ -207,8 +224,6 @@ plotsp(spm$x,col=col)
 fm <- pcaeigen(spm$xp2, nlv = 10)
 plotxy(fm$T[, c(1,2)], group = spm$annee)
 
-
-
 #plot from VS
 # library(RColorBrewer)
 # couleur <- brewer.pal(n = length(levels(as.factor(nirs.list.ade4$raw$info$Bloc))),
@@ -218,5 +233,76 @@ plotxy(fm$T[, c(1,2)], group = spm$annee)
 #           fac = as.factor(nirs.list.ade4[[i]]$info$Bloc), xax = 1, yax = 2,
 #           clabel = 0.7, col = couleur, sub = names(pca.nirs)[i], csub=2, possub="topleft")
 
+```
+
+
+
+
+
+
+
+
+
+
+# Prédiction de nouveaux échantillons
+```{r eval=FALSE, include=FALSE}
+library(nirsextra)
+library(rchemo)
+library(openxlsx)
+# load('vitaspec_fruit')
+load("Vitaspec_fruit_models")
+param=read.csv("Vitaspec_fruit_param.csv")
+
+f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20240325_Vitaspec_Pobe/"
+spnew=rbind(asd_read_dir(f), asd_read_dir("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250224_Vitaspec_Pobe/"))
+spnew=spnew[!grepl("X",rownames(spnew)),]
+cond="meso_frais"
+param=param[grepl(cond,param$Cal_data),]
+
+# PCA
+# fm=pcaeigen(sp$x, nlv = 5)
+# Ttrain=fm$T
+# Ttest <- transform(fm, spnew)
+# T <- rbind(Ttrain, Ttest)
+# group <- c(rep("Training", nrow(sp)), rep("Test", nrow(spnew)))
+# i=1
+# plotxy(T[, i:(i+1)], group = group, pch = 16, zeroes = TRUE, cex = 1.3, main = "scores")
+
+# Prédiction
+pred=data.frame(spectrum=rownames(spnew))
+nag=dim(param)[1]
+
+for (i in 1:nag) {
+eval(paste0("p=",param[i,]$pre))
+spnx=pre(spnew,p)
+imodel=which(grepl(cond,id_model[,2]) & grepl(param[i,]$Propriete,id_model[,1]))
+pred=cbind(pred,predict(fm_all[[imodel]], spnx)$pred) # les modèles sont dans le meme ordre que les ag, car construits avec "param"
+}
+colnames(pred)[2:2:(nag+1)]=param$Propriete
+
+# Stats par échantillon
+library(dplyr)
+library(tidyr)
+pred$ech=substr(pred$spectrum,1,nchar(pred$spectrum)-5)
+group_col <- "ech"
+
+pred_moy <- select(pred,-spectrum) %>%
+  group_by(ech) %>%
+  summarise(across(where(is.numeric), mean), .groups = "drop")
+
+pred_stats <- select(pred,-spectrum) %>%
+  pivot_longer(cols = -all_of(group_col), names_to = "Variable", values_to = "Valeur") %>%
+  group_by(across(all_of(group_col)), Variable) %>%
+  reframe(
+    Stat = c("mean", "sd", "min", "max"),
+    Valeur = c(mean(Valeur), sd(Valeur), min(Valeur), max(Valeur))
+  ) %>%
+  pivot_wider(names_from = Stat, values_from = Valeur)
+
+library(openxlsx)
+titre="Pobe_24-25_NIRS_Meso_Frais"
+write.xlsx(pred, file = paste0("predictions/",titre,"_pred.xlsx"))
+write.xlsx(pred_moy, file = paste0("predictions/",titre,"_pred_moy.xlsx"))
+write.xlsx(pred_stats, file = paste0("predictions/",titre,"_pred_stats.xlsx"))
 ```
 

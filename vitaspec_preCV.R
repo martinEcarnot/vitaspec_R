@@ -1,4 +1,4 @@
-vitaspec_preCV = function(x,y,list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
+vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
 
 # From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
   
@@ -22,10 +22,16 @@ for (j in 1:length(list_pre)) {  # 1:
   xp=pre(x,list_pre[[j]])
 
   # generate sgm list for Leave-one-out
-  segm <- list(rep1 = as.list(1:nrow(xp)))
-  # segm <- segmkf(n = nrow(xp), K = 5)
-  fmc = gcvlv(xp, y,segm,score = r2, fun = plskern, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
-  
+  # segm <- list(rep1 = as.list(1:nrow(xp)))
+  segm <- segmkf(n = nrow(xp), K = 3)
+  if (fun=="lwplsr") {
+    pars=mpars(nlvdis = 5, diss = "mahal", h = c(1, Inf), k = c(10, 20))
+    fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+  }
+  else {
+    fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+  }
+browser()
   fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
   r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
   pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])
