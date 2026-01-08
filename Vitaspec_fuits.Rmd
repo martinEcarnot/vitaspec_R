@@ -168,7 +168,6 @@ legend(x="topright",legend=etatm, col = col,lty=1)
 
 
 
-
 # Calibration with dryed mesocarp - Compare AGAP and DIADE spectrometer
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 d="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
@@ -211,6 +210,7 @@ sp$ech=sub("-[^-]*$", "", rownames(sp))
 spm=aggregate(sp,by=list(sp$ech), mean)
 spm$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
 spm$ech=spm$Group.1; spm=spm[,-1]
+# spm=sp
 
 p=rbind(list('adj',''),list('snv',''))
 spm$xp=pre(spm$x,p)
@@ -304,5 +304,56 @@ titre="Pobe_24-25_NIRS_Meso_Frais"
 write.xlsx(pred, file = paste0("predictions/",titre,"_pred.xlsx"))
 write.xlsx(pred_moy, file = paste0("predictions/",titre,"_pred_moy.xlsx"))
 write.xlsx(pred_stats, file = paste0("predictions/",titre,"_pred_stats.xlsx"))
+```
+
+
+# Outlier detection
+```{r}
+library(nirsextra)
+library(openxlsx)
+library("PerformanceAnalytics")
+source("vitaspec_load.R")
+ssech=1
+d0="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/"
+# Load spectra
+dirs=basename(list.dirs(paste0(d0,"spectres/"), recursive = FALSE))
+dirs_frais <- grep("_Pob", dirs, value = TRUE)
+sp24=vitaspec_load(paste0(d0,"spectres/"),dirs_frais[1])
+sp24=sp24[!grepl("X", rownames(sp24)),]
+colnames(sp24)[1]="x"
+sp24=sp24[sample(nrow(sp24),nrow(sp24)/ssech),]
+sp25=vitaspec_load(paste0(d0,"spectres/"),dirs_frais[2])
+sp25=sp25[!grepl("X", rownames(sp25)),]
+colnames(sp25)[1]="x"
+sp25=sp25[sample(nrow(sp25),nrow(sp25)/ssech),]
+
+sp=rbind(sp24,sp25)
+sp$annee=2025
+sp$annee[1:nrow(sp24)]=2024
+# sp$tissue="meso"
+# sp$tissue[grep("X", rownames(sp))]="exo"
+sp$xp=snv(sp$x)
+
+i24=1:nrow(sp)
+fm <- pcasvd(sp$xp[i24,], nlv = 6)
+scord=scordis(fm,sp$xp)
+plot(scord$res$dstand)
+
+predbioch=read.xlsx(paste0(d0,"vitaspec_R/predictions/Pobe_24-25_NIRS_Meso_Frais_pred.xlsx"))
+sc=data.frame(scord$res$dstand)
+sc$spectrum=rownames(sp)
+scbioch=merge(predbioch,sc,by = "spectrum")
+chart.Correlation(scbioch[,-c(1,18)])
+
+# dt=data.frame(fm$Tr)
+# p1 = ggplot(data = dt, aes(x = comp1, y = comp2, color=sp1$JafterL, shape = sp1$ech)) + geom_point(size=3) + labs(title = "Effet de la Lyophilisation - ACP globale ",x = "comp1", y = "comp2") + scale_color_manual(values = c("red","blue","black"))
+# plot(p1)
+
+iout=which(scord$res$dstand>1)
+plotsp(sp)
+
+fm <- plsrda(sp$xp[i24,], sp$tissue[i24], nlv = 8)
+pred = predict(fm, sp$xp[-i24,])
+err(pred$pred, sp$tissue[-i24])
 ```
 
