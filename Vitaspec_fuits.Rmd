@@ -130,9 +130,9 @@ for (k in 1:3) { #length(condition_spectr)) {
     
     # Modèle Complet après avoir choisit les meilleurs pré+nLV
     iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
-    eval(paste0("p=",param[iokparam,]$pre))
+    eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
     fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
-    fm_all=append(fm_all,list(fm_finale))   # betas[[ag[i]]] = coef(fm_finale)$B  # default: if no nlv, nlv=nlv_max
+    fm_all=append(fm_all,list(fm_finale))
     id_model=rbind(id_model,c(ag1,idparam))
   }
 }
@@ -273,7 +273,7 @@ pred=data.frame(spectrum=rownames(spnew))
 nag=dim(param)[1]
 
 for (i in 1:nag) {
-eval(paste0("p=",param[i,]$pre))
+eval(parse(text = paste0("p = ", param[i,]$pre)))
 spnx=pre(spnew,p)
 imodel=which(grepl(cond,id_model[,2]) & grepl(param[i,]$Propriete,id_model[,1]))
 pred=cbind(pred,predict(fm_all[[imodel]], spnx)$pred) # les modèles sont dans le meme ordre que les ag, car construits avec "param"
@@ -304,6 +304,35 @@ titre="Pobe_24-25_NIRS_Meso_Frais"
 write.xlsx(pred, file = paste0("predictions/",titre,"_pred.xlsx"))
 write.xlsx(pred_moy, file = paste0("predictions/",titre,"_pred_moy.xlsx"))
 write.xlsx(pred_stats, file = paste0("predictions/",titre,"_pred_stats.xlsx"))
+
+# # Check Results independantly
+# load('vitaspec_fruit')
+# tab1=sp[!duplicated(sp$ech), colnames(sp) %in% unique(param$Propriete)]
+# tab2=read.xlsx("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/vitaspec_R/predictions/Pobe_24-25_NIRS_Meso_Frais_pred_moy.xlsx")[,-1]
+# library(ggplot2)
+# 
+# for (col in names(tab1)) {
+#   df <- data.frame(
+#     x = tab2[[col]],
+#     y = tab1[[col]]
+#   )
+#   r2 <- summary(lm(y ~ x, df))$r.squared
+# 
+#   print(
+#     ggplot(df, aes(x, y)) +
+#       geom_point() +
+#       geom_smooth(method = "lm", se = FALSE) +
+#       annotate(
+#         "text",
+#         x = min(df$x, na.rm = TRUE),
+#         y = max(df$y, na.rm = TRUE),
+#         label = paste0("R² = ", round(r2, 3)),
+#         hjust = 0
+#       ) +
+#       labs(title = col)
+#   )
+# }
+
 ```
 
 
@@ -339,6 +368,7 @@ fm <- pcasvd(sp$xp[i24,], nlv = 6)
 scord=scordis(fm,sp$xp)
 plot(scord$res$dstand)
 
+# Voir s'il y a un lien entre Maha distance et mauvaise prediction (surtout <0)
 predbioch=read.xlsx(paste0(d0,"vitaspec_R/predictions/Pobe_24-25_NIRS_Meso_Frais_pred.xlsx"))
 sc=data.frame(scord$res$dstand)
 sc$spectrum=rownames(sp)
