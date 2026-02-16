@@ -24,7 +24,7 @@ spnew=rbind(spnew,spnew)
 for (i in 1:nag) {
   expr <- parse(text = param[i, ]$pre)
   p <- eval(expr, envir = parent.frame())
-  spnx=pre(spnew,p)
+  spnx=nirsextra::pre(spnew,p)
   imodel=which(grepl(cond,id_model[,2]) & grepl(param[i,]$Propriete,id_model[,1]))
   fm=fm_all[[imodel]]
   fm$xscales=rep(1,length(fm$xmeans))
