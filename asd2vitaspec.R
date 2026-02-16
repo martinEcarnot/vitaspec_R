@@ -26,7 +26,10 @@ for (i in 1:nag) {
   p <- eval(expr, envir = parent.frame())
   spnx=pre(spnew,p)
   imodel=which(grepl(cond,id_model[,2]) & grepl(param[i,]$Propriete,id_model[,1]))
-  pred=cbind(pred,predict(fm_all[[imodel]], spnx)$pred)
+  fm=fm_all[[imodel]]
+  fm$xscales=rep(1,length(fm$xmeans))
+  fm$yscales=rep(1,length(fm$ymeans))
+  pred=cbind(pred,predict(fm, spnx)$pred)
 }
 colnames(pred)=param$Propriete
 pred=pred[1,]
