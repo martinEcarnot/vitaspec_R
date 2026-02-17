@@ -1,0 +1,144 @@
+---
+title: "ROSA_vitaSPEC_fruits"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{Ubuntu}[
+      Path = /usr/share/fonts/truetype/ubuntu/,
+      Extension = .ttf,
+      UprightFont = *-R,
+      BoldFont = *-B,
+      ItalicFont = *-RI,
+      BoldItalicFont = *-BI
+    ]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.align = "center",
+                      fig.width = 6, fig.height = 4)
+
+library(ggplot2)
+library(dplyr)
+library(writexl)
+library(nirsextra)
+source("C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/vitaspec_load.R")
+
+theme_set(theme_minimal())
+
+
+```
+
+# Load & Save data
+
+## Yvalue
+
+```{r}
+
+d0="C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+
+# AG
+AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"), 
+                 sep=";", 
+                 header=TRUE, 
+                 dec=",") %>%
+  mutate(ech = sub("-.*", "", code_nirs))
+
+# carotène
+carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
+                    sep=";", 
+                    header=TRUE, 
+                    dec=",") %>%
+  select(-2) %>% 
+  mutate(ech = sub("-.*", "", code_nirs))
+
+# lip totaiux
+tlip <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.4.csv"), 
+                   sep=";", 
+                   header=TRUE, 
+                   dec=",") %>%
+  mutate(ech = sub("-.*", "", code_nirs))
+
+# eau
+meso <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"), 
+                   sep=";", 
+                   header=TRUE, 
+                   dec=",") %>%
+  rename(eau = `TE1...MF.`)
+eau <- meso %>% 
+  select(ech,eau)
+
+# merge 
+Yvalue <- eau %>%
+  full_join(AG, by = "ech") %>%
+  full_join(tlip, by = "ech") %>% 
+  full_join(carot, by = "ech")
+
+# export
+
+write.csv(Yvalue,"C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.csv",row.names = FALSE)
+
+write_xlsx(Yvalue, "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.xlsx")
+```
+
+## Xvalue
+
+```{r}
+# Load spectra
+dirs <- list.dirs(paste0(d0, "spectres/"), recursive = FALSE) %>%
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%  # on garde ceux avec _Vita
+  filter(!grepl("HR", value)) %>%    # on enleve ceux avec HR
+  pull(value)                        # retours sous forme de liste 
+
+# merge de tous les campagnes de spectres
+Xvalue <- merge(vitaspec_load(paste0(d0,"spectres/"),
+                       dirs[1]),
+                vitaspec_load(paste0(d0,"spectres/"),
+                       dirs[2]),
+                by="spname",
+                all=TRUE)
+
+for (i in 3:(length(dirs))) { Xvalue <- merge(Xvalue,
+                                              vitaspec_load(paste0(d0,"spectres/"),
+                                                            dirs[i]),
+                                              by="spname",
+                                              all=TRUE)}
+
+# clean des spectres sans nom (erreur manip)
+Xvalue <- Xvalue %>%
+  filter(!grep("Spectrum",
+               Xvalue$spname)) %>% 
+  mutate(ech = sub("-.*", "", spname),
+         rep = as.numeric(substr(spname, nchar(spname)-4, 
+                                 nchar(spname))))
+  
+# ajout colonne "état"
+Xvalue <- Xvalue %>%
+  mutate(etat = case_when(
+    # exo = Pobe et contient X
+    (!is.na(x20240325_Vitaspec_Pobe[,1]) | !is.na(x20250224_Vitaspec_Pobe[,1])) & grepl("X", spname) ~ "Exo",
+
+    # meso_frais = Pobe présentes et ne contient pas X
+    (!is.na(x20240325_Vitaspec_Pobe[,1]) | !is.na(x20250224_Vitaspec_Pobe[,1])) & !grepl("X", spname) ~ "Meso_frais",
+
+    # Mso_silica = 
+    (!is.na(x20240405_VitaSPEC_S_DIADE[,1]) | !is.na(x20250313_Vitaspec_S_DIADE[,1])) ~ "Meso_Silica",
+
+    # meso_Lyoph = 
+    (!is.na(x20250319_Vitaspec_Lyoph_DIADE[,1]) | !is.na(x20250321_Vitaspec_Lyoph_DIADE[,1])) ~ "Meso_Lyoph",
+
+    # si aucune condition 
+    TRUE ~ NA_character_
+  ))
+
+  
+
+```
+
