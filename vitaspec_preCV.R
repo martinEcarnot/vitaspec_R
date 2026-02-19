@@ -31,7 +31,7 @@ for (j in 1:length(list_pre)) {  # 1:
   else {
     fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
   }
-browser()
+# browser()
   fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
   r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
   pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])

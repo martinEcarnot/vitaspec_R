@@ -27,11 +27,18 @@ library(ggplot2)
 library(dplyr)
 library(writexl)
 library(nirsextra)
-source("C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/vitaspec_load.R")
+library(tidyverse)
+library(rchemo)
+
+
+d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+source(paste0(d0,"vitaspec_R/vitaspec_load.R"))
+source("vitaspec_R/vitaspec_preCV.R")
+source("vitaspec_R/list_pre.R")
+load("vitaspec_R/vitaspec_fruit")
+
 
 theme_set(theme_minimal())
-
-
 ```
 
 # Load & Save data
@@ -39,8 +46,6 @@ theme_set(theme_minimal())
 ## Yvalue
 
 ```{r}
-
-d0="C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
 
 # AG
 AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"), 
@@ -81,9 +86,9 @@ Yvalue <- eau %>%
 
 # export
 
-write.csv(Yvalue,"C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.csv",row.names = FALSE)
+write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.csv"),row.names = FALSE)
 
-write_xlsx(Yvalue, "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.xlsx")
+write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.xlsx"))
 ```
 
 ## Xvalue
@@ -93,8 +98,8 @@ write_xlsx(Yvalue, "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vit
 dirs <- list.dirs(paste0(d0, "spectres/"), recursive = FALSE) %>%
   basename() %>%                     # recup le nom des dossiers
   as_tibble() %>%                    # tibble pour dyplr
-  filter(grepl("_Vita", value)) %>%  # on garde ceux avec _Vita
-  filter(!grepl("HR", value)) %>%    # on enleve ceux avec HR
+  filter(grepl("_Vita", value)) %>%  
+  filter(!grepl("HR", value)) %>%    
   pull(value)                        # retours sous forme de liste 
 
 # merge de tous les campagnes de spectres
@@ -113,11 +118,15 @@ for (i in 3:(length(dirs))) { Xvalue <- merge(Xvalue,
 
 # clean des spectres sans nom (erreur manip)
 Xvalue <- Xvalue %>%
-  filter(!grep("Spectrum",
-               Xvalue$spname)) %>% 
-  mutate(ech = sub("-.*", "", spname),
-         rep = as.numeric(substr(spname, nchar(spname)-4, 
-                                 nchar(spname))))
+  filter(!str_detect(spname, "Spectrum")) %>% 
+  mutate(
+    ech = sub("-.*", "", spname),
+    rep = as.numeric(substr(spname, 
+                            nchar(spname)-4, 
+                            nchar(spname)
+                            )
+                     )
+    )
   
 # ajout colonne "état"
 Xvalue <- Xvalue %>%
@@ -138,7 +147,100 @@ Xvalue <- Xvalue %>%
     TRUE ~ NA_character_
   ))
 
-  
 
 ```
+
+
+# Cross Validation
+
+## Prep data 
+```{r}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+## CV
+```{r}
+
+```
+
+# Calibration finale
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
