@@ -145,7 +145,7 @@ id_model=list()
 list_ag=c()
 
 condition_spectr=c("Mesocarpe Frais - 24-25","Exocarpe Frais - 24-25","Mesocarpe Silicagel - 24-25","Mesocarpe Lyoph - 24-25")
-for (k in 1) { #length(condition_spectr)) {
+for (k in 1:2) { #length(condition_spectr)) {
   sp=sp0
   # On selectionne les bons spectres selon la condition (Meso frais, Exo, ...)
   if (k==1) {
@@ -207,17 +207,17 @@ for (k in 1) { #length(condition_spectr)) {
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
 
     
-    # vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="plskern",list_pre,15, titl=condition_spectr[k])
+    vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="plskern",list_pre,15, titl=condition_spectr[k])
     
-    #Modèle Complet après avoir choisit les meilleurs pré+nLV
-    iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
-    eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
-    fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
-    fm_all=append(fm_all,list(fm_finale))
-    id_model=rbind(id_model,c(ag1,idparam))
+    # #Modèle Complet après avoir choisit les meilleurs pré+nLV
+    # iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
+    # eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
+    # fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
+    # fm_all=append(fm_all,list(fm_finale))
+    # id_model=rbind(id_model,c(ag1,idparam))
   }
 }
-save(fm_all,id_model,file="Vitaspec_fruit_models_2")
+# save(fm_all,id_model,file="Vitaspec_fruit_models_2")
 ```
 
 # Comparaison des spectres selon conditions

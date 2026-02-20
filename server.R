@@ -3,8 +3,9 @@ server <- function(input, output, session) {
   d0 = "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
   dossier = paste0(d0,"test_TR/")
   
+  fichiers_initiaux <- list.files(dossier, pattern = "\\.asd$", full.names = TRUE)
   resultats <- reactiveVal(NULL)
-  fichiers_traites <- reactiveVal(character())
+  fichiers_traites <- reactiveVal(fichiers_initiaux)
   
   fruit_en_cours <- reactiveVal("")
   historique_biochimie <- reactiveVal(data.frame())
