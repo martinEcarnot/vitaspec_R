@@ -40,18 +40,21 @@ AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"),
                  header=TRUE, 
                  dec=",")
 AG$ech <- sub("-.*", "", AG$code_nirs)
+AG$Code_chimie <- NULL
 AG_new <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/AG_new.csv"),
                      sep = ",",
                      header = TRUE,
                      dec = ".")
 AG_new$ech <- sub("-.*", "", AG_new$code_nirs)
-AG <- join(AG, AG_new, by = "ech", type = "full")
+AG <- rbind(AG, AG_new)
+
 
 carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"), 
                  sep=";", 
                  header=TRUE, 
                  dec=",")[,-2]
 carot$ech <- sub("-.*", "", carot$code_nirs)
+
 
 tlip <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.4.csv"), 
                 sep=";", 
@@ -63,14 +66,15 @@ tlip_new <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Tlip_new.csv"),
                 header=TRUE, 
                 dec=".")
 tlip_new$ech <- sub("-.*", "", tlip_new$code_nirs)
-tlip <- join(tlip, tlip_new, by = "ech", type = "full")
+tlip <- rbind(tlip, tlip_new)
+
 
 meso <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"),
                    sep=";", 
                    header=TRUE, 
                    dec=",")
-
 names(meso)[names(meso) == "TE1...MF."] <- "eau"
+
 
 ref <- join_all(list(meso,AG, carot,tlip), 
                 by = 'ech', 
@@ -127,8 +131,8 @@ save(sp,file="vitaspec_fruit")
 
 # Cross-Val
 ```{r echo=FALSE, warning=FALSE, results='asis'}
-suppressPackageStartupMessages(library(rchemo))
-suppressPackageStartupMessages(library(nirsextra))
+library(rchemo)
+library(nirsextra)
 library(data.table)
 source("vitaspec_preCV.R")
 source("list_pre.R")
@@ -174,13 +178,24 @@ for (k in 1) { #length(condition_spectr)) {
   }
   cat(paste0("\\begin{center}\n\\fontsize{24}{16}\\selectfont\\underline{", condition_spectr[k], "}\n\\end{center}\n\\normalsize\n\\par\n"))
 
-  ag=colnames(sp)[c(34,45:59)] 
+  ag=colnames(sp)[c(34,44:58)] 
   options(warn=-1)
  
   # En moyennant les rép
-  dat=aggregate(sp,by=list(sp$ech), mean)
-  dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
-  dat$ech=dat$Group.1; dat=dat[,-1] 
+
+  # dat=aggregate(sp,by=list(sp$ech), mean)
+  # dat$x=as.matrix(aggregate(sp$x, list(sp$ech), mean)[,-1])
+  # dat$ech=dat$Group.1; dat=dat[,-1] 
+  
+  # En moyennant les rép
+  dat = aggregate(sp, by=list(sp$ech), mean)
+  temp_x = aggregate(sp$x, list(sp$ech), mean)
+  dat$x = as.matrix(temp_x[, -1])
+  # NOM DES COLONNES
+  colnames(dat$x) = colnames(sp$x)
+  dat$ech = dat$Group.1 
+  dat = dat[, -1]
+  
   if (nrow(dat)<100) {rdmsp=1:nrow(dat)} else {rdmsp=sample.int(nrow(dat),100)}
   plotsp(dat$x[rdmsp,])
   title(paste0(condition_spectr[k],"  spectres bruts"))
@@ -191,17 +206,18 @@ for (k in 1) { #length(condition_spectr)) {
     iout=which(is.na(dat[,colnames(dat)==ag1]))
     if (length(iout)>0) {datok=dat[-iout,]} else datok=dat
 
-    vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="plskern",list_pre,15, titl=condition_spectr[k])
     
-    # Modèle Complet après avoir choisit les meilleurs pré+nLV
-    #iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
-    # eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
-    # fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
-    # fm_all=append(fm_all,list(fm_finale))
-    # id_model=rbind(id_model,c(ag1,idparam))
+    # vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="plskern",list_pre,15, titl=condition_spectr[k])
+    
+    #Modèle Complet après avoir choisit les meilleurs pré+nLV
+    iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
+    eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
+    fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
+    fm_all=append(fm_all,list(fm_finale))
+    id_model=rbind(id_model,c(ag1,idparam))
   }
 }
-# save(fm_all,id_model,file="Vitaspec_fruit_models")
+save(fm_all,id_model,file="Vitaspec_fruit_models_2")
 ```
 
 # Comparaison des spectres selon conditions
@@ -315,11 +331,12 @@ library(nirsextra)
 library(rchemo)
 library(openxlsx)
 # load('vitaspec_fruit')
-load("Vitaspec_fruit_models")
+load("Vitaspec_fruit_models_2")
 param=read.csv("Vitaspec_fruit_param.csv")
 
-f="/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20240325_Vitaspec_Pobe/"
-spnew=rbind(asd_read_dir(f), asd_read_dir("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/spectres/20250224_Vitaspec_Pobe/"))
+d0="C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+f=paste0(d0,"spectres/20240325_Vitaspec_Pobe/")
+spnew=rbind(asd_read_dir(f), asd_read_dir(paste0(d0,"spectres/20250224_Vitaspec_Pobe/")))
 spnew=spnew[!grepl("X",rownames(spnew)),]
 cond="meso_frais"
 param=param[grepl(cond,param$Cal_data),]
@@ -366,9 +383,9 @@ pred_stats <- select(pred,-spectrum) %>%
 
 library(openxlsx)
 titre="Pobe_24-25_NIRS_Meso_Frais"
-write.xlsx(pred, file = paste0("predictions/",titre,"_pred.xlsx"))
-write.xlsx(pred_moy, file = paste0("predictions/",titre,"_pred_moy.xlsx"))
-write.xlsx(pred_stats, file = paste0("predictions/",titre,"_pred_stats.xlsx"))
+write.xlsx(pred, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_new.xlsx"))
+write.xlsx(pred_moy, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_moy_new.xlsx"))
+write.xlsx(pred_stats, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_stats_new.xlsx"))
 
 # # Check Results independantly
 # load('vitaspec_fruit')

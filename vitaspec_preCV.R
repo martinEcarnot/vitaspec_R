@@ -1,3 +1,10 @@
+# temporaire : r2 fais main
+r2 <- function(pred, obs) {
+  obs <- as.numeric(obs)
+  pred <- as.numeric(pred)
+  return(1 - sum((obs - pred)^2, na.rm = TRUE) / sum((obs - mean(obs, na.rm = TRUE))^2, na.rm = TRUE))
+}
+
 vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
 
 # From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
