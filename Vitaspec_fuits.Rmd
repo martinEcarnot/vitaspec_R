@@ -334,9 +334,10 @@ library(openxlsx)
 load("Vitaspec_fruit_models_2")
 param=read.csv("Vitaspec_fruit_param.csv")
 
-d0="C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
-f=paste0(d0,"spectres/20240325_Vitaspec_Pobe/")
-spnew=rbind(asd_read_dir(f), asd_read_dir(paste0(d0,"spectres/20250224_Vitaspec_Pobe/")))
+d0="C:/Users/robot/Documents/Martin/VitaSPEC/"
+f="C:/ProgramData/ASD/Indico Pro/Projects/20260223_Vitaspec_Pobe_AGAP"
+# spnew=rbind(asd_read_dir(f), asd_read_dir(paste0(d0,"spectres/20250224_Vitaspec_Pobe/")))
+spnew=asd_read_dir(f)
 spnew=spnew[!grepl("X",rownames(spnew)),]
 cond="meso_frais"
 param=param[grepl(cond,param$Cal_data),]
@@ -382,10 +383,10 @@ pred_stats <- select(pred,-spectrum) %>%
   pivot_wider(names_from = Stat, values_from = Valeur)
 
 library(openxlsx)
-titre="Pobe_24-25_NIRS_Meso_Frais"
-write.xlsx(pred, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_new.xlsx"))
-write.xlsx(pred_moy, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_moy_new.xlsx"))
-write.xlsx(pred_stats, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_stats_new.xlsx"))
+titre="Pobe_26_NIRS_Test30_Meso_Frais"
+write.xlsx(pred, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred.xlsx"))
+write.xlsx(pred_moy, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_moy.xlsx"))
+write.xlsx(pred_stats, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_stats.xlsx"))
 
 # # Check Results independantly
 # load('vitaspec_fruit')
@@ -445,6 +446,7 @@ sp$annee[1:nrow(sp24)]=2024
 # sp$tissue[grep("X", rownames(sp))]="exo"
 sp$xp=snv(sp$x)
 
+
 i24=1:nrow(sp)
 fm <- pcasvd(sp$xp[i24,], nlv = 6)
 scord=scordis(fm,sp$xp)
@@ -467,5 +469,28 @@ plotsp(sp)
 fm <- plsrda(sp$xp[i24,], sp$tissue[i24], nlv = 8)
 pred = predict(fm, sp$xp[-i24,])
 err(pred$pred, sp$tissue[-i24])
+```
+
+
+Effet de prendre spectre coté endocarpe
+```{r}
+  load("vitaspec_meso_24-25")
+  fm <- pcasvd(sp$x, nlv = 6)
+  f="C:/ProgramData/ASD/Indico Pro/Projects/20260223_Vitaspec_Pobe_AGAP"
+Xtest=asd_read_dir(f)
+Xtest=Xtest[!grepl("X",rownames(Xtest)),]
+
+  Ttrain <- fm$T
+Ttest <- transform(fm, Xtest)
+T <- rbind(Ttrain, Ttest)
+group <- c(rep("Training", nrow(Ttrain)), rep("Test", nrow(Ttest)))
+iE=grep("E",rownames(Xtest))
+iK=grep("K",rownames(Xtest))
+group[nrow(Ttrain)+iE]="E"
+group[nrow(Ttrain)+iK]="K"
+
+i <- 2
+plotxy(T[, i:(i+1)], group = group, pch = 16, zeroes = TRUE, cex = 0.3, main = "scores", col = c("Black","Blue", "Orange"))
+
 ```
 
