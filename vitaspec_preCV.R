@@ -5,7 +5,7 @@ r2 <- function(pred, obs) {
   return(1 - sum((obs - pred)^2, na.rm = TRUE) / sum((obs - mean(obs, na.rm = TRUE))^2, na.rm = TRUE))
 }
 
-vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
+vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, y_name = "", plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
 
 # From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
   
@@ -30,7 +30,7 @@ for (j in 1:length(list_pre)) {  # 1:
 
   # generate sgm list for Leave-one-out
   # segm <- list(rep1 = as.list(1:nrow(xp)))
-  segm <- segmkf(n = nrow(xp), K = 3)
+  segm <- segmkf(n = nrow(xp), K = 10)
   if (fun=="lwplsr") {
     pars=mpars(nlvdis = 5, diss = "mahal", h = c(1, Inf), k = c(10, 20))
     fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
@@ -49,7 +49,7 @@ for (j in 1:length(list_pre)) {  # 1:
 best_pre_lo=which(r2_tt == max(r2_tt[2:14,]), arr.ind = TRUE)[1,]
 if (plotLV) {
   matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
-  title(ag1)
+  title(paste(y_name, titl, sep = " - "))
   # pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
   legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
 }
@@ -71,7 +71,7 @@ if (plotYY) {
   r_squared <- summary_fit$r.squared
   # legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(txtpre)),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
   legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
-  title(paste(ag1,titl,sep=" - "))
+  title(paste(y_name, titl, sep = " - "))
 }
 }
 

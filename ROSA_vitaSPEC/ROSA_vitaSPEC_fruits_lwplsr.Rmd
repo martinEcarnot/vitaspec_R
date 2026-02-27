@@ -27,7 +27,7 @@ library(purrr)
 
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
 source(paste0(d0,"vitaspec_R/vitaspec_load.R"))
-source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
+source(paste0(d0,"vitaspec_R/vitaspec_preCV_lwplsr.R"))
 source(paste0(d0,"vitaspec_R/list_pre.R"))
 source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
 load(paste0(d0,"vitaspec_R/vitaspec_fruit"))
@@ -234,7 +234,7 @@ ag %>%
       vitaspec_preCV(
         x = x_mat, 
         y = y_vals, 
-        fun = "plskern", 
+        fun = "lwplsr", 
         list_pre = list_pre, 
         ncomp = 15, 
         titl = "Meso_frais",
@@ -245,7 +245,7 @@ ag %>%
 ```
 
 # Calibration finale
-```{r, echo=FALSE, warning=FALSE, results='asis'}
+```{r, include=FALSE, echo=FALSE, warning=FALSE, results='asis'}
 fm_all=list()
 id_model=list()
 idparam <- "meso_frais"
@@ -263,10 +263,10 @@ ag %>%
       vitaspec_preCV(
         x = x_mat, 
         y = y_vals, 
-        fun = "plskern", 
+        fun = "lwplsr", 
         list_pre = list_pre, 
         ncomp = 15, 
-        titl = "Meso_frais",
+        titl = "Meso_frais_lwplsr",
         y_name = ag1
       )
     })
@@ -286,11 +286,12 @@ ag %>%
       fm_all <<- append(fm_all, list(fm_finale))
       id_model <<- id_model %>%
         bind_rows(tibble(Propriete = ag1,
-                         Condition = idparam))
+                         Condition = idparam,
+                         Methode = "lwplsr"))
     }
   })
 
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_models_3"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_models_lwplsr_2"))
 ```
 
 

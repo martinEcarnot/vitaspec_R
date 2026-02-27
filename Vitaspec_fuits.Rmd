@@ -210,11 +210,11 @@ for (k in 1:2) { #length(condition_spectr)) {
     vitaspec_preCV(datok$x,datok[,colnames(datok)==ag1],fun="plskern",list_pre,15, titl=condition_spectr[k])
     
     # #Modèle Complet après avoir choisit les meilleurs pré+nLV
-    # iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
-    # eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
-    # fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
-    # fm_all=append(fm_all,list(fm_finale))
-    # id_model=rbind(id_model,c(ag1,idparam))
+    iokparam=which(grepl(idparam,param$Cal_data) & param$Propriete==ag1)
+    eval(parse(text = paste0("p = ", param[iokparam, ]$pre)), envir = .GlobalEnv)
+    fm_finale = plskern(pre(datok$x,p), datok[,colnames(datok)==ag1],nlv=param[iokparam,]$nvl)
+    fm_all=append(fm_all,list(fm_finale))
+    id_model=rbind(id_model,c(ag1,idparam))
   }
 }
 # save(fm_all,id_model,file="Vitaspec_fruit_models_2")
