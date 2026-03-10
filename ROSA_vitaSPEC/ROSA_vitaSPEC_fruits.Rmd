@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE,
 library(ggplot2)
 library(dplyr)
 library(writexl)
+library(openxlsx)
 library(nirsextra)
 library(tidyverse)
 library(rchemo)
@@ -198,8 +199,9 @@ mean_spectres <- function(data){
     .groups = "drop"
   )}
 
-mean_Meso_frais_matrix <- mean_spectres(Meso_frais_matrix)
+#mean_Meso_frais_matrix <- mean_spectres(Meso_frais_matrix)
 
+mean_Meso_sec_DIADE_matrix <- mean_spectres(Meso_sec_DIADE_matrix)
 
 ### chimie
 
@@ -212,32 +214,40 @@ join <- function(data){
     left_join(Yvalue, by = "ech")
 }
 
-dat <- join(mean_Meso_frais_matrix)
+#dat <- join(mean_Meso_frais_matrix)
+
+dat <- join(mean_Meso_sec_DIADE_matrix)
 ```
 
 ## CV
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 fm_all=list()
 id_model=list()
-idparam <- "meso_frais"
+#idparam <- "meso_frais"
+idparam <- "meso_silica"
 
-ag %>% 
+#source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/list_pre_beta_carot.R"))
+
+compose_etudie <- ag#[-c(1:10,12:16)]
+print(compose_etudie)
+
+compose_etudie %>%
   walk(function(ag1) {
     print(ag1)
-    datok <- dat %>% 
+    datok <- dat %>%
       filter(!is.na(.data[[ag1]]))
-  
+
     y_vals <- as.numeric(datok[[ag1]])
     x_mat  <- as.matrix(datok$x)
 
     try({
       vitaspec_preCV(
-        x = x_mat, 
-        y = y_vals, 
-        fun = "plskern", 
-        list_pre = list_pre, 
-        ncomp = 15, 
-        titl = "Meso_frais",
+        x = x_mat,
+        y = y_vals,
+        fun = "plskern",
+        list_pre = list_pre,
+        ncomp = 15,
+        titl = "Meso_sec",
         y_name = ag1
       )
     })
@@ -248,9 +258,10 @@ ag %>%
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 fm_all=list()
 id_model=list()
-idparam <- "meso_frais"
+#idparam <- "meso_frais"
+idparam <- "meso_silica"
 
-ag %>% 
+compose_etudie %>% 
   walk(function(ag1) {
     print(ag1)
     datok <- dat %>% 
@@ -266,18 +277,20 @@ ag %>%
         fun = "plskern", 
         list_pre = list_pre, 
         ncomp = 15, 
-        titl = "Meso_frais",
+        titl = "Meso_sec",
         y_name = ag1
       )
     })
     current_param <- param %>%
-      filter(str_detect(Cal_data, idparam),
-             Propriete == ag1)
+      filter(str_detect(Cal_data, fixed(idparam)),  
+             str_trim(Propriete) == str_trim(ag1))
 
-    if (nrow(current_param) > 0) {
+    if (nrow(current_param) == 0) {
+      warning(paste("error no", idparam, "for", ag1,"found"))
+    } else {
       p <- eval(parse(text = current_param$pre))
       n_lv <- current_param$nvl
-
+  
       fm_finale <- plskern(
         pre(x_mat, p),
         y_vals,
@@ -285,14 +298,207 @@ ag %>%
         )
       fm_all <<- append(fm_all, list(fm_finale))
       id_model <<- id_model %>%
-        bind_rows(tibble(Propriete = ag1,
-                         Condition = idparam))
+      bind_rows(tibble(Propriete = ag1,
+                       Condition = idparam))
+      }
     }
-  })
+  )
 
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_models_3"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_models_3_sec"))
 ```
 
+# prediction de nouveaux échantillons
+```{r}
+load(paste0(d0,"vitaspec_R/Vitaspec_fruit_models_3_sec"))
+
+idparam <- "meso_silica" 
+titre <- "SEC_26_NIRS_TEST_Meso_SEC"
+
+
+load(paste0(d0, "vitaspec_R/Vitaspec_fruit_models_3_sec"))
+param <- read.csv(paste0(d0, "vitaspec_R/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260304_Vitaspec_S_DIADE")
+spnew <- asd_read_dir(f)
+spnew <- spnew[!grepl("X", rownames(spnew)), ]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# prédiction
+
+pred <- tibble(spname = rownames(spnew))
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  
+  prop <- param_filtre$Propriete[i]
+  
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  
+  pred_val <- predict(fm_all[[imodel]], spnx)$pred
+  pred <- pred %>% 
+    mutate(!!prop := as.vector(pred_val))
+}
+
+# stats par échantillon
+pred <- pred %>%
+  mutate(ech = sub("-.*", "", spname)) %>%
+  relocate(ech, spname)
+
+# moy par échantillon
+pred_moy <- pred %>%
+  select(-spname) %>%
+  group_by(ech) %>%
+  summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# stats descriptives
+pred_stats <- pred %>%
+  select(-spname) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+
+
+
+
+
+# ====================================================================
+# CHECK RESULTS INDEPENDANTLY (Commenté, adapté au style ggplot de base)
+# ====================================================================
+
+# load(paste0(d0, "vitaspec_R/vitaspec_fruit"))
+# tab1 <- sp %>% 
+#   filter(!duplicated(ech)) %>% 
+#   select(ech, any_of(unique(param$Propriete)))
+# 
+# tab2 <- readxl::read_xlsx(paste0(d0, "vitaspec_R/predictions/Pobe_24-25_NIRS_Meso_Frais_pred_moy.xlsx"))
+# 
+# df_check <- tab2 %>%
+#   inner_join(tab1, by = "ech", suffix = c("_pred", "_ref"))
+#
+# # Boucle pour générer les plots
+# vars_to_plot <- unique(param$Propriete)
+# 
+# for (col in vars_to_plot) {
+#   if(paste0(col, "_pred") %in% names(df_check) & paste0(col, "_ref") %in% names(df_check)) {
+#     
+#     df_plot <- data.frame(
+#       x = df_check[[paste0(col, "_pred")]],
+#       y = df_check[[paste0(col, "_ref")]]
+#     )
+#     
+#     r2 <- summary(lm(y ~ x, data = df_plot))$r.squared
+#     
+#     p <- ggplot(df_plot, aes(x, y)) +
+#       geom_point(color = "steelblue") +
+#       geom_smooth(method = "lm", se = FALSE, color = "darkred") +
+#       annotate("text", x = min(df_plot$x, na.rm = TRUE), y = max(df_plot$y, na.rm = TRUE),
+#                label = paste0("R² = ", round(r2, 3)), hjust = 0, vjust = 1) +
+#       labs(title = col, x = "Prédiction", y = "Référence") # Le thème (theme_minimal) s'appliquera via ton theme_set global
+#     
+#     print(p)
+#   }
+# }
+
+
+
+f = "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/spectres/20260304_Vitaspec_S_DIADE"
+# spnew=rbind(asd_read_dir(f), asd_read_dir(paste0(d0,"spectres/20250224_Vitaspec_Pobe/")))
+spnew=asd_read_dir(f)
+spnew=spnew[!grepl("X",rownames(spnew)),]
+cond="meso_silica"
+param=param[grepl(cond,param$Cal_data),]
+
+# PCA
+# fm=pcaeigen(sp$x, nlv = 5)
+# Ttrain=fm$T
+# Ttest <- transform(fm, spnew)
+# T <- rbind(Ttrain, Ttest)
+# group <- c(rep("Training", nrow(sp)), rep("Test", nrow(spnew)))
+# i=1
+# plotxy(T[, i:(i+1)], group = group, pch = 16, zeroes = TRUE, cex = 1.3, main = "scores")
+
+# Prédiction
+pred=data.frame(spectrum=rownames(spnew))
+nag=dim(param)[1]
+
+for (i in 1:nag) {
+eval(parse(text = paste0("p = ", param[i,]$pre)))
+spnx=pre(spnew,p)
+imodel=which(grepl(cond,id_model[,2]) & grepl(param[i,]$Propriete,id_model[,1]))
+pred=cbind(pred,predict(fm_all[[imodel]], spnx)$pred) # les modèles sont dans le meme ordre que les ag, car construits avec "param"
+}
+colnames(pred)[2:2:(nag+1)]=param$Propriete
+
+# Stats par échantillon
+library(dplyr)
+library(tidyr)
+pred$ech=substr(pred$spectrum,1,nchar(pred$spectrum)-5)
+group_col <- "ech"
+
+pred_moy <- select(pred,-spectrum) %>%
+  group_by(ech) %>%
+  summarise(across(where(is.numeric), mean), .groups = "drop")
+
+pred_stats <- select(pred,-spectrum) %>%
+  pivot_longer(cols = -all_of(group_col), names_to = "Variable", values_to = "Valeur") %>%
+  group_by(across(all_of(group_col)), Variable) %>%
+  reframe(
+    Stat = c("mean", "sd", "min", "max"),
+    Valeur = c(mean(Valeur), sd(Valeur), min(Valeur), max(Valeur))
+  ) %>%
+  pivot_wider(names_from = Stat, values_from = Valeur)
+
+library(openxlsx)
+titre="SEC_26_NIRS_TEST_Meso_SEC"
+write.xlsx(pred, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred.xlsx"))
+write.xlsx(pred_moy, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_moy.xlsx"))
+write.xlsx(pred_stats, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_stats.xlsx"))
+
+# # Check Results independantly
+# load('vitaspec_fruit')
+# tab1=sp[!duplicated(sp$ech), colnames(sp) %in% unique(param$Propriete)]
+# tab2=read.xlsx("/home/ecarnot/Documents/INRA/Projets/VitaSPEC/vitaspec_R/predictions/Pobe_24-25_NIRS_Meso_Frais_pred_moy.xlsx")[,-1]
+# library(ggplot2)
+# 
+# for (col in names(tab1)) {
+#   df <- data.frame(
+#     x = tab2[[col]],
+#     y = tab1[[col]]
+#   )
+#   r2 <- summary(lm(y ~ x, df))$r.squared
+# 
+#   print(
+#     ggplot(df, aes(x, y)) +
+#       geom_point() +
+#       geom_smooth(method = "lm", se = FALSE) +
+#       annotate(
+#         "text",
+#         x = min(df$x, na.rm = TRUE),
+#         y = max(df$y, na.rm = TRUE),
+#         label = paste0("R² = ", round(r2, 3)),
+#         hjust = 0
+#       ) +
+#       labs(title = col)
+#   )
+# }
+```
 
 
 

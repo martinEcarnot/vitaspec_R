@@ -7,12 +7,13 @@ r2 <- function(pred, obs) {
 
 vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, y_name = "", plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
 
+mes_couleurs <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999", "#000000")
 # From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
   
 r2_tt=matrix(nrow=ncomp+1,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-6)  #
 fmtt=list()
 pftot=NULL
-K=5
+
 # nseq=20
 # seqlo=seq(1,2150,nseq)
 # nseq=length(seqlo)
@@ -48,10 +49,10 @@ for (j in 1:length(list_pre)) {  # 1:
 }
 best_pre_lo=which(r2_tt == max(r2_tt[2:14,]), arr.ind = TRUE)[1,]
 if (plotLV) {
-  matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+  matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
   title(paste(y_name, titl, sep = " - "))
   # pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
-  legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
+  legend("bottomright", legend = pftot, col = mes_couleurs[1:ncol(r2_tt)], lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
 }
 fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
 txtpre= pftot[best_pre_lo[2]]  # txtpre= disp_pre(dat$x,list_pre[[best_pre_lo[2]]])

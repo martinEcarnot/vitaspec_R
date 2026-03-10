@@ -32,7 +32,7 @@ vitaspec_preCV = function(x,y,fun="lwplsr",list_pre,ncomp,titl, y_name = "", plo
     # segm <- list(rep1 = as.list(1:nrow(xp)))
     segm <- segmkf(n = nrow(xp), K = 10)
     if (fun=="lwplsr") {
-      pars=mpars(nlvdis = 5, diss = "mahal", h = 1, k = 120)
+      pars=mpars(nlvdis = 5, diss = "mahal", h = Inf, k = 30)
       fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
     }
     else {

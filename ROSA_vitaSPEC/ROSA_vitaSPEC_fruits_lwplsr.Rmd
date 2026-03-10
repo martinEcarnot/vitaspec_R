@@ -23,6 +23,7 @@ library(tidyverse)
 library(rchemo)
 library(stringr)
 library(purrr)
+library(pls)
 
 
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
@@ -217,6 +218,78 @@ dat <- join(mean_Meso_frais_matrix)
 
 ## CV
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
+set.seed(123)
+
+dat_clean <- dat[!is.na(dat$eau) & complete.cases(dat$x), ]
+mod <- plsr(eau~x,data=dat_clean,ncomp=1,scale=TRUE,validation="CV",segments=10)
+fitted(mod)
+RMSEP(mod)
+
+
+n <- nrow(dat_clean)
+cvpred <- rep(0,n)
+
+segs <- cvsegments(n,10)
+cvpred <- rep(0,n)
+
+for (k in 1:10){
+  cvmod = plsr(eau~x, data = dat_clean[-segs[[k]],], ncomp = 50, scale = TRUE, validation = "CV", segments = 10)
+  bestncomp = selectNcomp(cvmod,method = "onesigma")
+  cvpred[segs[[k]]] = predict(cvmod, newdata = dat_clean[segs[[k]],])[,,bestncomp]
+  print(bestncomp)
+}
+  
+PRESS.pls <- sum((dat_clean$eau-cvpred)^2) ; PRESS.pls
+sqrt(PRESS.pls/306)
+
+graphics.off()
+print(selectNcomp(mod,method = "onesigma",plot = TRUE))
+
+
+R2_cv <- cor(dat_clean$eau, cvpred)^2
+
+library(ggplot2)
+
+
+df_plot <- data.frame(
+  Observe = dat_clean$eau,
+  Predite = cvpred
+)
+graphics.off()
+p <- ggplot(df_plot, aes(x = Observe, y = Predite)) +
+  geom_point(shape = 1, color = "black", size = 2.5) + 
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed", linewidth = 1) +
+  geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 1) +
+  annotate("text", x = -Inf, y = Inf, 
+           label = paste0("R^2 == ", round(R2_cv, 3)), 
+           parse = TRUE, hjust = -0.2, vjust = 1.5, size = 5, color = "black") +
+  labs(title = "PLSR - Eau",
+       x = "Teneur mesurée",
+       y = "Teneur prédite par SPIR") +
+  theme_bw() + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"), # Centre le titre
+    axis.title = element_text(face = "bold"))
+
+print(p)
+ggsave(filename = "PLS_eau_performance.png", 
+       plot = p, 
+       width = 8,        
+       height = 6,       
+       dpi = 300,        
+       bg = "white")
+
+
+
+
+
+
+
+
+
+
+
+
 fm_all=list()
 id_model=list()
 idparam <- "meso_frais"
