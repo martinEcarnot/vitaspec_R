@@ -383,7 +383,7 @@ pred_stats <- select(pred,-spectrum) %>%
   pivot_wider(names_from = Stat, values_from = Valeur)
 
 library(openxlsx)
-titre="Pobe_26_NIRS_Test30_Meso_Frais"
+titre="Pobe_24-25_NIRS_Meso_Sec"
 write.xlsx(pred, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred.xlsx"))
 write.xlsx(pred_moy, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_moy.xlsx"))
 write.xlsx(pred_stats, file = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/",titre,"_pred_stats.xlsx"))
