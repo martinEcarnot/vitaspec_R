@@ -221,7 +221,7 @@ dat <- join(mean_Meso_frais_matrix)
 set.seed(123)
 
 dat_clean <- dat[!is.na(dat$eau) & complete.cases(dat$x), ]
-mod <- plsr(eau~x,data=dat_clean,ncomp=1,scale=TRUE,validation="CV",segments=10)
+mod <- plsr(eau~x,data=dat_clean,ncomp=50,scale=TRUE,validation="CV",segments=10)
 fitted(mod)
 RMSEP(mod)
 
@@ -290,31 +290,31 @@ ggsave(filename = "PLS_eau_performance.png",
 
 
 
-fm_all=list()
-id_model=list()
-idparam <- "meso_frais"
-
-ag %>% 
-  walk(function(ag1) {
-    print(ag1)
-    datok <- dat %>% 
-      filter(!is.na(.data[[ag1]]))
-  
-    y_vals <- as.numeric(datok[[ag1]])
-    x_mat  <- as.matrix(datok$x)
-
-    try({
-      vitaspec_preCV(
-        x = x_mat, 
-        y = y_vals, 
-        fun = "lwplsr", 
-        list_pre = list_pre, 
-        ncomp = 15, 
-        titl = "Meso_frais",
-        y_name = ag1
-      )
-    })
-  })
+# fm_all=list()
+# id_model=list()
+# idparam <- "meso_frais"
+# 
+# ag %>% 
+#   walk(function(ag1) {
+#     print(ag1)
+#     datok <- dat %>% 
+#       filter(!is.na(.data[[ag1]]))
+#   
+#     y_vals <- as.numeric(datok[[ag1]])
+#     x_mat  <- as.matrix(datok$x)
+# 
+#     try({
+#       vitaspec_preCV(
+#         x = x_mat, 
+#         y = y_vals, 
+#         fun = "lwplsr", 
+#         list_pre = list_pre, 
+#         ncomp = 15, 
+#         titl = "Meso_frais",
+#         y_name = ag1
+#       )
+#     })
+#   })
 ```
 
 # Calibration finale

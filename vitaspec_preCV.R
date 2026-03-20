@@ -49,10 +49,57 @@ for (j in 1:length(list_pre)) {  # 1:
 }
 best_pre_lo=which(r2_tt == max(r2_tt[2:14,]), arr.ind = TRUE)[1,]
 if (plotLV) {
-  matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+  matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], 
+          ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
   title(paste(y_name, titl, sep = " - "))
-  # pftot=c("Prétraitement A","Prétraitement B","Prétraitement C") # Pour rapport Alternance Amel
-  legend("bottomright", legend = pftot, col = mes_couleurs[1:ncol(r2_tt)], lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
+  
+  pftot_wrap <- sapply(pftot, function(x) {
+    paste(strwrap(x, width = 60), collapse = "\n")
+  })
+  
+  opar <- par(no.readonly = TRUE) 
+  
+  par(mar = c(0, 0, 0, 0)) 
+  
+  plot.new() 
+  
+  legend("center", 
+         legend = pftot_wrap, 
+         col = mes_couleurs[1:ncol(r2_tt)], 
+         lty = 1, 
+         lwd = 2, 
+         cex = 0.8, 
+         bty = "n", 
+         y.intersp = 1.5)
+  
+  par(opar) 
+  
+  # opar <- par(no.readonly = TRUE) 
+  # 
+  # layout(matrix(c(1, 2), nrow = 1), widths = c(0.70, 0.30))
+  # 
+  # par(mar = c(5, 4, 4, 0) + 0.1) 
+  # matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+  # title(paste(y_name, titl, sep = " - "))
+  # 
+  # par(mar = c(5, 0, 4, 1) + 0.1) 
+  # plot.new() 
+  # 
+  # pftot_wrap <- sapply(pftot, function(x) {
+  #   paste(strwrap(x, width = 30), collapse = "\n")
+  # })
+  # 
+  # 
+  # legend("left", 
+  #        legend = pftot_wrap, 
+  #        col = mes_couleurs[1:ncol(r2_tt)], 
+  #        lty = 1, 
+  #        cex = 0.7, 
+  #        bty = "n",
+  #        y.intersp = 0.5, 
+  #        x.intersp = 1.25)
+  # 
+  # par(opar)
 }
 fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
 txtpre= pftot[best_pre_lo[2]]  # txtpre= disp_pre(dat$x,list_pre[[best_pre_lo[2]]])
