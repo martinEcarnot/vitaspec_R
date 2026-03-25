@@ -27,6 +27,11 @@ library(purrr)
 library(stringr)
 library(ggpmisc)
 library(pls)
+library(tidymodels)
+library(future)
+library(furrr)
+library(future.callr)
+
 
 
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
@@ -35,8 +40,6 @@ source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
 source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
 load(paste0(d0,"vitaspec_R/vitaspec_fruit"))
 
-
-theme_set(theme_minimal())
 ```
 
 # Load & Save data
@@ -225,14 +228,15 @@ dat <- join(mean_Meso_sec_DIADE_matrix)
 
 ## CV
 ```{r echo=FALSE, warning=FALSE, results='asis'}
-source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test.R"))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R"))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_AG.R"))
+
 source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
 source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/new_preCV.R"))
 source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/new_new_preCV.R"))
-library(pls)
-library(future)
-library(furrr)
-library(future.callr)
+
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/get_best_wold.R"))
 
 rpd <- rchemo::rpd
 S0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_VitaSPEC/Results/test_pretraitements/"
@@ -245,7 +249,7 @@ set.seed(123)
 
 #source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/list_pre_beta_carot.R"))
 ncomp = 15
-compose_etudie <- ag[-c(1:19)]
+compose_etudie <- ag[-c(1,11:20)]
 print(compose_etudie)
 
 for (k in compose_etudie){
@@ -263,13 +267,23 @@ files <- paste0(S0,k)
       
       y_vals <- as.numeric(datok[[ag1]])
       x_mat  <- as.matrix(datok$x)
-  
+
+      # try({
+      #   vitaspec_preCV(
+      #     x = x_mat,
+      #     y = y_vals,
+      #     list_pre = list_pre_test_AG,
+      #     ncomp = ncomp, 
+      #     titl = "Meso_sec",
+      #     y_name = ag1,
+      #   )
+      # })
       try({
         new_new_preCV(
           data = datok,
           x = x_mat,
           y = y_vals,
-          list_pre = list_pre,
+          list_pre = list_pre_test_AG,
           ncomp = ncomp,
           seg = 10,
           titl = "Meso_sec",
@@ -279,13 +293,11 @@ files <- paste0(S0,k)
         })
     })
 
-
 ```
 
 ## comparaison pretraitements
 ```{r}
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
-
 
 for (k in compose_etudie){
 files <- k
@@ -297,10 +309,12 @@ files <- k
   
   for (i in 1:length(list_tab_clean)){
     tab <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],".xlsx"))
-    
+     
     tab_moy <- tab %>% 
       group_by(Pretraitement) %>%
-      summarise(across(-Repetition, ~ mean(.x, na.rm = TRUE)),
+      summarise(onesigma_Ncomp = paste(onesigma_Ncomp, collapse = ", "),
+                Wold_Ncomp = paste(Wold_Ncomp, collapse = ", "),
+                across(-c(Repetition, onesigma_Ncomp, Wold_Ncomp), ~ mean(.x, na.rm = TRUE)),
                 .groups = "drop")
     write_xlsx(tab_moy, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy",".xlsx"))
   
@@ -331,8 +345,6 @@ files <- k
       write_xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_diff",".xlsx"))
   }
 }
-
-
 
 ```
  
@@ -395,9 +407,32 @@ compose_etudie %>%
       
       ## graph 1
       par(mar = c(5, 4, 4, 4) + 0.3)
+      
+      # recup nom pre
+      titre_elements <- c()
+
+      n_etapes <- ifelse(is.matrix(p), nrow(p), length(p))
+      
+      for (i in 1:n_etapes) {
+        if (is.matrix(p)) {
+          nom <- p[i, 1][[1]]
+          args <- p[i, 2][[1]]
+        } else {
+          nom <- p[[i]][[1]]
+          args <- p[[i]][[2]]
+        }
+        if (is.null(args) || (is.character(args) && all(args == ""))) {
+          titre_elements <- c(titre_elements, nom)
+        } else {
+          args_txt <- paste0("c(", paste(args, collapse = ","), ")")
+          titre_elements <- c(titre_elements, paste0(nom, "_", args_txt))
+        }
+      }
+      texte_p <- paste(titre_elements, collapse = "_")
     
       bestncomp_global <- selectNcomp(fm_finale, method = "onesigma", plot = TRUE, 
-                                    main = p)
+                                    main = ag1)
+      mtext(paste0("Prétraitement : ",texte_p), side = 3, line = 0.5, cex = 0.75)
     
       par(new = TRUE)
     
@@ -421,12 +456,13 @@ compose_etudie %>%
             lwd = c(1, 2, 2))
       
       ## graph2
-      texte_n <- paste0("n_ech = ",n)
-      valeur_r2 <- round(res_r2_adj[n_lv], 3)
-      texte_r2 <- paste0("R[CV]^2 = ", valeur_r2)
-      
+      valeur_r2_adj <- round(res_r2_adj[n_lv], 3)
       valeur_rmsecv <- round(res_rmsep[n_lv], 3)
-      texte_rmsecv <- paste0("RMSEP = ", valeur_rmsecv)
+      
+      texte <- paste0("n_comp = ", n_lv,
+                      "\nR2_cv = ", valeur_r2_adj, 
+                      "\nRMSEcv = ", valeur_rmsecv,
+                      "\nn_ech = ", n)
       
       valeurs_predites <- as.vector(fm_finale$validation$pred[, 1, ncomp])
       
@@ -439,21 +475,8 @@ compose_etudie %>%
         geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 0.5) +
         annotate("text", 
                  x = -Inf, y = Inf,          
-                 hjust = -0.2, vjust = 1.5,  
-                 label = texte_r2, 
-                 parse = TRUE,               
-                 size = 4.5) +
-        annotate("text", 
-                 x = -Inf, y = Inf,          
-                 hjust = -0.2, vjust = 3.5,  # vjust plus grand = descend plus bas
-                 label = texte_rmsecv, 
-                 parse = TRUE,               
-                 size = 4.5) +
-        annotate("text", 
-                 x = -Inf, y = Inf,          
-                 hjust = -0.2, vjust = 5.5,  # vjust plus grand = descend plus bas
-                 label = texte_n, 
-                 parse = TRUE,               
+                 hjust = 0, vjust = 1.5,  
+                 label = texte, 
                  size = 4.5) +
         labs(title = paste("Prédictions vs Mesures :", ag1),
              x = "Valeurs Prédites",
@@ -464,7 +487,6 @@ compose_etudie %>%
     }
     }
     )
-0
 save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_model_def_sec"))
 ```
 

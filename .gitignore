@@ -4,7 +4,6 @@
 .Ruserdata
 20250603_Vitaspec_HR_DIADE_pred.xlsx
 vitaspec_fruit
-list_pre_test.R
 huiles_CV.txt
 predictions/
 vitaspec_meso_24-25
@@ -26,4 +25,4 @@ vitaspec_meso_24-25
 .RDataTmp15
 .RDataTmp16
 .RDataTmp17
-
+.RDataTmp18

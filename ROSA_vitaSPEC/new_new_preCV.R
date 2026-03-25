@@ -1,8 +1,3 @@
-library(tidyverse)
-library(tidymodels) 
-library(pls)
-library(writexl)
-library(ggplot2)
 
 new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, sortie){
   
@@ -18,7 +13,7 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
   comparaison <- pmap_dfr(grille_parametres, function(numero_rep, idx_pre) {
     
     # tracker
-    cat("Molécule:", y_name, "| Pretraitement:", idx_pre, "/", length(list_pre), "| Repetition:", numero_rep, "/", rep, "\n")
+    cat("Molécule:", y_name, " Pretraitement:", idx_pre, "/", length(list_pre), " Repetition:", numero_rep, "/", rep, "\n")
     flush.console() 
     
     # pre
@@ -61,27 +56,33 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
     # mod global
     mod_global <- plsr(y ~ xp, data = df_temp, ncomp = ncomp, scale = FALSE, validation = "CV", segments = segs)
     
-    res_rmsep <- RMSEP(mod_global, estimate = "CV")$val[1, 1, -1] 
-    res_r2_adj <- R2(mod_global, estimate = "CV")$val[1, 1, -1]
-    res_r2 <- R2(mod_global, estimate = "train")$val[1, 1, -1]
-    x_comps <- 1:(length(res_r2))
-     
-    # tableau de résultats
-    df_res <- data.frame(matrix(ncol = 0, nrow = 1))
-    for(m in 1:length(res_rmsep)){ 
-      lv_num <- m 
-      df_res[1, paste0("LV", lv_num, "_RMSEP")] <- res_rmsep[m]
-      df_res[1, paste0("LV", lv_num, "_R2")] <- res_r2[m]
-      df_res[1, paste0("LV", lv_num, "_ADJR2")] <- res_r2_adj[m]
-    }
+    # metriques
+    res_rmsep <- RMSEP(mod_global, estimate = "CV")$val[1, 1,] 
     
-    df_res <- cbind(Repetition = numero_rep, Pretraitement = nom_pre, RMSEP_glo = RMSEP_glo, df_res)
+    res_r2 <- R2(mod_global, estimate = "train")$val[1, 1,]
+    res_r2_adj <- R2(mod_global, estimate = "CV")$val[1, 1,]
+    
+    best_wold_global <- get_best_wold(pls_mod = mod_global, y_train = df_temp$y, n_rows = n)
+    
+    x_comps <- 0:(length(res_r2)- 1)
+     
     
     # graph
     par(mar = c(5, 4, 4, 4) + 0.3)
     
     bestncomp_global <- selectNcomp(mod_global, method = "onesigma", plot = TRUE, 
                                     main = paste("Prétraitement :", nom_pre))
+    
+    # tableau de résultats
+    df_res <- data.frame(matrix(ncol = 0, nrow = 1))
+    for(m in 1:length(res_rmsep)){ 
+      lv_num <- m - 1
+      df_res[1, paste0("LV", lv_num, "_RMSEP")] <- res_rmsep[m]
+      df_res[1, paste0("LV", lv_num, "_R2")] <- res_r2[m]
+      df_res[1, paste0("LV", lv_num, "_ADJR2")] <- res_r2_adj[m]
+    }
+    
+    df_res <- cbind(Repetition = numero_rep, Pretraitement = nom_pre, RMSEP_glo = RMSEP_glo, onesigma_Ncomp = bestncomp_global, Wold_Ncomp = best_wold_global, df_res)
     
     par(new = TRUE)
     
