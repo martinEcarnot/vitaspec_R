@@ -5,6 +5,8 @@
 20250603_Vitaspec_HR_DIADE_pred.xlsx
 vitaspec_fruit
 huiles_CV.txt
+ROSA_vitaSPEC/models
+Vitaspec_fruit_model_def_sec
 predictions/
 vitaspec_meso_24-25
 .RDataTmp
@@ -26,3 +28,4 @@ vitaspec_meso_24-25
 .RDataTmp16
 .RDataTmp17
 .RDataTmp18
+.RDataTmp19

@@ -64,10 +64,15 @@ AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"),
   select(-c(1,2))
 
 ### carotène
-carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
-                    sep=";", 
-                    header=TRUE, 
-                    dec=",") %>%
+
+# carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
+#                     sep=";", 
+#                     header=TRUE, 
+#                     dec=",") %>%
+#   mutate(ech = sub("-.*", "", code_nirs)) %>% 
+#   select(-c(1,2))
+
+carot <- read.xlsx(paste0(d0,"analyses_ref/fruits/méso-carot-sets_1-3=51_éch_Amel+92_Antoine_v2.xlsx")) %>%
   mutate(ech = sub("-.*", "", code_nirs)) %>% 
   select(-c(1,2))
 
@@ -102,9 +107,9 @@ Yvalue <- eau %>%
 
 ### export
 
-write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.csv"),row.names = FALSE)
+write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new.csv"),row.names = FALSE)
 
-write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques.xlsx"))
+write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new.xlsx"))
 ```
 
 ## Xvalue
@@ -172,7 +177,7 @@ Xvalue <- Xvalue %>%
 ### spectres
 
 Meso_frais_matrix <- compile_spectres_matrix(Xvalue,c("x20240325_Pobe","x20250224_Pobe"),"sans_X")
-# Meso_frais_df <- compile_spectres_df(Xvalue,c("x20240325_Pobe","x20250224_Pobe"),"sans_X")
+Meso_frais_df <- compile_spectres_df(Xvalue,c("x20240325_Pobe","x20250224_Pobe"),"sans_X")
 
 
 Exo_frais_matrix <- compile_spectres_matrix(Xvalue,c("x20240325_Pobe","x20250224_Pobe"),"avec_X")
@@ -180,7 +185,7 @@ Exo_frais_matrix <- compile_spectres_matrix(Xvalue,c("x20240325_Pobe","x20250224
   
 
 Meso_sec_DIADE_matrix <- compile_spectres_matrix(Xvalue,c("x20240405_S_DIADE","x20250313_S_DIADE"))
-# Meso_sec_DIADE_df <- compile_spectres_df(Xvalue,c("x20240405_S_DIADE","x20250313_S_DIADE"))
+Meso_sec_DIADE_df <- compile_spectres_df(Xvalue,c("x20240405_S_DIADE","x20250313_S_DIADE"))
 Meso_sec_AGAP_matrix <- compile_spectres_matrix(Xvalue,c("x20240405_S_AGAP","x20250313_S_AGAP"))
 # Meso_sec_AGAP_df <- compile_spectres_df(Xvalue,c("x20240405_S_AGAP","x20250313_S_AGAP"))
 Meso_sec_TOT_matrix <- compile_spectres_matrix(Xvalue,c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"))
@@ -195,17 +200,31 @@ Meso_lyoph_TOT_matrix <- compile_spectres_matrix(Xvalue,c("x20250319_Lyoph_DIADE
 # Meso_lyoph_TOT_df <- compile_spectres_df(Xvalue,c("x20250319_Lyoph_DIADE","x20250321_Lyoph_DIADE","x20250319_Lyoph_AGAP","x20250321_Lyoph_AGAP"))
 
 
-mean_spectres <- function(data){
+mean_spectres_matrix <- function(data){
   data %>%
-  group_by(ech) %>%
-  summarise(
-    x = matrix(colMeans(x, na.rm = TRUE), nrow = 1),
-    .groups = "drop"
-  )}
+    group_by(ech) %>%
+    summarise(
+      x = matrix(colMeans(x, na.rm = TRUE), nrow = 1),
+      .groups = "drop"
+    )
+  }
 
-#mean_Meso_frais_matrix <- mean_spectres(Meso_frais_matrix)
+mean_spectres_df <- function(data){
+  data %>% 
+    select(-rep) %>% 
+    group_by(ech) %>% 
+    summarise(
+      across(where(is.numeric), ~ mean(.x, na.rm = TRUE)),
+      .groups = "drop")
+  }
 
-mean_Meso_sec_DIADE_matrix <- mean_spectres(Meso_sec_DIADE_matrix)
+
+mean_Meso_sec_DIADE_df <- mean_spectres_df(Meso_sec_DIADE_df)
+# write.csv(mean_Meso_frais_df, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/mean_Meso_frais_df.csv"),row.names = FALSE)
+# write_xlsx(mean_Meso_frais_df, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/mean_Meso_frais_df.xlsx"))
+
+mean_Meso_sec_DIADE_matrix <- mean_spectres_matrix(Meso_sec_DIADE_matrix)
+
 
 ### chimie
 
@@ -228,7 +247,7 @@ dat <- join(mean_Meso_sec_DIADE_matrix)
 
 ## CV
 ```{r echo=FALSE, warning=FALSE, results='asis'}
-source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R"))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R "))
 source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_AG.R"))
 
 source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
@@ -249,7 +268,7 @@ set.seed(123)
 
 #source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/list_pre_beta_carot.R"))
 ncomp = 15
-compose_etudie <- ag[-c(1,11:20)]
+compose_etudie <- ag[-c(11:20)]
 print(compose_etudie)
 
 for (k in compose_etudie){
@@ -331,7 +350,7 @@ files <- k
     write_xlsx(tab_RMSEP, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_RMSEP",".xlsx"))
     
     tab_diff <- tab_moy
-    for(d in 1:ncomp) {
+    for(d in 0:ncomp) {
       col_r2   <- paste0("LV", d, "_R2")
       col_adj  <- paste0("LV", d, "_ADJR2")
       col_diff <- paste0("LV", d, "_diff")
@@ -351,8 +370,7 @@ files <- k
 ## Calibration finale
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 param=read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
-source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test.R"))
-
+#source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R"))
 
 
 fm_all=list()
@@ -361,7 +379,7 @@ id_model=list()
 idparam <- "meso_silica"
 
 ncomp <- 15
-compose_etudie <- ag[-c(1:10,20)]
+compose_etudie <- ag#[-c(1:10,20)]
 
 compose_etudie %>% 
   walk(function(ag1) {
@@ -487,10 +505,195 @@ compose_etudie %>%
     }
     }
     )
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/Vitaspec_fruit_model_def_sec"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec"))
 ```
 
-## prediction de nouveaux échantillons
+## nouveaux Y sur 2024-2025
+```{r}
+# comparaison valeurs des Y 
+
+new_carot <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/new_carot_fruits.xlsx")) %>% 
+  mutate(ech = sub("-.*", "", code_nirs)) %>% 
+  select(-c(1,2))
+old_carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
+                     sep=";", 
+                     header=TRUE, 
+                     dec=",") %>%
+   mutate(ech = sub("-.*", "", code_nirs)) %>% 
+   select(-c(1,2))
+
+new_carot_commun <- semi_join(new_carot, old_carot, by = "ech")
+new_carot_reste <- anti_join(new_carot, old_carot, by = "ech")
+
+#graph comparaison
+old_carot <- old_carot %>%
+  filter(ech %in% new_carot_commun$ech) %>%
+  mutate(Origine = "Old",
+         trans.alpha.carotene = trans.alpha.carotne,
+         total.beta.carotene = total.beta.carotenes,
+         total.carotene = total.carotenes) %>% 
+  select(-c(1,5,6))
+new_carot_commun <- new_carot_commun %>%
+  mutate(Origine = "New",
+          trans.alpha.carotene = `trans-alpha-carotène`,
+          trans.beta.carotene = `trans-beta-carotène`,
+          X13.cis.beta.carotene = `13.cis-beta-carotène`,
+          X9.cis.beta.carotene = `9.cis-beta-carotène`,
+          total.beta.carotene = `total.beta-carotènes`,
+          total.carotene = total.carotènes) %>% 
+  select(-c(1:6))
+data_plot <- bind_rows(old_carot, new_carot_commun)
+
+data_long <- data_plot %>%
+  pivot_longer(
+    cols = -c(ech, Origine), 
+    names_to = "Variable", 
+    values_to = "Valeur")
+
+variables <- unique(data_long$Variable)
+
+mon_theme <- theme_bw() + 
+  theme(
+    plot.title = element_text(size = 14, hjust = 0, face = "bold", margin = margin(b = 15)),
+    strip.background = element_rect(fill = "gray85", color = "black"),
+    strip.text = element_text(size = 11, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA),
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_line(color = "gray95"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 6),
+    legend.position = "bottom"
+  )
+
+p_page1 <- data_long %>%
+  filter(Variable %in% variables[1:3]) %>%
+  ggplot(aes(x = ech, y = Valeur, color = Origine, fill = Origine)) +
+  geom_line(aes(group = ech), color = "black", linewidth = 0.5) +
+  geom_point(shape = 21, size = 2, color = "black", alpha = 0.8) +
+  facet_wrap(~ Variable, scales = "free", ncol = 1) + 
+  labs(title = "Comparaison old vs new", x = "Échantillons", y = "Valeur") +
+  mon_theme
+p_page2 <- data_long %>%
+  filter(Variable %in% variables[4:6]) %>%
+  ggplot(aes(x = ech, y = Valeur, color = Origine, fill = Origine)) +
+  geom_line(aes(group = ech), color = "black", linewidth = 0.5) +
+  geom_point(shape = 21, size = 2, color = "black", alpha = 0.8) +
+  facet_wrap(~ Variable, scales = "free", ncol = 1) + 
+  labs(title = "Comparaison old vs new", x = "Échantillons", y = "Valeur") +
+  mon_theme
+
+pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/graphique_comparaison_new_carot_fruits.pdf"), 
+    width = 16,  
+    height = 10)  
+print(p_page1) 
+print(p_page2)
+
+dev.off()
+
+
+# comparaison nouveaux Y/pred
+pred_silica <- readxl::read_excel(paste0(d0,"pred/Pobe_24-25_NIRS_Meso_Silica_pred_moy.xlsx"))
+pred_silica2 <- pred_silica %>% 
+  mutate(ech = sub("-.*", "", ech))
+pred_carot_reste <- select(semi_join(pred_silica2, new_carot_reste, by = "ech"))
+
+
+
+
+df_compare <- inner_join(file1_clean, file2_clean, by = "ech", suffix = c("_frais", "_sec"))
+
+
+colonnes_communes <- intersect(names(file1), names(file2))
+molecules <- setdiff(colonnes_communes, "ech")
+
+
+pdf("Meso_frais_vs_sec_2024-2025_out-lier.pdf", width = 8, height = 6)
+
+for (mol in molecules) {
+  
+  col_x <- paste0(mol, "_frais") # abscisse = fichier 1
+  col_y <- paste0(mol, "_sec")   # ordonnée = fichier 2
+  
+  df_plot <- df_compare %>%
+    select(x = !!sym(col_x), y = !!sym(col_y)) %>%
+    mutate(
+        x = as.numeric(gsub(",", ".", x)),
+        y = as.numeric(gsub(",", ".", y))) %>%
+    drop_na()
+  
+
+  if (nrow(df_plot) > 0) {
+    
+   
+    r2 <- summary(lm(y ~ x, data = df_plot))$r.squared
+    
+   
+    p <- ggplot(df_plot, aes(x = x, y = y)) +
+      geom_point(shape = 1, alpha = 0.6) +
+      
+      geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.5) +
+     
+      geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+      
+      annotate(
+        "text",
+        x = min(df_plot$x), 
+        y = max(df_plot$y), 
+        label = paste0("R² = ", round(r2, 3)), 
+        hjust = 0, vjust = 1, fontface = "bold", size = 5
+      ) +
+      
+      labs(
+        title = paste("Comparaison Frais vs Sec :", mol),
+        x = paste(mol, "Prédit sur FRAIS"),
+        y = paste(mol, "Prédit sur SEC"),
+        caption = "Ligne rouge : y=x"
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(face = "bold", size = 14),
+        axis.title = element_text(face = "bold")
+      )
+    
+  
+    print(p)
+  }
+}
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+## prediction de nouveaux échantillons 2026
 ### METHODE 1
 ```{r}
 # load(paste0(d0,"vitaspec_R/Vitaspec_fruit_models_3_sec"))

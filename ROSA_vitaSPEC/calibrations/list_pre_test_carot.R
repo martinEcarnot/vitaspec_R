@@ -1,6 +1,6 @@
 # Chargement des prétraitements
 
-list_pre_test=list(
+list_pre_test_carot=list(
 
 rbind(list('adj',''),list('snv',''),list('sder',c(1,3,5))),
 rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15))),
