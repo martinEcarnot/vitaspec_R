@@ -235,6 +235,8 @@ ag <- Y %>%
   select(2:21) %>%
   colnames()
 
+write.csv(ag, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag.csv"),row.names = FALSE)
+
 join <- function(data){
   data %>% 
     left_join(Y, by = "ech")
@@ -243,6 +245,10 @@ join <- function(data){
 #dat <- join(mean_Meso_frais_matrix)
 
 dat <- join(mean_Meso_sec_DIADE_matrix)
+
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat_sec_DIADE_matrix.csv"),row.names = FALSE)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_sec_DIADE_matrix.csv"),row.names = FALSE)
+
 ```
 
 ## CV
@@ -510,6 +516,10 @@ save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitasp
 
 ## nouveaux Y sur 2024-2025
 ```{r}
+
+library(ggpmisc)
+library(ggrepel)
+
 ## comparaison valeurs des Y
 new_carot <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/new_carot_fruits.xlsx")) %>% 
   mutate(ech = sub("-.*", "", code_nirs)) %>% 
@@ -558,7 +568,7 @@ tab_diff_moy <- data_plot %>%
   relocate(trans.alpha.carotene,trans.beta.carotene,X9.cis.beta.carotene,X13.cis.beta.carotene,total.beta.carotene,total.carotene)
 
 
-#graph comparaison
+#graph comparaison old/new
 mon_theme <- theme_bw() + 
   theme(
     plot.title = element_text(size = 14, hjust = 0, face = "bold", margin = margin(b = 15)),
@@ -593,6 +603,40 @@ p_page2 <- data_long %>%
 # print(p_page1) 
 # print(p_page2)
 # dev.off()
+
+#regression old/new
+data_scatter <- data_plot %>%
+  pivot_longer(cols = -c(ech, Origine), names_to = "Variable", values_to = "Valeur") %>%
+  pivot_wider(names_from = Origine, values_from = Valeur) %>% 
+  mutate(ech_clean = sub("^M", "", ech))
+p3 <- ggplot(data_scatter, aes(x = Old, y = New)) +
+  geom_point(shape = 1, alpha = 0.6) +
+  geom_text_repel(aes(label = ech_clean), 
+                  size = 3,            # Taille du texte
+                  segment.color = 'grey80', # Couleur de la petite ligne de liaison
+                  force = 1,           # Force de répulsion (augmentez si besoin)
+                  max.overlaps = 15) +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 0.5) +
+  stat_poly_eq(aes(label = after_stat(rr.label)), 
+               formula = y ~ x, 
+               parse = TRUE, 
+               label.x = "left", 
+               label.y = "top") +
+  facet_wrap(~ Variable, scales = "free", ncol = 3) + 
+  theme_bw() +
+  labs(
+    title = "Comparaison Old vs New",
+    x = "Old",
+    y = "New"
+  )
+
+pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/pred_vs_mesure_new_carot_scatter.pdf"), 
+    width = 16,  
+    height = 10)  
+print(p3) 
+dev.off()
+
 
 #graph histo
 data_plot_graph <- data_plot %>%
@@ -631,12 +675,11 @@ p2 <- ggplot(data_plot_graph, aes(x = compose, y = diff_moy, fill = Sens)) +
     plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
     legend.position = "bottom")
 
-
-pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/graphique_difference_carot.pdf"), 
-    width = 16,  
-    height = 10)  
-print(p2) 
-dev.off()
+# pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/graphique_difference_carot.pdf"), 
+#     width = 16,  
+#     height = 10)  
+# print(p2) 
+# dev.off()
 
 
 ## comparaison nouveaux Y/pred
