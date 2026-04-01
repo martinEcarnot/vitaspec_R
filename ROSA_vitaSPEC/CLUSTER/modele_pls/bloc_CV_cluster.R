@@ -49,6 +49,11 @@ id_model=list()
 idparam <- "meso_silica"
 set.seed(123)
 
+read.table(paste0(d0,"ag.csv"),
+           sep=";", 
+           header=TRUE, 
+           dec=",")
+
 ncomp = 15
 compose_etudie <- ag[-c(3:20)]
 print(compose_etudie)
@@ -60,10 +65,6 @@ for (k in compose_etudie){
     dir.create(files, recursive = TRUE)}
 }
 
-read.table(paste0(d0,"ag.csv"),
-           sep=";", 
-           header=TRUE, 
-           dec=",")
 dat <- read.table(paste0(d0,"dat_sec_DIADE_matrix.csv"),
                   sep = ",",
                   header = TRUE,
