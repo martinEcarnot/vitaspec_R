@@ -18,7 +18,7 @@ library(rchemo)
 
 d0 <- "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/"
 
-source(paste0(d0,"list_pre_test_carot_cluster.R "))
+source(paste0(d0,"list_pre_test_carot_cluster.R"))
 source(paste0(d0,"list_pre_test_AG_cluster.R"))
 
 source(paste0(d0,"new_new_preCV_cluster.R"))
@@ -33,13 +33,13 @@ id_model=list()
 idparam <- "meso_silica"
 set.seed(123)
 
-read.table(paste0(d0,"ag.csv"),
-           sep=";", 
-           header=TRUE, 
-           dec=",")
+ag <- read.table(paste0(d0,"ag.csv"),
+                 sep=";", 
+                 header=TRUE, 
+                 dec=",")
 
 ncomp = 15
-compose_etudie <- ag[-c(3:20)]
+compose_etudie <- colnames(ag)[-c(3:20)]
 print(compose_etudie)
 
 for (k in compose_etudie){
