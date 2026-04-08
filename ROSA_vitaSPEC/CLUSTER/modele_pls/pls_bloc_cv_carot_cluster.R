@@ -80,12 +80,12 @@ compose_etudie %>%
         data = datok,
         x = x_mat,
         y = y_vals,
-        list_pre = list_pre_test_AG,
+        list_pre = list_pre_test_carot,
         ncomp = ncomp,
         seg = 10,
         titl = "Meso_sec",
         y_name = ag1,
-        rep = 3,
+        rep = 50,
         sortie = S0)
     })
   })
