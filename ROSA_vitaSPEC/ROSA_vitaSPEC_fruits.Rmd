@@ -438,13 +438,17 @@ join <- function(data){
   data %>% 
     left_join(Y, by = "ech")
 }
+join_HR <- function(data){
+  data %>% 
+    left_join(Y_HR, by = "ech")
+}
 
 #dat <- join(mean_Meso_frais_matrix)
 
-dat <- join(mean_HR_2425_DIADE)
+dat <- join_HR(mean_HR_2425_DIADE)
 
-write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_HR_2425_DIADE.csv"),row.names = FALSE)
-write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_mean_HR_2425_DIADE.csv"),row.names = FALSE)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_DIADE.csv"),row.names = FALSE)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_HR_2425_DIADE.csv"),row.names = FALSE)
 
 ```
 
