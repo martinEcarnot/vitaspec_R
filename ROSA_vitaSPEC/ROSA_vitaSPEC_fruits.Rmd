@@ -70,7 +70,8 @@ AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"),
 #   mutate(ech = sub("-.*", "", code_nirs)) %>% 
 #   select(-c(1,2))
 carot <- read.xlsx(paste0(d0,"analyses_ref/fruits/méso-carot-sets_1-3=51_éch_Amel+92_Antoine_v2.xlsx")) %>%
-  mutate(ech = sub("-.*", "", code_nirs)) %>% 
+  mutate(ech = sub("-.*", "", code_nirs)
+         ) %>% 
   select(-c(1,2))
 
 ### lip totaux
@@ -102,8 +103,8 @@ Yvalue <- eau %>%
   full_join(carot, by = "ech")
 
 ### export
-write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.csv"),row.names = FALSE)
-write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx"))
+#write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.csv"),row.names = FALSE)
+#write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx"))
 
 
 
@@ -150,8 +151,8 @@ Yvalue_HR <- carot_HR %>%
   relocate(ech,`C14.0`,`C16.0`,`C18.0`,`C18.1n9`,`C18.2`,`FFA(%)`,trans.alpha.carotene,trans.beta.carotene,X13.cis.beta.carotene,X9.cis.beta.carotene,total.beta.carotene,total.carotene,lycopene,aT,aT3,gT3,dT3,total.T3,total.toco)
 
 ### export
-write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
-write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
+# write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
+# write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
 
 ```
 
@@ -183,6 +184,9 @@ dirs2026 <- list.dirs(paste0(d0,"spectres/"), recursive = FALSE) %>%
   filter(!grepl("HR", value)) %>%
   filter(grepl("2026",value)) %>% 
   pull(value) 
+
+dirs2026_vrai <- dirs2026[-c(5,7:9,15:16)]
+dirs2026_test <- dirs2026[-c(1:4,6,10:16)]
 
 ### merge de tous les campagnes de spectres
 Xvalue2024_fruit <- map_dfr(dirs2024, function(dossier) {
@@ -216,9 +220,28 @@ Xvalue2025_fruit <- map_dfr(dirs2025, function(dossier) {
     TRUE ~ NA_character_)
   return(data)
 })
-Xvalue2026_fruit <- map_dfr(dirs2026, function(dossier) {
+Xvalue2026_fruit <- map_dfr(dirs2026_vrai, function(dossier) {
   data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
   data$campagne <- 2026
+  data$source <- case_when(
+    str_detect(dossier, "AGAP") ~ "AGAP",
+    str_detect(dossier, "DIADE") ~ "DIADE",
+    TRUE ~ NA_character_)
+  data$etat <- case_when(
+    str_detect(dossier, "Pobe") & str_detect(data$spname, "X") ~ "Exo",
+    str_detect(dossier, "Pobe") & !str_detect(data$spname, "X") ~ "Meso_frais",
+    str_detect(dossier, "S_DIADE|S_AGAP") ~ "Meso_Silica",
+    TRUE ~ NA_character_)
+  return(data)
+})
+Xvalue2026_fruit_spe <- map_dfr(dirs2026_test, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2026
+  data$source <- case_when(
+    str_detect(dossier, "_Manip") ~ "AGAP",
+    str_detect(dossier, "Test") ~ "AGAP",
+    TRUE ~ NA_character_)
+  data$etat <- "Meso_frais"
   return(data)
 })
 
@@ -239,6 +262,15 @@ Xvalue2025_fruit <- Xvalue2025_fruit %>%
                             nchar(spname)-4, 
                             nchar(spname)
                             )))
+# Xvalue2026_fruit <- Xvalue2026_fruit %>% 
+#   filter(!str_detect(spname, "Spectrum")) %>% 
+#   mutate(
+#     ech = sub("-.*", "", spname),
+#     rep = as.numeric(substr(spname, 
+#                             nchar(spname)-4, 
+#                             nchar(spname)
+#                             )))
+  
 
 ### clean noms colonnes
 Xvalue2024_fruit <- Xvalue2024_fruit %>% 
@@ -248,6 +280,8 @@ Xvalue2025_fruit <- Xvalue2025_fruit %>%
   rename_with(~ str_remove_all(.x, "(?i)_Vitaspec")) %>% 
   select(-2)
 Xvalue2026_fruit <- Xvalue2026_fruit %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec"))
+Xvalue2026_fruit_spe <- Xvalue2026_fruit_spe %>% 
   rename_with(~ str_remove_all(.x, "(?i)_Vitaspec"))
 
 
@@ -322,57 +356,57 @@ Xvalue2025_HR <- Xvalue2025_HR %>%
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 ### spectres
 ## FRAIS
-Meso_frais_24_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240325_Pobe"),filtre_nom = "sans_X")
-Meso_frais_25_matrix <- compile_spectres_matrix(Xvalue2025_fruit,c("x20250224_Pobe"),"sans_X")
+Meso_frais_24_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240325_Pobe"),filtre_etat = "Meso_frais")
+Meso_frais_25_matrix <- compile_spectres_matrix(Xvalue2025_fruit,c("x20250224_Pobe"),filtre_etat = "Meso_frais")
 #Meso_frais_26_matrix <- 
-Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_nom = "sans_X")
+Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Meso_frais")
 #Meso_frais_242526_matrix <- 
 
 #Meso_frais_df <- compile_spectres_df(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),"sans_X")
 
 
 ##SEC
-Meso_sec_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE"))
-Meso_sec_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE"))
+Meso_sec_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE"),filtre_etat = "Meso_Silica")
+Meso_sec_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
 #Meso_sec_26_DIADE_matrix <-
-Meso_sec_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE"))
+Meso_sec_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
 #Meso_sec_242526_DIADE_matrix
 
-Meso_sec_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_AGAP"))
-Meso_sec_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_AGAP"))
-Meso_sec_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_AGAP","x20250313_S_AGAP"))
+Meso_sec_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
 
-Meso_sec_2425_TOT_matrix <- compile_spectres_matrix(Xvalue_fruit,c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"))
+Meso_sec_2425_TOT_matrix <- compile_spectres_matrix(Xvalue_fruit,c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
 
 
 ##LYOPH
-Meso_lyoph_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_DIADE","x20250321_Lyoph_DIADE"))
-Meso_lyoph_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_AGAP","x20250321_Lyoph_AGAP"))
+Meso_lyoph_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_DIADE","x20250321_Lyoph_DIADE"),filtre_etat = "Meso_Lyoph")
+Meso_lyoph_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_AGAP","x20250321_Lyoph_AGAP"),filtre_etat = "Meso_Lyoph")
 
-Meso_lyoph_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"))
+Meso_lyoph_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Lyoph")
 
 
 ##EXO
-# Exo_frais_matrix <- compile_spectres_matrix(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),"avec_X")
-# Exo_frais_df <- compile_spectres_df(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),"avec_X")
+# Exo_frais_matrix <- compile_spectres_matrix(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Exo")
+# Exo_frais_df <- compile_spectres_df(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Exo")
 
 
 ##HYUILE
-HR_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE"))
-HR_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"))
-HR_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"))
+HR_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE"),filtre_etat = "HR")
+HR_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
+HR_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
 
-HR_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP"))
-HR_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20250317_AGAP"))
-HR_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP","x20250317_AGAP"))
+HR_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP"),filtre_etat = "HR")
+HR_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20250317_AGAP"),filtre_etat = "HR")
+HR_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP","x20250317_AGAP"),filtre_etat = "HR")
 
-write.csv(HR_24_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_DIADE.csv"),row.names = FALSE)
-write.csv(HR_25_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"),row.names = FALSE)
-write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_DIADE.csv"),row.names = FALSE)
-
-write.csv(HR_24_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_AGAP.csv"),row.names = FALSE)
-write.csv(HR_25_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_AGAP.csv"),row.names = FALSE)
-write.csv(HR_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_AGAP.csv"),row.names = FALSE)
+# write.csv(HR_24_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_DIADE.csv"),row.names = FALSE)
+# write.csv(HR_25_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"),row.names = FALSE)
+# write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_DIADE.csv"),row.names = FALSE)
+# 
+# write.csv(HR_24_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_AGAP.csv"),row.names = FALSE)
+# write.csv(HR_25_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_AGAP.csv"),row.names = FALSE)
+# write.csv(HR_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_AGAP.csv"),row.names = FALSE)
 
 
 ## TOT
@@ -414,7 +448,7 @@ mean_spectres_df <- function(data){
 # mean_Meso_lyoph_AGAP_matrix <- mean_spectres_matrix(Meso_lyoph_AGAP_matrix)
 # mean_Meso_lyph_TOT_diff_matrix <- bind_rows("DIADE" = mean_Meso_lyoph_DIADE_matrix, "AGAP" = mean_Meso_lyoph_AGAP_matrix, .id = "source")
 
-mean_HR_2425_DIADE <- mean_spectres_matrix(HR_2425_DIADE_matrix)
+mean_Meso_sec_2425_DIADE <- mean_spectres_matrix(Meso_sec_2425_DIADE_matrix)
 
 
 
@@ -443,12 +477,11 @@ join_HR <- function(data){
     left_join(Y_HR, by = "ech")
 }
 
-#dat <- join(mean_Meso_frais_matrix)
+# dat <- join_HR(mean_HR_2425_DIADE)
+dat <- join(mean_Meso_sec_2425_DIADE)
 
-dat <- join_HR(mean_HR_2425_DIADE)
-
-write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_DIADE.csv"),row.names = FALSE)
-write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_HR_2425_DIADE.csv"),row.names = FALSE)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_HR_2425_DIADE.csv"),row.names = FALSE)
 
 ```
 
@@ -536,17 +569,23 @@ files <- paste0(S0,k)
 ## comparaison pretraitements
 ```{r}
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+SEC <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/SEC/"
+
+ncomp = 15
+compose_etudie <- ag[-c(1:10)]
+
+V <- SEC
 
 for (k in compose_etudie){
 files <- k
 
-  list_tab <- list.files(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files),
+  list_tab <- list.files(paste0(d0,SEC,files),
                          pattern = "\\.xlsx$",
                          full.names = FALSE)
   list_tab_clean <- gsub("\\.xlsx$", "", list_tab)
   
   for (i in 1:length(list_tab_clean)){
-    tab <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],".xlsx"))
+    tab <- readxl::read_excel(paste0(d0,V,files,"/",list_tab_clean[i],".xlsx"))
      
     tab_moy <- tab %>% 
       group_by(Pretraitement) %>%
@@ -554,19 +593,19 @@ files <- k
                 Wold_Ncomp = paste(Wold_Ncomp, collapse = ", "),
                 across(-c(Repetition, onesigma_Ncomp, Wold_Ncomp), ~ mean(.x, na.rm = TRUE)),
                 .groups = "drop")
-    write_xlsx(tab_moy, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy",".xlsx"))
+    write_xlsx(tab_moy, paste0(d0,V,files,"/",list_tab_clean[i],"_moy",".xlsx"))
   
     tab_R2 <- tab_moy %>% 
       select(Pretraitement, ends_with("R2") & -contains ("ADJ"))
-    write_xlsx(tab_R2, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_R2",".xlsx"))
+    write_xlsx(tab_R2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2",".xlsx"))
     
     tab_ADJR2 <- tab_moy %>% 
       select(Pretraitement, contains ("ADJ"))
-    write_xlsx(tab_ADJR2, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_ADJR2",".xlsx"))
+    write_xlsx(tab_ADJR2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_ADJR2",".xlsx"))
     
     tab_RMSEP <- tab_moy %>% 
       select(Pretraitement, contains("RMSEP"))
-    write_xlsx(tab_RMSEP, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_RMSEP",".xlsx"))
+    write_xlsx(tab_RMSEP, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_RMSEP",".xlsx"))
     
     tab_diff <- tab_moy
     for(d in 0:ncomp) {
@@ -580,10 +619,9 @@ files <- k
     tab_diff <- tab_diff %>% 
       select(-contains("RMSEP")) %>% 
       select(Pretraitement,contains("diff")) %>% 
-      write_xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/",files,"/",list_tab_clean[i],"_moy_diff",".xlsx"))
+      write_xlsx(paste0(d0,V,files,"/",list_tab_clean[i],"_moy_diff",".xlsx"))
   }
 }
-
 ```
  
 ## Calibration finale
@@ -600,6 +638,11 @@ idparam <- "meso_silica"
 ncomp <- 15
 compose_etudie <- ag#[-c(1:10,20)]
 
+dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE_matrix.csv"),
+                  sep = ",",
+                  header = TRUE,
+                  dec = ".")
+
 compose_etudie %>% 
   walk(function(ag1) {
     print(ag1)
@@ -607,7 +650,7 @@ compose_etudie %>%
       filter(!is.na(.data[[ag1]]))
   
     y_vals <- as.numeric(datok[[ag1]])
-    x_mat  <- as.matrix(datok$x)
+    x_mat <- as.matrix(datok %>% select(starts_with("x", ignore.case = FALSE)))
     seg <- 10
     
     current_param <- param %>%

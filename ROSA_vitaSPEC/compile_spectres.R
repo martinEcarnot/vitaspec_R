@@ -1,4 +1,4 @@
-compile_spectres_matrix <- function(..., colonnes_spectres, filtre_nom = "aucun") {
+compile_spectres_matrix <- function(..., colonnes_spectres, filtre_etat = "aucun") {
   
   data <- bind_rows(list(...))
   
@@ -10,19 +10,24 @@ compile_spectres_matrix <- function(..., colonnes_spectres, filtre_nom = "aucun"
     df_temp <- df_temp[!is.na(df_temp$x[, 1]), ]
     df_temp <- df_temp %>% select(-starts_with("x20"))
     table[[i]] <- df_temp
-    }
+  }
   df_compile <- bind_rows(table)
   
-  if (filtre_nom == "sans_X") {
-    df_compile <- df_compile %>% filter(!str_detect(spname, "X"))
-  } else if (filtre_nom == "avec_X") {
-    df_compile <- df_compile %>% filter(str_detect(spname, "X"))
+  if (filtre_etat == "Exo") {
+    df_compile <- df_compile %>% filter(etat == "Exo")
+  } else if (filtre_etat == "Meso") {
+
+    df_compile <- df_compile %>% filter(str_detect(etat, "Meso"))
+  } else if (all(filtre_etat != "aucun")) {
+    #filtre sur un ou plusieurs états(ex filtre_etat = c("Meso_frais", "Meso_Lyoph"))
+    df_compile <- df_compile %>% filter(etat %in% filtre_etat)
   }
   
   return(df_compile)
 }
 
-compile_spectres_df <- function(..., colonnes_spectres, filtre_nom = "aucun") {
+
+compile_spectres_df <- function(..., colonnes_spectres, filtre_etat = "aucun") {
   
   data <- bind_rows(list(...))
   
@@ -34,13 +39,15 @@ compile_spectres_df <- function(..., colonnes_spectres, filtre_nom = "aucun") {
     df_temp <- df_temp[!is.na(df_temp$x[, 1]), ]
     df_temp <- df_temp %>% select(-starts_with("x20"))
     table[[i]] <- df_temp
-    }
+  }
   df_compile <- bind_rows(table)
   
-  if (filtre_nom == "sans_X") {
-    df_compile <- df_compile %>% filter(!str_detect(spname, "X"))
-  } else if (filtre_nom == "avec_X") {
-    df_compile <- df_compile %>% filter(str_detect(spname, "X"))
+  if (filtre_etat == "Exo") {
+    df_compile <- df_compile %>% filter(etat == "Exo")
+  } else if (filtre_etat == "Meso") {
+    df_compile <- df_compile %>% filter(str_detect(etat, "Meso"))
+  } else if (all(filtre_etat != "aucun")) {
+    df_compile <- df_compile %>% filter(etat %in% filtre_etat)
   }
   
   spectres_df <- as.data.frame(df_compile$x)
