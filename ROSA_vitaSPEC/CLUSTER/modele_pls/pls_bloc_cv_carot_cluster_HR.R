@@ -41,7 +41,7 @@ ag_table <- read.table(paste0(d0,"ag_HR.csv"),
 ag <- ag_table$x
 
 ncomp = 15
-compose_etudie <- ag[-c(1:6)]
+compose_etudie <- ag[-c(1:14)]
 print(compose_etudie)
 
 for (k in compose_etudie){
@@ -51,7 +51,7 @@ for (k in compose_etudie){
     dir.create(files, recursive = TRUE)}
 }
 
-dat <- read.table(paste0(d0,"dat_mean_HR_2425_DIADE.csv"),
+dat <- read.table(paste0(d0,"dat_HR_2425_DIADE.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
