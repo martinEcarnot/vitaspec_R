@@ -133,7 +133,8 @@ carot_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/HR-carot-sets_1_à_3-1
 
 ###AGL
 AGL_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/Partie_1.4.xlsx")) %>% 
-  mutate(ech = as.character(`#`)) %>% 
+  mutate(ech = as.character(`#`),
+         FFA = `FFA(%)`) %>% 
   select(-c(1:2))
 
 ###TOCO
@@ -448,7 +449,7 @@ mean_spectres_df <- function(data){
 # mean_Meso_lyoph_AGAP_matrix <- mean_spectres_matrix(Meso_lyoph_AGAP_matrix)
 # mean_Meso_lyph_TOT_diff_matrix <- bind_rows("DIADE" = mean_Meso_lyoph_DIADE_matrix, "AGAP" = mean_Meso_lyoph_AGAP_matrix, .id = "source")
 
-mean_Meso_sec_2425_DIADE <- mean_spectres_matrix(Meso_sec_2425_DIADE_matrix)
+mean_HR_2425_DIADE <- mean_spectres_matrix(HR_2425_DIADE_matrix)
 
 
 
@@ -457,6 +458,9 @@ mean_Meso_sec_2425_DIADE <- mean_spectres_matrix(Meso_sec_2425_DIADE_matrix)
 # le fichier Yvalue modifié avec les 4 variables carotene en plus 
 Y <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus.xlsx")) 
 Y_HR <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus_HR.xlsx"))
+
+Y_HR <- Y_HR %>% 
+  mutate(FFA = `FFA(%)`)
 
 ag <- Y %>%
   select(2:21) %>%
@@ -480,7 +484,7 @@ join_HR <- function(data){
 # dat <- join_HR(mean_HR_2425_DIADE)
 dat <- join(mean_Meso_sec_2425_DIADE)
 
-write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_HR_2425_DIADE.csv"),row.names = FALSE)
 # write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_HR_2425_DIADE.csv"),row.names = FALSE)
 
 ```
@@ -629,7 +633,7 @@ files <- k
 param=read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
 #source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R"))
 
-
+  
 fm_all=list()
 id_model=list()
 #idparam <- "meso_frais"
@@ -638,7 +642,7 @@ idparam <- "meso_silica"
 ncomp <- 15
 compose_etudie <- ag#[-c(1:10,20)]
 
-dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE_matrix.csv"),
+dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
