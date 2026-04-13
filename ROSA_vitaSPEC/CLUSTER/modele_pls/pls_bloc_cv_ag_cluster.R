@@ -51,7 +51,7 @@ for (k in compose_etudie){
     dir.create(files, recursive = TRUE)}
 }
 
-dat <- read.table(paste0(d0,"dat_sec_DIADE_matrix.csv"),
+dat <- read.table(paste0(d0,"dat_Meso_frais_2425.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
@@ -83,7 +83,7 @@ compose_etudie %>%
         list_pre = list_pre_test_AG,
         ncomp = ncomp,
         seg = 10,
-        titl = "Meso_sec",
+        titl = "Meso_frais",
         y_name = ag1,
         rep = 50,
         sortie = S0)
