@@ -15,8 +15,7 @@ compile_spectres_matrix <- function(..., colonnes_spectres, filtre_etat = "aucun
   
   if (filtre_etat == "Exo") {
     df_compile <- df_compile %>% filter(etat == "Exo")
-  } else if (filtre_etat == "Meso") {
-
+  } else if (filtre_etat == "Meso_frais") {
     df_compile <- df_compile %>% filter(str_detect(etat, "Meso"))
   } else if (all(filtre_etat != "aucun")) {
     #filtre sur un ou plusieurs états(ex filtre_etat = c("Meso_frais", "Meso_Lyoph"))
