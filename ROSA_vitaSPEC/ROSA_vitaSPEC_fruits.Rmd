@@ -362,11 +362,11 @@ source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
 ## FRAIS
 Meso_frais_24_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240325_Pobe"),filtre_etat = "Meso_frais")
 Meso_frais_25_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250224_Pobe"),filtre_etat = "Meso_frais")
-#Meso_frais_26_matrix <- 
+Meso_frais_26_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectres = c("x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
 Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Meso_frais")
-#Meso_frais_242526_matrix <- 
+Meso_frais_242526_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe","x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
 
-#Meso_frais_df <- compile_spectres_df(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),"sans_X")
+
 
 
 ##SEC
@@ -471,7 +471,7 @@ ag_HR <- Y_HR %>%
   select(2:24) %>% 
   colnames()
 
-#write.csv(ag_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag_HR.csv"),row.names = FALSE)
+write.csv(ag_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag_HR.csv"),row.names = FALSE)
 #write.csv(ag_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/ag_HR.csv"),row.names = FALSE)
 
 join <- function(data){
