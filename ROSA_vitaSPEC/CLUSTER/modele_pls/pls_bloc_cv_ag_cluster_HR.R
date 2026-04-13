@@ -41,7 +41,7 @@ ag_table <- read.table(paste0(d0,"ag_HR.csv"),
 ag <- ag_table$x
 
 ncomp = 15
-compose_etudie <- ag[-c(6:22)]
+compose_etudie <- ag[-c(1:5,7:23)]
 print(compose_etudie)
 
 for (k in compose_etudie){
