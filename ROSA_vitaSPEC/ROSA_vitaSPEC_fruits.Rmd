@@ -152,8 +152,8 @@ Yvalue_HR <- carot_HR %>%
   relocate(ech,`C14.0`,`C16.0`,`C18.0`,`C18.1n9`,`C18.2`,`FFA`,trans.alpha.carotene,trans.beta.carotene,X13.cis.beta.carotene,X9.cis.beta.carotene,total.beta.carotene,total.carotene,lycopene,aT,aT3,gT3,dT3,total.T3,total.toco)
 
 ### export
-write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
-write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
+# write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
+# write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
 
 ```
 
@@ -462,14 +462,13 @@ mean_HR_2425_DIADE <- mean_spectres_matrix(HR_2425_DIADE_matrix)
 Y <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus.xlsx")) 
 Y_HR <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus_HR.xlsx"))
 
-Y_HR <- Y_HR %>% 
-  mutate(FFA = `FFA(%)`)
+Y_HR <- Y_HR
 
 ag <- Y %>%
   select(2:21) %>%
   colnames()
 ag_HR <- Y_HR %>% 
-  select(2:6,8:25) %>% 
+  select(2:24) %>% 
   colnames()
 
 #write.csv(ag_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag_HR.csv"),row.names = FALSE)
