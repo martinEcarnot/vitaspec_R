@@ -57,7 +57,6 @@ rbind(list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'))
 rbind(list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,9))),
 
 rbind(list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1)))
-
 ) 
      
   
