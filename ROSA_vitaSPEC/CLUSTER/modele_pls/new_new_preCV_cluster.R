@@ -35,7 +35,7 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
     }
     
     PRESS.pls <- sum((y - cvpred)^2) 
-    RMSEP_glo <- sqrt(PRESS.pls/n)
+    RMSEcv_glo <- sqrt(PRESS.pls/n)
     
     # recup nom du pretraitement
     mat <- list_pre[[idx_pre]]
@@ -57,10 +57,10 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
     mod_global <- plsr(y ~ xp, data = df_temp, ncomp = ncomp, scale = FALSE, validation = "CV", segments = segs)
     
     # metriques
-    res_rmsep <- RMSEP(mod_global, estimate = "CV")$val[1, 1,] 
+    res_rmsecv <- RMSEP(mod_global, estimate = "CV")$val[1, 1,] 
     
     res_r2 <- R2(mod_global, estimate = "train")$val[1, 1,]
-    res_r2_adj <- R2(mod_global, estimate = "CV")$val[1, 1,]
+    res_r2_cv <- R2(mod_global, estimate = "CV")$val[1, 1,]
     
     best_wold_global <- get_best_wold(pls_mod = mod_global, y_train = df_temp$y, n_rows = n)
     
@@ -75,14 +75,14 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
     
     # tableau de résultats
     df_res <- data.frame(matrix(ncol = 0, nrow = 1))
-    for(m in 1:length(res_rmsep)){ 
+    for(m in 1:length(res_rmsecv)){ 
       lv_num <- m - 1
-      df_res[1, paste0("LV", lv_num, "_RMSEP")] <- res_rmsep[m]
+      df_res[1, paste0("LV", lv_num, "_RMSEcv")] <- res_rmsecv[m]
       df_res[1, paste0("LV", lv_num, "_R2")] <- res_r2[m]
-      df_res[1, paste0("LV", lv_num, "_ADJR2")] <- res_r2_adj[m]
+      df_res[1, paste0("LV", lv_num, "_R2cv")] <- res_r2_cv[m]
     }
     
-    df_res <- cbind(Repetition = numero_rep, Pretraitement = nom_pre, RMSEP_glo = RMSEP_glo, onesigma_Ncomp = bestncomp_global, Wold_Ncomp = best_wold_global, df_res)
+    df_res <- cbind(Repetition = numero_rep, Pretraitement = nom_pre, RMSEcv_glo = RMSEcv_glo, onesigma_Ncomp = bestncomp_global, Wold_Ncomp = best_wold_global, df_res)
     
     par(new = TRUE)
     
@@ -90,18 +90,18 @@ new_new_preCV = function(data, x, y, list_pre, ncomp, seg, titl, y_name, rep, so
     plot(x_comps, res_r2, type = "b", col = "#90C987", pch = 17, lty = 2, lwd = 2,
          axes = FALSE, xlab = "", ylab = "", ylim = c(0, 1)) 
     
-    # ADJR2
-    lines(x_comps, res_r2_adj, type = "b", col = "#4eb265", pch = 16, lty = 1, lwd = 2)
+    # R2cv
+    lines(x_comps, res_r2_cv, type = "b", col = "#4eb265", pch = 16, lty = 1, lwd = 2)
     
     # axe
     axis(4, col = "black", col.axis = "black")
     mtext("R2", side = 4, line = 2.5, col = "black", cex = 0.9)
     
-    mtext(paste("Repetition :",numero_rep,"/", rep,"| RMSEcv global =", round(RMSEP_glo, 3)), side = 3, line = 0.5, cex = 0.85)
+    mtext(paste("Repetition :",numero_rep,"/", rep,"| RMSEcv global =", round(RMSEcv_glo, 3)), side = 3, line = 0.5, cex = 0.85)
     
     # legende
     legend("top", bty = "n", cex = 0.8,
-           legend = c("RMSEcv", "R2", "ADJR2"), 
+           legend = c("RMSEcv", "R2", "R2_cv"), 
            col = c("black", "#90C987", "#4eb265"), 
            pch = c(1, 17, 16), 
            lty = c(1, 2, 1),
