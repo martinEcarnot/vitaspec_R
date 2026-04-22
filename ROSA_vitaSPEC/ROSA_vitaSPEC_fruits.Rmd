@@ -353,13 +353,16 @@ Xvalue2025_HR <- map_dfr(dirs2025_HR, function(dossier) {
 
 ### clean des spectres sans nom (erreur manip)
 Xvalue2024_HR <- Xvalue2024_HR %>% 
-  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage|^73-")) %>% 
   mutate(
     ech = sub("-.*", "", spname),
     rep = as.numeric(str_extract(spname, "(?<=0)[1-9][0-9]*$"))
   )
 Xvalue2025_HR <- Xvalue2025_HR %>% 
-  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  filter(
+    !str_detect(spname, "Spectrum|blanc|test nettoyage|^165-|^73-"),
+    spname != "139-HR-29-400006"
+  ) %>% 
   mutate(
     ech = sub("-.*", "", spname),
     rep = as.numeric(str_extract(spname, "(?<=0)[1-9][0-9]*$"))
@@ -379,40 +382,57 @@ Xvalue2025_HR <- Xvalue2025_HR %>%
 ## Prep data 
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 ### spectres
-
 source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
+
 
 ## FRAIS
 Meso_frais_24_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240325_Pobe"),filtre_etat = "Meso_frais")
 Meso_frais_25_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250224_Pobe"),filtre_etat = "Meso_frais")
 Meso_frais_26_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectres = c("x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
 Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Meso_frais")
-# write.csv(Meso_frais_2425_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Meso_frais_2425.csv"),row.names = FALSE)
 Meso_frais_242526_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe","x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
 
+# write.csv(Meso_frais_242526_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_242526.csv"),row.names = FALSE)
 
 
 
 ##SEC
+#DIADE
 Meso_sec_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE"),filtre_etat = "Meso_Silica")
 Meso_sec_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
-#Meso_sec_26_DIADE_matrix <-
+Meso_sec_26_DIADE_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectres = c("x20260304_S_DIADE","x20260305_S_DIADE","x20260306_S_DIADE","x20260309_R6_FACILE_S_DIADE","x20260309_R7_FACILE_S_DIADE"),filtre_etat = "Meso_Silica")
 Meso_sec_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
-# write.csv(Meso_sec_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Meso_sec_2425_DIADE.csv"),row.names = FALSE)
-#Meso_sec_242526_DIADE_matrix
+Meso_sec_242526_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20260304_S_DIADE","x20260305_S_DIADE","x20260306_S_DIADE","x20260309_R6_FACILE_S_DIADE","x20260309_R7_FACILE_S_DIADE"),filtre_etat = "Meso_Silica")
+  
+# write.csv(Meso_sec_24_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_24_DIADE.csv"),row.names = FALSE)
 
+#AGAP
 Meso_sec_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_AGAP"),filtre_etat = "Meso_Silica")
 Meso_sec_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
 Meso_sec_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
 
+# write.csv(Meso_sec_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_AGAP.csv"),row.names = FALSE)
+
+#TOT
+Meso_sec_24_TOT_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20240405_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
 Meso_sec_2425_TOT_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+
+# write.csv(Meso_sec_2425_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_TOT.csv"),row.names = FALSE)
+
 
 
 ##LYOPH
+#DIADE
 Meso_lyoph_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_DIADE","x20250321_Lyoph_DIADE"),filtre_etat = "Meso_Lyoph")
+
+#AGAP
 Meso_lyoph_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_AGAP","x20250321_Lyoph_AGAP"),filtre_etat = "Meso_Lyoph")
 
 Meso_lyoph_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Lyoph")
+
+# write.csv(Meso_lyoph_25_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_lyoph_25_TOT.csv"),row.names = FALSE)
+
 
 
 ##EXO
@@ -421,27 +441,27 @@ Meso_lyoph_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_sp
 
 
 ##HYUILE
+#DIADE
 HR_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE"),filtre_etat = "HR")
 HR_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
 HR_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
-write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/HR_2425_DIADE.csv"),row.names = FALSE)
 
+# write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_DIADE.csv"),row.names = FALSE)
+# write_xlsx(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/HR_2425_DIADE.xlsx"))
+
+#AGAP
 HR_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP"),filtre_etat = "HR")
-HR_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20250317_AGAP"),filtre_etat = "HR")
+HR_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_AGAP"),filtre_etat = "HR")
 HR_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP","x20250317_AGAP"),filtre_etat = "HR")
 
-# write.csv(HR_24_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_DIADE.csv"),row.names = FALSE)
-# write.csv(HR_25_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"),row.names = FALSE)
-# write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_DIADE.csv"),row.names = FALSE)
-# 
-# write.csv(HR_24_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_24_AGAP.csv"),row.names = FALSE)
-# write.csv(HR_25_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_AGAP.csv"),row.names = FALSE)
 # write.csv(HR_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_AGAP.csv"),row.names = FALSE)
 
+# TOT
+HR_24_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20240424_AGAP","x20241209_AGAP"),filtre_etat = "HR")
+HR_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
+HR_2425_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20240424_AGAP","x20241209_AGAP","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
 
-## TOT
-# TOT_AGAP_matrix <- 
-
+# write.csv(HR_2425_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_TOT.csv"),row.names = FALSE)
 
 
 
@@ -463,26 +483,50 @@ mean_spectres_df <- function(data){
       .groups = "drop")
   }
 
-# mean_Meso_sec_DIADE_df <- mean_spectres_df(Meso_sec_DIADE_df)
-# write.csv(mean_Meso_frais_df, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/mean_Meso_frais_df.csv"),row.names = FALSE)
-# write_xlsx(mean_Meso_frais_df, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/mean_Meso_frais_df.xlsx"))
-
-# mean_Meso_sec_DIADE_matrix <- mean_spectres_matrix(Meso_sec_DIADE_matrix)
-# mean_Meso_sec_AGAP_matrix <- mean_spectres_matrix(Meso_sec_AGAP_matrix)
-# mean_Meso_sec_TOT_matrix <- mean_spectres_matrix(Meso_sec_TOT_matrix)
-# mean_Meso_sec_TOT_diff_matrix <- bind_rows("DIADE" = mean_Meso_sec_DIADE_matrix, "AGAP" = mean_Meso_sec_AGAP_matrix, .id = "source")
-# 
-# mean_Meso_frais_matrix <- mean_spectres_matrix(Meso_frais_matrix)
-# 
-# mean_Meso_lyoph_DIADE_matrix <- mean_spectres_matrix(Meso_lyoph_DIADE_matrix)
-# mean_Meso_lyoph_AGAP_matrix <- mean_spectres_matrix(Meso_lyoph_AGAP_matrix)
-# mean_Meso_lyph_TOT_diff_matrix <- bind_rows("DIADE" = mean_Meso_lyoph_DIADE_matrix, "AGAP" = mean_Meso_lyoph_AGAP_matrix, .id = "source")
 
 
+
+mean_Meso_frais_24 <- mean_spectres_matrix(Meso_frais_24_matrix)
+mean_Meso_frais_25 <- mean_spectres_matrix(Meso_frais_25_matrix)
+mean_Meso_frais_26 <- mean_spectres_matrix(Meso_frais_26_matrix)
 mean_Meso_frais_2425 <- mean_spectres_matrix(Meso_frais_2425_matrix)
-mean_Meso_sec_2425_AGAP <- mean_spectres_matrix(Meso_sec_2425_AGAP_matrix)
+mean_Meso_frais_242526 <- mean_spectres_matrix(Meso_frais_242526_matrix)
+
+
+mean_Meso_sec_24_DIADE <- mean_spectres_matrix(Meso_sec_24_DIADE_matrix)
+mean_Meso_sec_25_DIADE <- mean_spectres_matrix(Meso_sec_25_DIADE_matrix)
+mean_Meso_sec_26_DIADE <- mean_spectres_matrix(Meso_sec_26_DIADE_matrix)
 mean_Meso_sec_2425_DIADE <- mean_spectres_matrix(Meso_sec_2425_DIADE_matrix)
+mean_Meso_sec_242526_DIADE <- mean_spectres_matrix(Meso_sec_242526_DIADE_matrix)
+
+mean_Meso_sec_24_AGAP <- mean_spectres_matrix(Meso_sec_24_AGAP_matrix)
+mean_Meso_sec_25_AGAP <- mean_spectres_matrix(Meso_sec_25_AGAP_matrix)
+mean_Meso_sec_2425_AGAP <- mean_spectres_matrix(Meso_sec_2425_AGAP_matrix)
+
+mean_Meso_sec_24_TOT <- mean_spectres_matrix(Meso_sec_24_TOT_matrix)
+mean_Meso_sec_25_TOT <- mean_spectres_matrix(Meso_sec_25_TOT_matrix)
+mean_Meso_sec_2425_TOT <- mean_spectres_matrix(Meso_sec_2425_TOT_matrix)
+
+
+mean_Meso_lyoph_25_DIADE <- mean_spectres_matrix(Meso_lyoph_25_DIADE_matrix)
+mean_Meso_lyoph_25_AGAP <- mean_spectres_matrix(Meso_lyoph_25_AGAP_matrix)
+mean_Meso_lyoph_25_TOT <- mean_spectres_matrix(Meso_lyoph_25_TOT_matrix)
+
+
+mean_HR_24_DIADE <- mean_spectres_matrix(HR_24_DIADE_matrix)
+mean_HR_25_DIADE <- mean_spectres_matrix(HR_25_DIADE_matrix)
 mean_HR_2425_DIADE <- mean_spectres_matrix(HR_2425_DIADE_matrix)
+
+mean_HR_24_AGAP <- mean_spectres_matrix(HR_24_AGAP_matrix)
+mean_HR_25_AGAP <- mean_spectres_matrix(HR_25_AGAP_matrix)
+mean_HR_2425_AGAP <- mean_spectres_matrix(HR_2425_AGAP_matrix)
+
+mean_HR_24_TOT <- mean_spectres_matrix(HR_24_TOT_matrix)
+mean_HR_25_TOT <- mean_spectres_matrix(HR_25_TOT_matrix)
+mean_HR_2425_TOT <- mean_spectres_matrix(HR_2425_TOT_matrix)
+
+# write.csv(mean_HR_25_TOT, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/mean_HR_25_TOT.csv"),row.names = FALSE)
+
 
 
 ### chimie
@@ -512,13 +556,75 @@ join_HR <- function(data){
     left_join(Y_HR, by = "ech")
 }
 
-# dat <- join_HR(mean_HR_2425_DIADE)
-# dat <- join(mean_Meso_sec_2425_AGAP)
-dat <- join(mean_Meso_sec_2425_DIADE)
+# dat <- join(mean_Meso_frais_24)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_24.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_25)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_25.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_26)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_26.csv"),row.names = FALSE)
 # dat <- join(mean_Meso_frais_2425)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_2425.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_242526)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_242526.csv"),row.names = FALSE)
 
-# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
-# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
+
+# dat <- join(mean_Meso_sec_24_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_26_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_26_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_242526_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_242526_DIADE.csv"),row.names = FALSE)
+# 
+# dat <- join(mean_Meso_sec_24_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_AGAP.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_AGAP.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_AGAP.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_sec_24_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_TOT.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_TOT.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_TOT.csv"),row.names = FALSE)
+
+
+# dat <- join(mean_Meso_lyoph_25_DIADE) 
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_DIADE.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_lyoph_25_AGAP) 
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_AGAP.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_lyoph_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_TOT.csv"),row.names = FALSE)
+
+
+# dat <- join_HR(mean_HR_24_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_DIADE.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_DIADE.csv"),row.names = FALSE)
+# 
+# dat <- join_HR(mean_HR_24_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_AGAP.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_AGAP.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_AGAP.csv"),row.names = FALSE)
+# 
+# dat <- join_HR(mean_HR_24_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_TOT.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_TOT.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_TOT.csv"),row.names = FALSE)
+
 
 ```
 
