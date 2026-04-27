@@ -29,7 +29,7 @@ S0 <- paste0(d0,"test_pretraitements/")
 fm_all=list()
 id_model=list()
 #idparam <- "meso_frais"
-idparam <- "meso_silica"
+idparam <- "meso_frais"
 set.seed(123)
 
 ag_table <- read.table(paste0(d0,"ag.csv"),
@@ -50,7 +50,7 @@ for (k in compose_etudie){
     dir.create(files, recursive = TRUE)}
 }
 
-dat <- read.table(paste0(d0,"dat_mean_Meso_sec_2425_DIADE.csv"),
+dat <- read.table(paste0(d0,"dat_mean_Meso_frais_2425.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
@@ -82,7 +82,7 @@ compose_etudie %>%
         list_pre = list_pre_test_tot,
         ncomp = ncomp,
         seg = 10,
-        titl = "Meso_Silica",
+        titl = "Meso_frais",
         y_name = ag1,
         rep = 50,
         sortie = S0)
