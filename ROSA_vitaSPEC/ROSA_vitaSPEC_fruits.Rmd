@@ -712,14 +712,14 @@ files <- paste0(S0,k)
 ## comparaison pretraitements
 ```{r}
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
-SEC <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/SEC/"
-HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/HR/"
-FRAIS <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/FRAIS/"
+SEC <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/SEC/"
+HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/HR/"
+FRAIS <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/FRAIS/"
 
 ncomp = 15
 compose_etudie <- ag #ag_HR
 
-V <- FRAIS
+V <- SEC
 
 for (k in compose_etudie){
 files <- k
@@ -731,38 +731,48 @@ files <- k
   
   for (i in 1:length(list_tab_clean)){
     tab <- readxl::read_excel(paste0(d0,V,files,"/",list_tab_clean[i],".xlsx"))
-     
+    colnames(tab)[1] <- "Repetition"
+    colnames(tab)[2] <- "Pretraitement"
+  
     tab_moy <- tab %>% 
+      distinct(Pretraitement, Repetition, .keep_all = TRUE) %>% 
       group_by(Pretraitement) %>%
-      summarise(onesigma_Ncomp = paste(onesigma_Ncomp, collapse = ", "),
-                Wold_Ncomp = paste(Wold_Ncomp, collapse = ", "),
-                across(-c(Repetition, onesigma_Ncomp, Wold_Ncomp), ~ mean(.x, na.rm = TRUE)),
-                .groups = "drop")
+      summarise(
+        onesigma_Ncomp = paste(onesigma_Ncomp, collapse = ", "),
+        Wold_Ncomp = paste(Wold_Ncomp, collapse = ", "),
+        across(-c(Repetition, onesigma_Ncomp, Wold_Ncomp), ~ mean(.x, na.rm = TRUE)),
+        .groups = "drop"
+      )
     write_xlsx(tab_moy, paste0(d0,V,files,"/",list_tab_clean[i],"_moy",".xlsx"))
   
     tab_R2 <- tab_moy %>% 
-      select(Pretraitement, ends_with("R2") & -contains ("ADJ"))
+      select(Pretraitement, ends_with("R2") & -contains ("cv"))
     write_xlsx(tab_R2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2",".xlsx"))
     
     tab_ADJR2 <- tab_moy %>% 
-      select(Pretraitement, contains ("ADJ"))
-    write_xlsx(tab_ADJR2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_ADJR2",".xlsx"))
+      select(Pretraitement, contains ("R2cv"))
+    write_xlsx(tab_ADJR2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2cv",".xlsx"))
     
     tab_RMSEP <- tab_moy %>% 
-      select(Pretraitement, contains("RMSEP"))
-    write_xlsx(tab_RMSEP, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_RMSEP",".xlsx"))
+      select(Pretraitement, contains("RMSEcv"))
+    write_xlsx(tab_RMSEP, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_RMSEcv",".xlsx"))
     
     tab_diff <- tab_moy
     for(d in 0:ncomp) {
       col_r2   <- paste0("LV", d, "_R2")
-      col_adj  <- paste0("LV", d, "_ADJR2")
+      col_adj  <- paste0("LV", d, "_R2cv")
       col_diff <- paste0("LV", d, "_diff")
   
-    tab_diff <- tab_diff %>% 
-      mutate(!!col_diff := .[[col_r2]] - .[[col_adj]])
+      if (col_r2 %in% names(tab_diff) && col_adj %in% names(tab_diff)) {
+        tab_diff <- tab_diff %>% 
+          mutate(!!col_diff := .data[[col_r2]] - .data[[col_adj]])
+      } else {
+        message(paste(d, "colonnes non trouvées"))
+      }
     }
+  
     tab_diff <- tab_diff %>% 
-      select(-contains("RMSEP")) %>% 
+      select(-contains("RMSEcv")) %>% 
       select(Pretraitement,contains("diff")) %>% 
       write_xlsx(paste0(d0,V,files,"/",list_tab_clean[i],"_moy_diff",".xlsx"))
   }
@@ -1013,9 +1023,9 @@ data_scatter <- data_plot %>%
 p3 <- ggplot(data_scatter, aes(x = Old, y = New)) +
   geom_point(shape = 1, alpha = 0.6) +
   geom_text_repel(aes(label = ech_clean), 
-                  size = 3,            # Taille du texte
-                  segment.color = 'grey80', # Couleur de la petite ligne de liaison
-                  force = 1,           # Force de répulsion (augmentez si besoin)
+                  size = 3,            #taille du texte
+                  segment.color = 'grey80', # ligne de liaison
+                  force = 1,           
                   max.overlaps = 15) +
   geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
   geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 0.5) +
@@ -1416,9 +1426,6 @@ write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, 
 write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
 ```
 
-
-
-
 ## plot differences sec vs frais
 ```{r}
 library(ggplot2)
@@ -1507,8 +1514,79 @@ dev.off()
 
 ```
 
+## plot detect outlier
+```{r}
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyverse)
 
 
+fileHR <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/HR_pred.xlsx")) %>% 
+  mutate(
+    ech = as.factor(as.numeric(str_extract(ech, "(\\d+)(?=_[^_]*$)"))),
+    partie_chiffree = str_remove(str_extract(spectrum, "_[0-9]+$"), "_"),
+    Repetition = as.factor(case_when(
+      nchar(partie_chiffree) <= 2 ~ as.numeric(partie_chiffree),                  
+      nchar(partie_chiffree) > 2  ~ as.numeric(str_sub(partie_chiffree, -1, -1))
+    ))
+  ) %>% 
+  select(-c(1), -partie_chiffree)
+
+variables <- unique(fileHR_long$Variable)
+
+liste_ech <- sort(as.numeric(as.character(unique(fileHR_long$ech))))
+
+groupes_ech <- cut(seq_along(liste_ech), breaks = 2, labels = FALSE)
+
+ech_partie1 <- liste_ech[groupes_ech == 1]
+ech_partie2 <- liste_ech[groupes_ech == 2]
+
+label_p1 <- paste("Partie 1 (Échantillons", min(ech_partie1), "à", max(ech_partie1), ")")
+label_p2 <- paste("Partie 2 (Échantillons", min(ech_partie2), "à", max(ech_partie2), ")")
+
+fileHR_long <- fileHR_long %>%
+  mutate(
+    ech_num = as.numeric(as.character(ech)),
+    partie = case_when(
+      ech_num %in% ech_partie1 ~ label_p1,
+      ech_num %in% ech_partie2 ~ label_p2
+    ),
+    partie = factor(partie, levels = c(label_p1, label_p2)) 
+  )
+
+nom_fichier_pdf <- "detection_outlier_HR.pdf"
+
+pdf(paste0(d0, nom_fichier_pdf), width = 11.7, height = 8.3)
+
+for (var in variables) {
+  
+  p <- fileHR_long %>%
+    filter(Variable == var) %>%
+    
+    ggplot(aes(x = ech, y = Valeur, fill = Repetition)) + 
+    geom_line(aes(group = ech), color = "black", linewidth = 0.5) +
+    geom_point(shape = 21, size = 2, color = "black", alpha = 0.8) +
+    facet_wrap(~ partie, scales = "free_x", ncol = 1) + 
+
+    scale_fill_brewer(palette = "Paired") +
+    
+    labs(
+      title = paste("Analyse du composé :", var),
+      x = "Échantillons", 
+      y = "Valeur prédite",
+      fill = "Répétition"
+    ) +
+    mon_theme
+  
+  print(p)
+}
+dev.off()
+
+
+```
 
 
 
