@@ -10,6 +10,10 @@ ROSA_vitaSPEC/Data
 Vitaspec_fruit_model_def_sec
 predictions/
 vitaspec_meso_24-25
+.venv/
+__pycache__/
+*.py[cod]
+.env
 .RDataTmp
 .RDataTmp1
 .RDataTmp2

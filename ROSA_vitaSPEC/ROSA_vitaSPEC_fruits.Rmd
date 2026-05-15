@@ -625,6 +625,16 @@ join_HR <- function(data){
 # write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_TOT.csv"),row.names = FALSE)
 
 
+
+
+
+HR_25_DIADE_out <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>% 
+  mutate(ech = as.character(ech))
+
+HR_25_DIADE_out_ok <- inner_join(HR_25_DIADE_out, Y_HR, by = "ech")
+
+write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
+
 ```
 
 ## CV
@@ -1866,11 +1876,13 @@ ggsave(filename = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/acp/pca_tri
 
 library(tidyverse)
 
-fileHR <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/old_mauvais_param/HR_pred.xlsx")) %>% 
+HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean.csv"))
+
+HR_pred <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/old_mauvais_param/HR_pred.xlsx")) %>% 
   mutate(
-    ech = as.factor(as.numeric(str_extract(ech, "(\\d+)(?=_[^_]*$)"))),
+    ech = as.integer(str_extract(ech, "(\\d+)(?=_[^_]*$)")),
     partie_chiffree = str_remove(str_extract(spectrum, "_[0-9]+$"), "_"),
-    Repetition = as.factor(case_when(
+    Repetition = as.integer(case_when(
       nchar(partie_chiffree) <= 2 ~ as.numeric(partie_chiffree),                  
       nchar(partie_chiffree) > 2  ~ as.numeric(str_sub(partie_chiffree, -1, -1))
     ))
@@ -1878,7 +1890,9 @@ fileHR <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/old
   select(-c(1), -partie_chiffree) %>% 
   distinct(ech, Repetition, .keep_all = TRUE)
 
-fileHR_long <- fileHR %>%
+HR_pred_clean <- semi_join(HR_pred, HR_25_DIADE_clean, by = c("ech" = "ech", "Repetition" = "rep"))
+
+fileHR_long <- HR_pred_clean %>%
   pivot_longer(
     cols = -c(ech, Repetition), 
     names_to = "Variable", 
@@ -1973,14 +1987,13 @@ tableau_outliers <- fileHR_long %>%
     Repetition, 
     Valeur_Predite = Valeur, 
     Mediane_Echantillon = mediane_val, 
+    madval = mad_val,
     Score_MAD = Z
   ) %>%
   
   arrange(Composé, Echantillon, desc(Score_MAD))
 
-nom_fichier_excel <- paste0(d0, "liste_outliers_HR_MAD_1.xlsx")
-
-write_xlsx(tableau_outliers, nom_fichier_excel)
+write_xlsx(tableau_outliers, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/liste_outliers_HR_MAD_2tour.xlsx"))
 
 ```
 
@@ -2136,8 +2149,25 @@ dev.off()
 ```{r}
 library(cowplot)
 
-MAD <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_outliers_HR_MAD_2.xlsx")) %>% 
-  filter(Composé != "a.")
+MAD <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_outliers_HR_MAD_2tour.xlsx")) %>% 
+  filter(Composé != "a.",
+         Composé != "C14.0",
+         Composé != "C18.0",
+         Composé != "total.trans.carotenes.natif",
+         Composé != "ratio.alpha.beta",
+         Composé != "ratio.alpha.natif",
+         Composé != "ratio.beta.natif",
+         Composé != "X13.cis.beta.carotene",
+         Composé != "total.beta.carotene",
+         Composé != "total.carotene",
+         Composé != "aT",
+         Composé != "aT3",
+         Composé != "dT3",
+         Composé != "gT3",
+         Composé != "lycopene",
+         Composé != "total.T3", 
+         Composé != "total.toco"
+         )
 
 MAD_groupe <- MAD %>%
   group_by(Echantillon) %>%
@@ -2193,17 +2223,29 @@ legende_seule <- cowplot::get_legend(p_complet)
 p_sans_legende <- p_complet + theme(legend.position = "none")
 
 
-pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/data/outliers/Intensite_outliers_2.pdf"), width = 12, height = 8)
+pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/data/outliers/Intensite_outliers_2.5.pdf"), width = 12, height = 8)
 print(p_sans_legende)
 print(plot_grid(legende_seule)) 
 
 dev.off()
 
-write_xlsx(spectres_a_supprimer, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer.xlsx"))
+# write_xlsx(spectres_a_supprimer, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer.xlsx"))
+write_xlsx(decision_tab, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_3.xlsx"))
 ```
 
+## on enleve les spectres
+```{r}
+supr <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_2.xlsx")) %>%
+  mutate(Echantillon = as.integer(Echantillon),
+         Repetition = as.integer(Repetition))
 
+HR <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"))
 
+HR_clean <- anti_join(HR, supr, by = c("ech" = "Echantillon", "rep" = "Repetition"))
+
+write.csv(HR_clean, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean.csv"),row.names = FALSE)
+  
+```
 
 
 
