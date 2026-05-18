@@ -626,7 +626,7 @@ join_HR <- function(data){
 
 
 
-
+ag_HR_vrai <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/ag_HR.csv"))
 
 HR_25_DIADE_out <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>% 
   mutate(ech = as.character(ech))
@@ -726,9 +726,9 @@ HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/HR/"
 FRAIS <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/FRAIS/"
 
 ncomp = 15
-compose_etudie <- ag #ag_HR
+compose_etudie <- ag_HR#ag #ag_HR
 
-V <- FRAIS
+V <- HR
 
 for (k in compose_etudie){
 files <- k
@@ -758,9 +758,9 @@ files <- k
       select(Pretraitement, ends_with("R2") & -contains ("cv"))
     write_xlsx(tab_R2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2",".xlsx"))
     
-    tab_ADJR2 <- tab_moy %>% 
+    tab_R2cv <- tab_moy %>% 
       select(Pretraitement, contains ("R2cv"))
-    write_xlsx(tab_ADJR2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2cv",".xlsx"))
+    write_xlsx(tab_R2cv, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2cv",".xlsx"))
     
     tab_RMSEP <- tab_moy %>% 
       select(Pretraitement, contains("RMSEcv"))
@@ -796,14 +796,14 @@ param=read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_p
   
 fm_all=list()
 id_model=list()
-idparam <- "meso_silica"
+# idparam <- "meso_silica"
 # idparam <- "meso_frais"
-# idparam <- "HR"
+idparam <- "HR"
 
 ncomp <- 15
-compose_etudie <- ag#ag_HR
+compose_etudie <- ag_HR#ag#ag_HR
 
-dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_DIADE.csv"),
+dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
@@ -843,7 +843,7 @@ compose_etudie %>%
                        Condition = idparam))
       
       res_rmsep <- RMSEP(fm_finale, estimate = "CV")$val[1, 1, -1] 
-      res_r2_adj <- R2(fm_finale, estimate = "CV")$val[1, 1, -1]
+      res_r2_cv <- R2(fm_finale, estimate = "CV")$val[1, 1, -1]
       res_r2 <- R2(fm_finale, estimate = "train")$val[1, 1, -1]
       x_comps <- 1:(length(res_r2))
       
@@ -886,7 +886,7 @@ compose_etudie %>%
          axes = FALSE, xlab = "", ylab = "", ylim = c(0, 1)) 
     
       # ADJR2
-      lines(x_comps, res_r2_adj, type = "b", col = "#4eb265", pch = 16, lty = 1, lwd = 2)
+      lines(x_comps, res_r2_cv, type = "b", col = "#4eb265", pch = 16, lty = 1, lwd = 2)
     
       # axe
       axis(4, col = "black", col.axis = "black")
@@ -894,18 +894,18 @@ compose_etudie %>%
     
       # legende
       legend("top", bty = "n", cex = 0.8,
-             legend = c("RMSEcv", "R2", "ADJR2"), 
+             legend = c("RMSEcv", "R2", "R2cv"), 
             col = c("black", "#90C987", "#4eb265"), 
             pch = c(1, 17, 16), 
             lty = c(1, 2, 1),
             lwd = c(1, 2, 2))
       
       ## graph2
-      valeur_r2_adj <- round(res_r2_adj[n_lv], 3)
+      valeur_r2_cv <- round(res_r2_cv[n_lv], 3)
       valeur_rmsecv <- round(res_rmsep[n_lv], 3)
       
       texte <- paste0("n_comp = ", n_lv,
-                      "\nR2_cv = ", valeur_r2_adj, 
+                      "\nR2_cv = ", valeur_r2_cv, 
                       "\nRMSEcv = ", valeur_rmsecv,
                       "\nn_ech = ", n)
       
@@ -932,7 +932,7 @@ compose_etudie %>%
     }
     }
     )
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE"))
 ```
 
 ## nouveaux Y sur 2024-2025
@@ -1395,12 +1395,84 @@ write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, 
 write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
 ```
 
-
-
-
 ## prediction de nouveaux échantillons 2026 - HR
 ```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE"))
 
+# C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
+# dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
+# tab_HR_moy <- dat_HR_25_DIADE_clean %>% 
+#   select(-c(campagne, source, etat, rep)) %>% 
+#   group_by(ech) %>%
+#   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+# write_xlsx(tab_HR_moy,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_test.xlsx"))
+
+idparam <- "HR" 
+titre <- "HR_26_318_to_408"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260410_Vitaspec_HR_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    rep = as.numeric(str_extract(spectrum, "\\d$")),       
+    ech = paste0("HR-",as.numeric(str_extract(spectrum, "^[^-]+")))) %>%  
+  relocate(spectrum, ech, rep)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  prop <- param_filtre$Propriete[i]
+   
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  imodel <- imodel[1]
+  
+  n_lv <- param_filtre$nvl[i] 
+  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
+  pred_val <- as.vector(pred_array)
+  pred <- pred %>% 
+    mutate(!!prop := pred_val)
+}
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+compose <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(compose), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(compose)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
 ```
 
 ## prediction de 2024-2025 - frais/sec
