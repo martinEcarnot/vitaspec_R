@@ -1,0 +1,76 @@
+# %% importations
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import nirs4all
+from nirs4all.operators.transforms import SNV, SavitzkyGolay
+from nirs4all.operators.splitters import KennardStone  # splitting chimiométrique
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import KFold
+
+# %% data
+
+MODALITE_CIBLE = "meso_silica"
+# Noms des colonnes (à adapter avec ton vrai fichier CSV)
+COL_MODALITE = "modalite"
+COL_ID_ECHANTILLON = "id_echantillon"
+# On suppose que tes colonnes de longueurs d'onde ont un préfixe, ex: "wl_1000", "wl_1002"...
+PREFIXE_SPECTRE = "wl_"
+
+df_data = pd.read_csv("data_spectres_chimie.csv")
+# df_composes = pd.read_csv("liste_composes.csv") # Si tu as un fichier séparé pour les lister
+
+# Filtrage dynamique de la base de données selon la modalité choisie
+df_filtre = df_data[df_data[COL_MODALITE] == MODALITE_CIBLE].copy()
+print(f"Modalité sélectionnée : {MODALITE_CIBLE} | Spectres totaux : {len(df_filtre)}")
+
+# Définition automatique de la liste des composés à prédire
+# (Ici en dur pour l'exemple, tu peux automatiser via ton 2ème CSV)
+if MODALITE_CIBLE in ["meso_silica", "meso_frais"]:
+    liste_composes = ["carotene", "sucre", "acidite"]  # La liste de tes 20 composés
+elif MODALITE_CIBLE == "HR":
+    liste_composes = ["acide_oleique", "indice_iode"]  # La liste de tes 23 composés
+
+# Isolation des colonnes qui contiennent les spectres
+colonnes_spectres = [
+    col for col in df_filtre.columns if str(col).startswith(PREFIXE_SPECTRE)
+]
+
+
+# 2. Définition du Pipeline Déclaratif NIRS4ALL
+# C'est ici que réside la magie du package : tout le flux est défini en une seule structure lisible.
+rf_pipeline = [
+    # -- A. PRÉTRAITEMENTS SPECTRAUX (sur X) --
+    SNV(),  # Étape 1: Standard Normal Variate (corrige la diffusion)
+    SavitzkyGolay(
+        window_length=15, polyorder=2
+    ),  # Étape 2: Lissage pour enlever le bruit instrumental
+    # -- B. TRAITEMENT DE LA CIBLE (sur Y) --
+    {"y_processing": StandardScaler()},  # Centre et réduit tes valeurs chimiques (Y)
+    # -- C. SÉPARATION DES DONNÉES (Cross-Validation) --
+    # On utilise Kennard-Stone (fourni par nirs4all) qui est bien meilleur que le hasard pour la spectro
+    KennardStone(test_size=0.3),
+    # -- D. LE MODÈLE (Random Forest) --
+    {"model": RandomForestRegressor(n_estimators=200, random_state=42, n_jobs=-1)},
+]
+
+# 3. Exécution et Entraînement
+print("Lancement du pipeline d'analyse...")
+# L'API simplifiée (Quick Start) de nirs4all gère l'application successive des étapes
+# (Attention : la syntaxe exacte d'exécution peut légèrement varier selon la version mineure 0.8.x ou 0.9.x)
+resultats = nirs4all.run(X, y, pipeline=rf_pipeline)
+
+# 4. Analyse des résultats
+print("\n--- Performances du Modèle Random Forest ---")
+# nirs4all renvoie généralement un objet structuré contenant les métriques (RMSE, R2)
+# calculées directement sur les différents plis (folds) ou le test set.
+print(f"R² (Prédiction) : {resultats.metrics['r2']:.4f}")
+print(f"RMSEP           : {resultats.metrics['rmse']:.4f}")
+
+# 5. Visualisations intégrées
+# nirs4all possède des fonctions natives pour générer les graphiques classiques de publis
+resultats.plot_predictions()  # Trace le scatter plot Valeurs réelles vs Prédictions (la fameuse diagonale y=x)
+resultats.plot_feature_importance()  # Trace l'importance des variables (les longueurs d'ondes les plus utiles)

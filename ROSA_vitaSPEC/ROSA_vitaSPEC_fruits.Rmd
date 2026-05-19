@@ -626,14 +626,17 @@ join_HR <- function(data){
 
 
 
-ag_HR_vrai <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/ag_HR.csv"))
 
-HR_25_DIADE_out <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>% 
-  mutate(ech = as.character(ech))
 
-HR_25_DIADE_out_ok <- inner_join(HR_25_DIADE_out, Y_HR, by = "ech")
-
-write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
+# HR_25_DIADE_out <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>% 
+#   mutate(ech = as.character(ech))
+# HR_25_mean <- HR_25_DIADE_out %>% 
+#   select(-campagne, -source, -etat, -rep) %>%
+#   group_by(ech) %>%
+#   summarise(across(everything(), ~ mean(.x, na.rm = TRUE)))
+# 
+# HR_25_DIADE_out_ok <- inner_join(HR_25_mean, Y_HR, by = "ech")
+# write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
 
 ```
 
