@@ -1424,9 +1424,12 @@ param_filtre <- param %>%
 
 pred <- tibble(spectrum = rownames(spnew)) %>% 
   mutate(
-    rep = as.numeric(str_extract(spectrum, "\\d$")),       
-    ech = paste0("HR-",as.numeric(str_extract(spectrum, "^[^-]+")))) %>%  
-  relocate(spectrum, ech, rep)
+    rep = as.numeric(str_extract(spectrum, "\\d$")),
+    serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
+    ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
+    ech = as.numeric(str_extract(spectrum, "^[^-]+"))
+  ) %>%
+  relocate(spectrum, ech, rep, serie_collecte, ech_serie)
   
 # predictions
 nag <- nrow(param_filtre)
