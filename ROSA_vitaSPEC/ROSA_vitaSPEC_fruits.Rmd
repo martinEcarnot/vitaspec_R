@@ -377,9 +377,7 @@ Xvalue2025_HR <- Xvalue2025_HR %>%
 
 ```
 
-
-# Cross Validation
-## Prep data 
+### Prep data 
 ```{r, echo=FALSE, warning=FALSE, results='asis'}
 ### spectres
 source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
@@ -461,11 +459,117 @@ HR_24_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c(
 HR_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
 HR_2425_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20240424_AGAP","x20241209_AGAP","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
 
-# write.csv(HR_2425_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_TOT.csv"),row.names = FALSE)
+# write.csv(HR_25_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"),row.names = FALSE)
 
 
 
-### MEAN
+```
+
+### SD + OD (distances outlier)
+```{r}
+MAT <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>% 
+  mutate(id_spectre = paste0(ech, "_", rep)) %>% 
+  select(-campagne, -source, -etat, -ech, -rep) %>%
+  column_to_rownames(var = "id_spectre") %>%
+  as.matrix()
+
+
+# acp
+res.pca <- pcasvd(MAT, nlv = 10)
+
+
+# calcul distances
+res_scordis <- scordis(res.pca, nlv = 10)
+sd <- res_scordis$res.train %>% 
+  mutate(sdstand = dstand) %>% 
+  select(-d,-gh,-dstand) %>% 
+  rownames_to_column(var = "id_spectre")
+# sd_gh <- sd %>% 
+#   select(-sdstand)
+
+res_odis <- odis(res.pca, Xtrain = MAT, nlv=10)
+od <- res_odis$res.train %>% 
+  mutate(odstand = dstand) %>% 
+  select(-d, -dstand) %>% 
+  rownames_to_column(var = "id_spectre")
+
+dist <- sd %>%
+  inner_join(od, by = "id_spectre") %>%
+  column_to_rownames(var = "id_spectre")
+
+
+S = 1.5
+O = 1
+
+plot_data <- dist %>%
+  rownames_to_column(var = "id_spectre") %>%
+  mutate(statut = case_when(
+    sdstand <= S & odstand <= O ~ "ok x2",
+    sdstand > S  & odstand <= O ~ "ok",
+    sdstand <= S & odstand > O  ~ "outlier ortho",
+    sdstand > S  & odstand > O  ~ "outlier x2"
+  ))
+liste_outliers <- plot_data %>% 
+  filter(statut %in% c("ok", "outlier ortho", "outlier x2"))
+
+write_xlsx(liste_outliers,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/sd_od/liste_outliers_T2-lim",S,".xlsx"))
+
+#graph
+ggplot(plot_data, aes(x = sdstand, y = odstand)) +
+
+  geom_point(aes(color = statut), size = 2.5, alpha = 0.8) +
+  
+  # seuil à 1
+  geom_vline(xintercept = S, linetype = "dashed", color = "firebrick", linewidth = 0.7) +
+  geom_hline(yintercept = O, linetype = "dashed", color = "firebrick", linewidth = 0.7) +
+  
+
+  geom_text(data = filter(plot_data, sdstand > S | odstand > O),
+            aes(label = id_spectre), vjust = -0.7, size = 3, check_overlap = TRUE) +
+  
+  scale_color_manual(values = c(
+    "ok x2" = "forestgreen", 
+    "ok" = "darkorange", 
+    "outlier ortho" = "purple", 
+    "outlier x2" = "red"
+  )) +
+  
+  labs(
+    title = "Carte des outliers",
+    x = "distance d'Hotelling (T2)",
+    y = "distance résiduelle (Q)",
+    color = "Statut du spectre"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+
+ggsave(
+  filename = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/sd_od/carte_outliers_T2-lim",S,".pdf"), 
+  width = 8,                                
+  height = 5.5,                             
+  dpi = 300,                                
+  bg = "white"                              
+)
+
+
+# on sort les spectres flag
+spectres_a_exclure <- liste_outliers %>%
+  filter(statut %in% c("ok", "outlier x2")) %>%
+  select(id_spectre)
+
+HR <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>%
+  mutate(id_spectre = paste0(ech, "_", rep)) %>%
+  anti_join(spectres_a_exclure, by = "id_spectre") %>%
+  select(-id_spectre)
+
+write.csv(HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv"))
+
+```
+
+### mean
+```{r}
+
+### MEAN NORMAL
 mean_spectres_matrix <- function(data){
   data %>%
     group_by(ech) %>%
@@ -482,9 +586,6 @@ mean_spectres_df <- function(data){
       across(where(is.numeric), ~ mean(.x, na.rm = TRUE)),
       .groups = "drop")
   }
-
-
-
 
 mean_Meso_frais_24 <- mean_spectres_matrix(Meso_frais_24_matrix)
 mean_Meso_frais_25 <- mean_spectres_matrix(Meso_frais_25_matrix)
@@ -626,19 +727,19 @@ join_HR <- function(data){
 
 
 
+### MEAN OUTLIERS
 
+HR_25_DIADE_mean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>%
+  select(-campagne, -source, -etat, -rep) %>%
+  group_by(ech) %>%
+  summarise(across(everything(), ~ mean(.x, na.rm = TRUE))) %>% 
+  mutate(ech = as.character(ech))
 
-# HR_25_DIADE_out <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>% 
-#   mutate(ech = as.character(ech))
-# HR_25_mean <- HR_25_DIADE_out %>% 
-#   select(-campagne, -source, -etat, -rep) %>%
-#   group_by(ech) %>%
-#   summarise(across(everything(), ~ mean(.x, na.rm = TRUE)))
-# 
-# HR_25_DIADE_out_ok <- inner_join(HR_25_mean, Y_HR, by = "ech")
-# write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
-
+ 
+dat <- inner_join(HR_25_DIADE_mean, Y_HR, by = "ech")
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
 ```
+
 
 ## CV
 ```{r echo=FALSE, warning=FALSE, results='asis'}
@@ -935,7 +1036,7 @@ compose_etudie %>%
     }
     }
     )
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean"))
 ```
 
 ## nouveaux Y sur 2024-2025
@@ -1349,7 +1450,7 @@ pred <- tibble(spectrum = rownames(spnew)) %>%
     tissu = str_extract(spectrum, "(?<=-)[A-Za-z](?=[^-]*$)"),          # K / E
     de_ht_en_bas = as.numeric(str_extract(spectrum, "[0-9]+$")),        # 1 / 2 / ... / 15
     `#fruit` = paste0(régime, "-", copaux),                             # code petits pots
-    ech = paste0(régime,"-",copaux,"-",tissu,de_ht_en_bas)) %>%          #ex : R5-S4-K6
+    ech = paste0(régime,"-",copaux,"-",tissu)) %>%                      #ex : R5-S4-E / R4-S28-K
   relocate(spectrum, régime, copaux, conservation, tissu, de_ht_en_bas,`#fruit`, ech)
   
 # predictions
@@ -1393,14 +1494,14 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred_stats.xlsx"))
 ```
 
 ## prediction de nouveaux échantillons 2026 - HR
 ```{r}
-load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE"))
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean"))
 
 # C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
 # dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
@@ -1481,7 +1582,7 @@ write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, 
 write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
 ```
 
-## prediction de 2024-2025 - frais/sec
+## prediction de 2024-2025
 ```{r}
 load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR"))
 
@@ -1682,8 +1783,9 @@ dev.off()
 
 ```
 
+## DETECTION OUTLIER
 
-## plot detct outlier sur spectre bruts
+# plot detct outlier sur spectre bruts
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -1949,133 +2051,6 @@ ggsave(filename = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/acp/pca_tri
 ```
 
 
-## plot detect outlier sur pred
-```{r}
-
-library(tidyverse)
-
-HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean.csv"))
-
-HR_pred <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/predictions/old_mauvais_param/HR_pred.xlsx")) %>% 
-  mutate(
-    ech = as.integer(str_extract(ech, "(\\d+)(?=_[^_]*$)")),
-    partie_chiffree = str_remove(str_extract(spectrum, "_[0-9]+$"), "_"),
-    Repetition = as.integer(case_when(
-      nchar(partie_chiffree) <= 2 ~ as.numeric(partie_chiffree),                  
-      nchar(partie_chiffree) > 2  ~ as.numeric(str_sub(partie_chiffree, -1, -1))
-    ))
-  ) %>% 
-  select(-c(1), -partie_chiffree) %>% 
-  distinct(ech, Repetition, .keep_all = TRUE)
-
-HR_pred_clean <- semi_join(HR_pred, HR_25_DIADE_clean, by = c("ech" = "ech", "Repetition" = "rep"))
-
-fileHR_long <- HR_pred_clean %>%
-  pivot_longer(
-    cols = -c(ech, Repetition), 
-    names_to = "Variable", 
-    values_to = "Valeur"
-  )
-
-# calcul du MAD par échantillon par variable
-fileHR_long <- fileHR_long %>%
-  group_by(Variable, ech) %>%
-  mutate(
-    mad_val = ifelse(mad(Valeur, constant = 1.4826, na.rm = TRUE) == 0, 1e-6, mad(Valeur, constant = 1.4826, na.rm = TRUE)), 
-    mediane_val = median(Valeur, na.rm = TRUE),
-    Z = abs(Valeur - mediane_val) / mad_val,
-    #seuil conservateur de 3.5
-    Statut = ifelse(Z > 4.5, "Outlier", "Normal") 
-  ) %>%
-  ungroup()
-
-
-variables <- unique(fileHR_long$Variable)
-liste_ech <- sort(as.numeric(as.character(unique(fileHR_long$ech))))
-groupes_ech <- cut(seq_along(liste_ech), breaks = 2, labels = FALSE)
-
-ech_partie1 <- liste_ech[groupes_ech == 1]
-ech_partie2 <- liste_ech[groupes_ech == 2]
-
-label_p1 <- paste("Partie 1 (Échantillons", min(ech_partie1), "à", max(ech_partie1), ")")
-label_p2 <- paste("Partie 2 (Échantillons", min(ech_partie2), "à", max(ech_partie2), ")")
-
-fileHR_long <- fileHR_long %>%
-  mutate(
-    ech_num = as.numeric(as.character(ech)),
-    partie = case_when(
-      ech_num %in% ech_partie1 ~ label_p1,
-      ech_num %in% ech_partie2 ~ label_p2
-    ),
-    partie = factor(partie, levels = c(label_p1, label_p2)),
-    Statut = factor(Statut, levels = c("Normal", "Outlier"))
-  ) 
-
-mon_theme <- theme_bw() + 
-  theme(
-    plot.title = element_text(size = 14, hjust = 0, face = "bold", margin = margin(b = 15)),
-    strip.background = element_rect(fill = "gray85", color = "black"),
-    strip.text = element_text(size = 11, color = "black"),
-    panel.border = element_rect(color = "black", fill = NA),
-    panel.grid.major = element_line(color = "gray90"),
-    panel.grid.minor = element_line(color = "gray95"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 6),
-    legend.position = "bottom"
-  )
-
-nom_fichier_pdf <- paste0(d0, "detection_outlier_HR_MAD.pdf")
-pdf(nom_fichier_pdf, width = 11.7, height = 8.3)
-
-couleurs_statut <- c("Normal" = "grey70", "Outlier" = "red")
-
-for (var in variables) {
-  
-  p <- fileHR_long %>%
-    filter(Variable == var) %>%
-    
-    ggplot(aes(x = ech, y = Valeur, fill = Statut)) + 
-    
-    geom_line(aes(group = ech), color = "black", linewidth = 0.3, alpha = 0.5) +
-    
-    geom_point(shape = 21, size = 2.5, color = "black", stroke = 0.5) +
-    
-    facet_wrap(~ partie, scales = "free_x", ncol = 1) + 
-    
-    scale_fill_manual(values = couleurs_statut) +
-    
-    labs(
-      title = paste("Analyse du composé :", var, "(MAD > 4.5)"),
-      x = "Échantillons", 
-      y = "Valeur prédite",
-      fill = "Répétition :"
-    ) +
-    mon_theme
-  
-  print(p)
-}
-
-dev.off()
-
-tableau_outliers <- fileHR_long %>%
-  filter(Statut == "Outlier") %>%
-  
-  select(
-    Composé = Variable, 
-    Echantillon = ech, 
-    Repetition, 
-    Valeur_Predite = Valeur, 
-    Mediane_Echantillon = mediane_val, 
-    madval = mad_val,
-    Score_MAD = Z
-  ) %>%
-  
-  arrange(Composé, Echantillon, desc(Score_MAD))
-
-write_xlsx(tableau_outliers, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/liste_outliers_HR_MAD_2tour.xlsx"))
-
-```
-
-
 # plot outliers 1
 ```{r}
 library(nirsextra)
@@ -2223,97 +2198,17 @@ dev.off()
 ```
 
 
-## gestion de la liste MAD
+# MAD - plot detect outlier sur pred + gestion de la liste MAD (scripts "MAD")
 ```{r}
-library(cowplot)
+nb_modeles_rejet_max = "23"
+nb_modeles_rejet = "7"
+Z_seuil = 4.5
 
-MAD <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_outliers_HR_MAD_2tour.xlsx")) %>% 
-  filter(Composé != "a.",
-         Composé != "C14.0",
-         Composé != "C18.0",
-         Composé != "total.trans.carotenes.natif",
-         Composé != "ratio.alpha.beta",
-         Composé != "ratio.alpha.natif",
-         Composé != "ratio.beta.natif",
-         Composé != "X13.cis.beta.carotene",
-         Composé != "total.beta.carotene",
-         Composé != "total.carotene",
-         Composé != "aT",
-         Composé != "aT3",
-         Composé != "dT3",
-         Composé != "gT3",
-         Composé != "lycopene",
-         Composé != "total.T3", 
-         Composé != "total.toco"
-         )
-
-MAD_groupe <- MAD %>%
-  group_by(Echantillon) %>%
-  summarise(
-    rep = paste(Repetition, collapse = ", "),
-    compose = paste(Composé, collapse = ", "),
-    .groups = "drop"
-  )
+#source(..........)
 
 
-# Analyse par répétition d'échantillon
-decision_tab <- MAD %>%
-  group_by(Echantillon, Repetition) %>%
-  summarise(
-    nb_modeles_rejet = n(),                 # nombre de compose qui detecte cette rep
-    score_mad_moyen = mean(Score_MAD),      # intensité moyenne de l'outlier
-    modeles_impactes = paste(unique(Composé), collapse = ", "), # liste des composes
-    .groups = 'drop'
-  ) %>%
-  arrange(desc(nb_modeles_rejet), desc(score_mad_moyen))
-
-
-# top rep
-head(decision_tab)
-
-seuil_consensus <- 10        # a partir de 10 modèles, on supprime d'office
-seuil_mad_critique <- 10    # score MAD élevé
-
-
-spectres_a_supprimer <- decision_tab %>%
-  filter(
-    nb_modeles_rejet >= seuil_consensus | 
-    (nb_modeles_rejet >= 2 & score_mad_moyen >= seuil_mad_critique)
-  )
-
-# liste des spectres a retirer
-print(spectres_a_supprimer)
-
-
-p_complet <- ggplot(MAD, aes(x = Composé, y = as.factor(interaction(Echantillon, Repetition)))) +
-  geom_tile(aes(fill = Score_MAD)) +
-  scale_fill_gradient(low = "#00BFC4", high = "#F8766D") +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 10) 
-  ) +
-  labs(title = "Intensité des outliers par spectre et composé",
-       subtitle = "zones rouges = fort consensus de detection",
-       y = "Spectres (Echantillon x Répétition)")
-
-legende_seule <- cowplot::get_legend(p_complet)
-p_sans_legende <- p_complet + theme(legend.position = "none")
-
-
-pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/data/outliers/Intensite_outliers_2.5.pdf"), width = 12, height = 8)
-print(p_sans_legende)
-print(plot_grid(legende_seule)) 
-
-dev.off()
-
-# write_xlsx(spectres_a_supprimer, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer.xlsx"))
-write_xlsx(decision_tab, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_3.xlsx"))
-```
-
-## on enleve les spectres
-```{r}
-supr <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_2.xlsx")) %>%
+## on enlève les spectres flaggué
+supr <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_.xlsx")) %>%
   mutate(Echantillon = as.integer(Echantillon),
          Repetition = as.integer(Repetition))
 
@@ -2321,10 +2216,26 @@ HR <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"))
 
 HR_clean <- anti_join(HR, supr, by = c("ech" = "Echantillon", "rep" = "Repetition"))
 
-write.csv(HR_clean, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean.csv"),row.names = FALSE)
-  
-```
+lignes_fantomes <- anti_join(supr, HR, by = c("Echantillon" = "ech", "Repetition" = "rep"))
 
+
+
+
+
+write.csv(HR_clean, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean.csv"),row.names = FALSE)
+
+HR_25_DIADE <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>% 
+  mutate(ech = as.character(ech))
+
+# HR_25_mean <- HR_25_DIADE_out %>% 
+#   select(-campagne, -source, -etat, -rep) %>%
+#   group_by(ech) %>%
+#   summarise(across(everything(), ~ mean(.x, na.rm = TRUE)))
+# 
+# HR_25_DIADE_out_ok <- inner_join(HR_25_mean, Y_HR, by = "ech")
+# write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
+
+```
 
 
 

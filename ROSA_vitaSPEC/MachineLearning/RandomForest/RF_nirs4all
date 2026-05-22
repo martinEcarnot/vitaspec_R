@@ -1,76 +1,112 @@
-# %% importations
+# %% IMPORTATIONS
 import pandas as pd
+import sys
+from pathlib import Path
+from pathlib import Path
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 import nirs4all
-from nirs4all.operators.transforms import SNV, SavitzkyGolay
-from nirs4all.operators.splitters import KennardStone  # splitting chimiométrique
+
+# splitting pour la chimiometrie
+from nirs4all.operators.splitters import KennardStoneSplitter
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import KFold
 
-# %% data
+d0 = Path(
+    "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_vitaSPEC"
+)
+sys.path.append(str((d0 / "MachineLearning").resolve()))
+from diy_functions.pre_translation import pre_translation
 
-MODALITE_CIBLE = "meso_silica"
-# Noms des colonnes (à adapter avec ton vrai fichier CSV)
-COL_MODALITE = "modalite"
-COL_ID_ECHANTILLON = "id_echantillon"
-# On suppose que tes colonnes de longueurs d'onde ont un préfixe, ex: "wl_1000", "wl_1002"...
-PREFIXE_SPECTRE = "wl_"
 
-df_data = pd.read_csv("data_spectres_chimie.csv")
-# df_composes = pd.read_csv("liste_composes.csv") # Si tu as un fichier séparé pour les lister
+# %% chargement des donnees + pretrait
 
-# Filtrage dynamique de la base de données selon la modalité choisie
-df_filtre = df_data[df_data[COL_MODALITE] == MODALITE_CIBLE].copy()
-print(f"Modalité sélectionnée : {MODALITE_CIBLE} | Spectres totaux : {len(df_filtre)}")
+idparam = "meso_silica"
+# idparam = "meso_frais"
+# idparam = "HR"
 
-# Définition automatique de la liste des composés à prédire
-# (Ici en dur pour l'exemple, tu peux automatiser via ton 2ème CSV)
-if MODALITE_CIBLE in ["meso_silica", "meso_frais"]:
-    liste_composes = ["carotene", "sucre", "acidite"]  # La liste de tes 20 composés
-elif MODALITE_CIBLE == "HR":
-    liste_composes = ["acide_oleique", "indice_iode"]  # La liste de tes 23 composés
+DATA = d0 / "Data" / "dat" / "dat_mean_Meso_sec_2425_DIADE.csv"
+param = d0 / "calibrations" / "Vitaspec_fruit_param.csv"
+ech = "ech"
 
-# Isolation des colonnes qui contiennent les spectres
-colonnes_spectres = [
-    col for col in df_filtre.columns if str(col).startswith(PREFIXE_SPECTRE)
+# DATA
+df_data = pd.read_csv(DATA)
+col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
+
+liste_composes = []
+for col in reversed(df_data.columns):
+    if str(col).startswith("x."):
+        break
+    liste_composes.insert(0, col)
+
+# pretrait
+df_param = pd.read_csv(param)
+# On filtre les paramètres pour ne garder que ceux de la modalité actuelle (ex: contient 'meso_silica')
+df_param_mod = df_param[
+    df_param["Cal_data"].str.contains(idparam, na=False, case=False)
 ]
 
+print(f"{len(df_data)} échantillons.")
+print(f"{len(col_spectres)} longueurs d'ondes")
+print(
+    f"Dictionnaire de prétraitements chargé pour '{idparam}' : {len(df_param_mod)} règles trouvées."
+)
 
-# 2. Définition du Pipeline Déclaratif NIRS4ALL
-# C'est ici que réside la magie du package : tout le flux est défini en une seule structure lisible.
-rf_pipeline = [
-    # -- A. PRÉTRAITEMENTS SPECTRAUX (sur X) --
-    SNV(),  # Étape 1: Standard Normal Variate (corrige la diffusion)
-    SavitzkyGolay(
-        window_length=15, polyorder=2
-    ),  # Étape 2: Lissage pour enlever le bruit instrumental
-    # -- B. TRAITEMENT DE LA CIBLE (sur Y) --
-    {"y_processing": StandardScaler()},  # Centre et réduit tes valeurs chimiques (Y)
-    # -- C. SÉPARATION DES DONNÉES (Cross-Validation) --
-    # On utilise Kennard-Stone (fourni par nirs4all) qui est bien meilleur que le hasard pour la spectro
-    KennardStone(test_size=0.3),
-    # -- D. LE MODÈLE (Random Forest) --
-    {"model": RandomForestRegressor(n_estimators=200, random_state=42, n_jobs=-1)},
-]
+# %% BOUCLE SUR LES COMPOSES
 
-# 3. Exécution et Entraînement
-print("Lancement du pipeline d'analyse...")
-# L'API simplifiée (Quick Start) de nirs4all gère l'application successive des étapes
-# (Attention : la syntaxe exacte d'exécution peut légèrement varier selon la version mineure 0.8.x ou 0.9.x)
-resultats = nirs4all.run(X, y, pipeline=rf_pipeline)
+resultats_globaux = {}
 
-# 4. Analyse des résultats
-print("\n--- Performances du Modèle Random Forest ---")
-# nirs4all renvoie généralement un objet structuré contenant les métriques (RMSE, R2)
-# calculées directement sur les différents plis (folds) ou le test set.
-print(f"R² (Prédiction) : {resultats.metrics['r2']:.4f}")
-print(f"RMSEP           : {resultats.metrics['rmse']:.4f}")
+for compose in liste_composes:
+    print(f"\n{'=' * 50}")
+    print(f"Modélisation : {compose.upper()}")
 
-# 5. Visualisations intégrées
-# nirs4all possède des fonctions natives pour générer les graphiques classiques de publis
-resultats.plot_predictions()  # Trace le scatter plot Valeurs réelles vs Prédictions (la fameuse diagonale y=x)
-resultats.plot_feature_importance()  # Trace l'importance des variables (les longueurs d'ondes les plus utiles)
+    # filtre les échantillons valides
+    df_compose = df_data.dropna(subset=[compose]).copy()
+
+    if len(df_compose) == 0:
+        print(f"Aucune donnée chimique valide pour {compose}. Modèle ignoré.")
+        continue
+
+    print(f"Échantillons valides : {len(df_compose)}")
+
+    # construction du prétrait
+    # On cherche la ligne correspondant au composé dans le CSV des paramètres
+    regle_param = df_param_mod[df_param_mod["Propriete"] == compose]
+
+    if len(regle_param) > 0:
+        chaine_r = regle_param.iloc[0]["pre"]
+        etapes_pretraitement = pre_translation(chaine_r)
+        print(f"prétraitement: {etapes_pretraitement}")
+
+    # extraction x et y
+    X = df_compose[col_spectres].values
+    y = df_compose[compose].values
+
+    # pipeline nirs4all
+    # On additionne la liste de prétraitements avec le reste
+    pipeline = etapes_pretraitement + [
+        KennardStoneSplitter(test_size=0.3),
+        {"model": RandomForestRegressor(n_estimators=200, random_state=42, n_jobs=-1)},
+    ]
+
+    try:
+        # Exécution du modèle
+        resultat = nirs4all.run(X, y, pipeline=pipeline)
+
+        # Récupération des métriques
+        r2 = resultat.metrics["r2"]
+        rmse = resultat.metrics["rmse"]
+
+        print(f"✅ R² Prédiction : {r2:.3f} | RMSEP : {rmse:.3f}")
+
+        # Sauvegarde
+        resultats_globaux[compose] = {
+            "R2": r2,
+            "RMSEP": rmse,
+            "Resultat_Objet": resultat,
+        }
+
+    except Exception as e:
+        print(f"❌ Erreur lors de l'exécution pour {compose} : {e}")
+
+print("\n🚀 Fin de l'analyse globale !")
