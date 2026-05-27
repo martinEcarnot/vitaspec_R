@@ -50,7 +50,7 @@ for (k in compose_etudie){
     dir.create(files, recursive = TRUE)}
 }
 
-dat <- read.table(paste0(d0,"dat_HR_25_DIADE_clean.csv"),
+dat <- read.table(paste0(d0,"dat_HR_25_DIADE_clean_sd_mad.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
