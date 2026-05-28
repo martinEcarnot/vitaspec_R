@@ -282,7 +282,7 @@ Xvalue2025_fruit <- Xvalue2025_fruit %>%
 Xvalue2026_fruit <- Xvalue2026_fruit %>% 
   filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
   mutate(
-    ech = sub("-.*", "", spname),
+    ech = substr(spname, 1, nchar(spname) - 5),
     rep = as.numeric(substr(spname, 
                             nchar(spname)-4, 
                             nchar(spname)
@@ -290,7 +290,7 @@ Xvalue2026_fruit <- Xvalue2026_fruit %>%
 Xvalue2026_fruit_spe <- Xvalue2026_fruit_spe %>%
   filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
   mutate(
-    ech = sub("-.*", "", spname),
+    ech = substr(spname, 1, nchar(spname) - 5),
     rep = as.numeric(substr(spname, 
                             nchar(spname)-4, 
                             nchar(spname)
@@ -391,7 +391,7 @@ Meso_frais_26_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectr
 Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Meso_frais")
 Meso_frais_242526_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe","x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
 
-# write.csv(Meso_frais_242526_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_242526.csv"),row.names = FALSE)
+# write.csv(Meso_frais_26_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_26.csv"),row.names = FALSE)
 
 
 
@@ -827,7 +827,7 @@ files <- paste0(S0,k)
 ```{r}
 d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
 SEC <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/SEC/"
-HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/HR/"
+HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/HR_sd_mad/"
 FRAIS <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/FRAIS/"
 
 ncomp = 15
@@ -908,7 +908,7 @@ idparam <- "HR"
 ncomp <- 15
 compose_etudie <- ag_HR#ag#ag_HR
 
-dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),
+dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean_sd_mad.csv"),
                   sep = ",",
                   header = TRUE,
                   dec = ".")
@@ -1037,12 +1037,11 @@ compose_etudie %>%
     }
     }
     )
-save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean"))
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
 ```
 
 ## nouveaux Y sur 2024-2025
 ```{r}
-
 library(ggpmisc)
 library(ggrepel)
 
@@ -1268,24 +1267,20 @@ p <- ggplot(data_graph, aes(x = Predite, y = Mesuree)) +
 
 
 ## prediction de nouveaux échantillons 2026 
-### METHODE 1 - FRAIS + SEC
+### METHODE 1 - SEC
 ```{r}
 load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
 
-# idparam <- "meso_silica" 
-idparam <- "meso_frais" 
-titre <- "SEC_26_NIRS_R3_Methode1_Meso_Frais_AGAP"
+idparam <- "meso_silica" 
+titre <- "SEC_26_NIRS_R4_Methode1_Meso_Frais_AGAP"
 
 param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
 
 # spectres a predire
 
-f <- paste0(d0, "spectres/20260224_Vitaspec_Pobe_AGAP")
+f <- paste0(d0, "spectres/20260225_Vitaspec_Pobe_AGAP")
 spnew <- asd_read_dir(f) 
 spnew <- spnew[!grepl("^[^-]+-S", rownames(spnew)),]
-
-cat("nbr spctr avec NA :", sum(is.na(spnew)), "\n")
-spnew <- na.omit(spnew)
 
 param_filtre <- param %>% 
   filter(grepl(idparam, Cal_data))
@@ -1298,14 +1293,14 @@ pred <- tibble(spectrum = rownames(spnew)) %>%
     code1  = str_extract(spectrum, "(?<=-)[^-]+"),                      # L1H / L2H / L3H / L1M / L2M / L3M / pareil pour O
     zone   = substr(code1, 1, 2),                                       # L1 / L2 / L3 / O1 / O2 / O3
     lumière = substr(code1, 1, 1),                                      # L / O
-    code2  = substr(str_extract(spectrum, "(?<=-)[^-]+$"), 1, 3),       # FE1 / FE2 / FK1 / FK2
+    code2  = substr(str_extract(spectrum, "(?<=-)[^-]+$"), 1, 3),       # SE1 / SE2 / SK1 / SK2
     zone_régime = paste0("z",substr(code1, 2, 2)),                      # z1 / z2 / z3
     posi_epillet = substr(code1, 3, 3),                                 # H / M
     fruit = paste0("fruit",substr(code2,3,3)),                          # fruit1 / fruit2
     tissu = substr(code2, 2, 2),                                        # E / K
-    de_ht_en_bas = as.numeric(str_extract(spectrum, "[1-9][0-9]*$")),    # 1 à 15
+    de_ht_en_bas = as.numeric(str_extract(spectrum, "[1-9][0-9]*$")),   # 1 à 15
     `#fruit` = paste0(régime, "-", code1, str_extract(code2, "[0-9]")), # code petits pots
-    ech = paste(régime, code1, code2, sep = "-")) %>%                 #ex : R5-L1H-FE1
+    ech = paste(régime, code1, code2, sep = "-")) %>%                   #ex : R5-L1H-FE1
   relocate(spectrum, régime, code1, zone, lumière, zone_régime, code2, posi_epillet, fruit, tissu, de_ht_en_bas,`#fruit`, ech)
   
 # predictions
@@ -1313,53 +1308,16 @@ nag <- nrow(param_filtre)
 
 for (i in 1:nag) {
   p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+
   prop <- param_filtre$Propriete[i]
-  
-  cat("\n--- Test du prétraitement pour :", prop, "---\n")
-  cat("Formule appliquée :", param_filtre$pre[i], "\n")
-  
-  # Tentative d'application du prétraitement
-  spnx <- tryCatch({
-    pre(spnew, p)
-  }, error = function(e) {
-    cat("❌ Le prétraitement a crashé avec l'erreur :", e$message, "\n")
-    return(NULL)
-  })
-  
-  # Si le prétraitement a échoué, on cherche la cause
-  if (is.null(spnx)) {
-    
-    # Vérification 1 : Spectres plats (variance = 0)
-    variances <- apply(spnew, 1, sd, na.rm = TRUE)
-    spectres_plats <- names(variances)[variances == 0 | is.na(variances)]
-    
-    if (length(spectres_plats) > 0) {
-      cat("⚠️ Cause probable : Les spectres suivants sont plats ou saturés (variance = 0 ou NA),\n")
-      cat("ce qui fait planter le SNV/Preprocessing :\n")
-      print(spectres_plats)
-    } else {
-      cat("💡 Les spectres ne sont pas plats. Le problème vient probablement d'un décalage\n")
-      cat("de longueurs d'onde (colonnes) entre vos spectres AGAP et ce qu'attend le modèle.\n")
-      cat("Nombre de longueurs d'onde dans spnew :", ncol(spnew), "\n")
-    }
-    stop("Arrêt du script pour correction.")
-  }
-  
-# nag <- nrow(param_filtre)
-# 
-# 
-# for (i in 1:nag) {
-#   p <- eval(parse(text = param_filtre$pre[i]))
-#   spnx <- pre(spnew, p)
-#   
-#   prop <- param_filtre$Propriete[i]
-  
+
   imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
-  
-  n_lv <- param_filtre$nvl[i] 
+
+  n_lv <- param_filtre$nvl[i]
   pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
   pred_val <- as.vector(pred_array)
-  pred <- pred %>% 
+  pred <- pred %>%
     mutate(!!prop := pred_val)
 }
 
@@ -1387,10 +1345,156 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
 
+```
+
+### METHODE 1 - FRAIS
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+# idparam <- "meso_silica" 
+idparam <- "meso_frais" 
+titre <- "SEC_26_NIRS_R3_Methode1_Meso_Frais_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260224_Vitaspec_Pobe_DIADE")
+spnew <- asd_read_dir(f) 
+spnew <- spnew[!grepl("^[^-]+-F", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    régime = str_extract(spectrum, "^[^-]+"),                           # R5
+    code1  = str_extract(spectrum, "(?<=-)[^-]+"),                      # L1H / L2H / L3H / L1M / L2M / L3M / pareil pour O
+    zone   = substr(code1, 1, 2),                                       # L1 / L2 / L3 / O1 / O2 / O3
+    lumière = substr(code1, 1, 1),                                      # L / O
+    code2  = substr(str_extract(spectrum, "(?<=-)[^-]+$"), 1, 3),       # FE1 / FE2 / FK1 / FK2
+    zone_régime = paste0("z",substr(code1, 2, 2)),                      # z1 / z2 / z3
+    posi_epillet = substr(code1, 3, 3),                                 # H / M
+    fruit = paste0("fruit",substr(code2,3,3)),                          # fruit1 / fruit2
+    tissu = substr(code2, 2, 2),                                        # E / K
+    de_ht_en_bas = as.numeric(substr(spectrum, nchar(spectrum)-4, nchar(spectrum))),    # 1 à 15
+    `#fruit` = paste0(régime, "-", code1, str_extract(code2, "[0-9]")), # code petits pots
+    ech = paste(régime, code1, code2, sep = "-")) %>%                   #ex : R5-L1H-FE1
+  relocate(spectrum, régime, code1, zone, lumière, zone_régime, code2, posi_epillet, fruit, tissu, de_ht_en_bas,`#fruit`, ech)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
 ```
 
 ### METHODE 2 - SEC
@@ -1458,27 +1562,27 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
 
 
 ```
 
 ### METHODE 2 - FRAIS
 ```{r}
-load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
 
-idparam <- "meso_silica" 
-titre <- "SEC_26_NIRS_R3_Methode2_Meso_Sec"
+idparam <- "meso_frais" 
+titre <- "SEC_26_NIRS_R3_Methode2_Meso_Frais_DIADE"
 
 param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
 
 # spectres a predire
 
-f <- paste0(d0, "spectres/20260304_Vitaspec_S_DIADE")
+f <- paste0(d0, "spectres/20260224_Vitaspec_Pobe_DIADE")
 spnew <- asd_read_dir(f) 
-spnew <- spnew[grepl("^[^-]+-S", rownames(spnew)),]
+spnew <- spnew[grepl("^[^-]+-F", rownames(spnew)),]
 
 param_filtre <- param %>% 
   filter(grepl(idparam, Cal_data))
@@ -1486,28 +1590,92 @@ param_filtre <- param %>%
 # fichier prédiction
 
 pred <- tibble(spectrum = rownames(spnew)) %>% 
-  mutate(ech = sub("[0-9]+$", "", spectrum))             #ex : R5-S1-E
+  mutate(ech = str_replace(spectrum, "^(.*?F)([A-Z]).*?P(.*?)0{4}[^0]*$", "\\1\\3-\\2"),        #ex : R5-F1-E
+         de_ht_en_bas = as.numeric(substr(spectrum, nchar(spectrum)-4, nchar(spectrum))))
 
-#prediction 
+
+# predictions
 nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
 
 for (i in 1:nag) {
   p <- eval(parse(text = param_filtre$pre[i]))
-  spnx <- pre(spnew, p)
-  
   prop <- param_filtre$Propriete[i]
-  
   imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
-  
-  n_lv <- param_filtre$nvl[i] 
-  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
-  pred_val <- as.vector(pred_array)
-  pred <- pred %>% 
-    mutate(!!prop := pred_val)
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
 }
 
-pred <- pred %>%
-  relocate(ech, .after = last_col())
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
 
 # fichier moy par échantillon
 mes_molecules <- param_filtre$Propriete
@@ -1516,7 +1684,7 @@ pred_moy <- pred %>%
   group_by(ech) %>%
   summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
 
-#fichier stats descriptives
+# fichier stats descriptives
 pred_stats <- pred %>%
   select(ech, any_of(mes_molecules)) %>%
   pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
@@ -1530,9 +1698,16 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
+```
+
+
+
+### MANIP - A / B / C - FRAIS
+```{r}
+
 ```
 
 ### S-stock
@@ -1612,9 +1787,270 @@ write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/
 write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred_stats.xlsx"))
 ```
 
+## prediction de 2024-2025 - FRAIS
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+idparam <- "meso_frais" 
+titre <- "FRAIS_25_NIRS_Meso_Frais"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20250224_Vitaspec_Pobe")
+spnew <- asd_read_dir(f) 
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("^([^-]+).*-([^0-]+).*$", "\\1-\\2",spectrum))
+
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
+```
+
+## prediction de 2024 - 2025 - SEC
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+
+idparam <- "meso_silica" 
+titre <- "SEC_25_NIRS_Meso_SEC_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20250313_Vitaspec_S_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("^([^-]+).*-([^0-]+).*$", "\\1-\\2",spectrum))
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
+```
+
+
 ## prediction de nouveaux échantillons 2026 - HR
 ```{r}
-load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean"))
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
 
 # C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
 # dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
@@ -1625,7 +2061,8 @@ load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIAD
 # write_xlsx(tab_HR_moy,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_test.xlsx"))
 
 idparam <- "HR" 
-titre <- "HR_26_318_to_408"
+titre <- "HR_318_to_408"
+# titre <- "HR_271_to_317_DIADE"
 
 param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
 
@@ -1638,15 +2075,16 @@ param_filtre <- param %>%
   filter(grepl(idparam, Cal_data))
 
 # fichier prédiction
-
 pred <- tibble(spectrum = rownames(spnew)) %>% 
-  mutate(
-    rep = as.numeric(str_extract(spectrum, "\\d$")),
-    serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
-    ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
-    ech = as.numeric(str_extract(spectrum, "^[^-]+"))
-  ) %>%
-  relocate(spectrum, ech, rep, serie_collecte, ech_serie)
+  mutate(ech = sub("[0-9]+$", "", spectrum))
+# pred <- tibble(spectrum = rownames(spnew)) %>% 
+#   mutate(
+#     rep = as.numeric(str_extract(spectrum, "\\d$")),
+#     serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
+#     ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
+#     ech = as.numeric(str_extract(spectrum, "^[^-]+"))
+#   ) %>%
+#   relocate(spectrum, ech, rep, serie_collecte, ech_serie)
   
 # predictions
 nag <- nrow(param_filtre)
@@ -1690,23 +2128,166 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_stats.xlsx"))
+```
+#TEST
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
+
+# C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
+# dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
+# tab_HR_moy <- dat_HR_25_DIADE_clean %>% 
+#   select(-c(campagne, source, etat, rep)) %>% 
+#   group_by(ech) %>%
+#   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+# write_xlsx(tab_HR_moy,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_test.xlsx"))
+
+idparam <- "HR" 
+titre <- "HR_318_to_408"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260410_Vitaspec_HR_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    rep = as.numeric(str_extract(spectrum, "\\d$")),
+    serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
+    ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
+    ech = as.numeric(str_extract(spectrum, "^[^-]+"))
+  ) %>%
+  relocate(spectrum, ech, rep, serie_collecte, ech_serie)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+# fichier moy par échantillon
+compose <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(compose), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(compose)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_stats.xlsx"))
 ```
 
 ## prediction de 2024-2025 - HR
 ```{r}
-load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean"))
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
 
-MAT <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv"),
+MAT <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_sd_mad.csv"),
                      sep=",", 
                      header=TRUE, 
                      dec=".")
 # write_xlsx(MAT, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.xlsx"))
 
 idparam <- "HR" 
-titre <- "HR"
+titre <- "HR_1_to_317"
 
 param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
 
@@ -1797,9 +2378,9 @@ pred_stats <- pred %>%
   )
 
 #export
-write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred.xlsx"))
-write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_moy.xlsx"))
-write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/", titre, "_pred_stats.xlsx"))
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred_stats.xlsx"))
 ```
 
 ## plot differences sec vs frais
@@ -2235,7 +2816,7 @@ dev.off()
 ```{r}
 library(tidyverse)
 
-df_spectres <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>%
+df_spectres <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_26.csv")) %>%
   mutate(ech = as.character(ech))
 
 df_long <- df_spectres %>%
@@ -2251,7 +2832,7 @@ df_long <- df_spectres %>%
 
 liste_echantillons <- unique(df_long$ech)
 
-nom_fichier_pdf <- "Spectres_bruts_par_ech.pdf"
+nom_fichier_pdf <- "Spectres_bruts_par_ech_FRAIS.pdf"
 pdf(nom_fichier_pdf, width = 8, height = 5.5)
 
 for (echantillon_id in liste_echantillons) {
