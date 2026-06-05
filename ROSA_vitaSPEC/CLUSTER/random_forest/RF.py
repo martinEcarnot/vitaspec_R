@@ -22,9 +22,10 @@ import seaborn as sns
 
 ## Pathing
 d0 = Path(
-    "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/RF/"
+    "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/"
 )
-sys.path.append(str(d0.resolve()))
+sys.path.append(str((d0/"commun").resolve()))
+sys.path.append(str((d0/"random_forest").resolve()))
 
 ## Fonctions
 from diy_functions.pre_translation import pre_translation
@@ -32,11 +33,14 @@ from diy_functions.metrics import calculer_metriques
 
 # %% CHARGEMENT DONNEES +
 
+fichier_data = sys.argv[2]
+idparam = sys.argv[3]
+
 idparam = "meso_silica"
-DATA = d0 / "dat_mean_Meso_sec_2425_DIADE.csv"
+DATA = d0 / "commun" / fichier_data
 
 ## Lecture du fichier R pretraitements
-list_pre_tot = d0 / "diy_functions" / "list_pre_test_tot.R"
+list_pre_tot = d0 / "commun" / "diy_functions" / "list_pre_test_tot.R"
 with open(list_pre_tot, "r", encoding="utf-8") as f:
     contenu_r = f.read()
 
@@ -65,10 +69,10 @@ kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
 # %% SÉLECTION DU COMPOSÉ
 
-# vrifie que l'argument est présent
+# verifie que l'argument est présent
 if len(sys.argv) < 2:
     print("error : spécifier un composé en argument")
-    print("exemple : python opti_nirs.py trans.beta.carotene")
+    print("exemple : python RF_sec.py trans.beta.carotene")
     sys.exit(1)
 
 # récupère le nom du composé
@@ -99,7 +103,6 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         param_grid=param_grid,
         cv=kf,
         scoring="neg_mean_squared_error",
-        # n_jobs=-1,
     )
 
     # pipeline
@@ -157,9 +160,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
             "Compose": compose,
             "ID_Pretraitement": id_pre + 1,
             "Code_R_Pretraitement": chaine_r_brute,
-            "Meilleurs_Hyperparam_RF": str(
-                meilleurs_params
-            ),  # ca converti en texte pour le CSV
+            "Meilleurs_Hyperparam_RF": str(meilleurs_params), 
             "Rc": round(rc, 4),
             "Rp": round(rp, 4),
             "RMSEC": round(rmsec, 4),
@@ -194,11 +195,10 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         continue
 
 ## Save
-dossier_compose = d0 / "Results" / idparam / compose
+dossier_compose = d0 / "random_forest" / "Results" / idparam / compose
 dossier_compose.mkdir(parents=True, exist_ok=True)
 
 # tableau du compose
-
 df_compose = pd.DataFrame(tableau_compose)
 
 chemin_csv_compose = dossier_compose / f"GRIDSEARCH_DETAILS_{compose}.csv"
@@ -212,7 +212,7 @@ except ModuleNotFoundError:
 
 # json meilleur
 if meilleur_modele_joblib is not None:
-    print(f"meilleur {compose} RMSECV: {meilleur_rmsecv_global:.4f})")
+    print(f"meilleur {compose} RMSECV: {meilleur_rmsecv_global:.4f}")
 
     # Sauvegarde du modèle physique (.joblib)
     chemin_modele = dossier_compose / f"modele_RF_{compose}.joblib"
@@ -225,15 +225,12 @@ else:
     print(f"no mod pour {compose}.")
 
 ## GRAPHS
-
 if meilleur_modele_joblib is not None:
-    sns.set_theme(style="whitegrid")  # Style épuré pour les graphiques
+    sns.set_theme(style="whitegrid")  
 
     ## graph robustesse (obverfitting)
-
     plt.figure(figsize=(10, 6))
 
-    # on trace tous les points en gris
     sns.scatterplot(
         data=df_compose,
         x="RMSECV",
@@ -244,7 +241,6 @@ if meilleur_modele_joblib is not None:
         label="Prétraitements testés",
     )
 
-    # on isole le meilleur en gros et rouge
     champion_row = df_compose.loc[df_compose["RMSECV"].idxmin()]
     plt.scatter(
         champion_row["RMSECV"],
@@ -257,7 +253,6 @@ if meilleur_modele_joblib is not None:
         zorder=5,
     )
 
-    # y = x
     min_val = min(df_compose["RMSECV"].min(), df_compose["RMSEP"].min())
     max_val = max(df_compose["RMSECV"].max(), df_compose["RMSEP"].max())
 
@@ -278,7 +273,6 @@ if meilleur_modele_joblib is not None:
     plt.ylabel("RMSEP", fontsize=12)
     plt.legend()
 
-    # Save
     chemin_graph_robustesse_png = dossier_compose / f"Graph_robustesse_{compose}.png"
     chemin_graph_robustesse_pdf = dossier_compose / f"Graph_robustesse_{compose}.pdf"
     plt.savefig(chemin_graph_robustesse_png, dpi=300, bbox_inches="tight")
@@ -286,9 +280,7 @@ if meilleur_modele_joblib is not None:
     plt.close()
 
     ## graph feature importance (stem plot)
-
     try:
-        # extraction du RF
         if hasattr(meilleur_modele_joblib, "__getitem__"):
             dernier_element = meilleur_modele_joblib[-1]
             if isinstance(dernier_element, dict) and "model" in dernier_element:
@@ -298,44 +290,28 @@ if meilleur_modele_joblib is not None:
         else:
             fitted_rf = meilleur_modele_joblib.best_estimator_
 
-        # extraction des scores d'importance
         importances = fitted_rf.feature_importances_
 
         plt.figure(figsize=(10, 5))
 
-        # extraction des longueurs d'ondes
         toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
         pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
 
-        # paramètre de réduction
         match_reduction = re.search(
             r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
         )
 
         if match_reduction:
-            drop_start = int(
-                match_reduction.group(1)
-            )  # longueur d'onde à enlever au début
-            drop_end = int(
-                match_reduction.group(2)
-            )  # longueur d'onde à enlever à la fin
+            drop_start = int(match_reduction.group(1))
+            drop_end = int(match_reduction.group(2))
             step = int(match_reduction.group(3))
 
-            # slicing
             end_idx = len(toutes_longueurs) - drop_end
             x_values = toutes_longueurs[drop_start:end_idx:step]
         else:
             x_values = toutes_longueurs
 
-            # Si le pas est différent
-            # if len(x_values) != len(importances):
-            #    print(
-            #        f"décalage d'indices pour {compose}"
-            #    )
-            #    x_values = range(1, len(importances) + 1)
-            #    xlabel_text = "index de la variable"
-            # else:
-            xlabel_text = "longueur d'onde (nm)"
+        xlabel_text = "longueur d'onde (nm)"
 
         plt.vlines(x=x_values, ymin=0, ymax=importances, color="blue", linewidth=1)
         plt.plot(
@@ -359,7 +335,6 @@ if meilleur_modele_joblib is not None:
         plt.gca().spines["top"].set_visible(True)
         plt.gca().spines["right"].set_visible(True)
 
-        # save
         chemin_graph_importance_png = (
             dossier_compose / f"Graph_feature_importance_{compose}.png"
         )
