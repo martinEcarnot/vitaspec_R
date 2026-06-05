@@ -1,0 +1,33 @@
+2026-06-03T10:35:41+0200 [INFO ] ========================================================================================================================
+2026-06-03T10:35:41+0200 [INFO ] Starting Nirs4all run(s) with 1 pipeline(s) on 1 dataset(s) (1 total runs).
+2026-06-03T10:35:41+0200 [INFO ] ========================================================================================================================
+2026-06-03T10:35:41+0200 [INFO ] Run 1/1: pipeline 'config_0e536167' on dataset 'dataset'
+2026-06-03T10:35:41+0200 [INFO ] [Dataset] dataset (regression)
+Features (samples=143, sources=1):
+- Source 0: (143, 1, 2151), processings=['raw'], min=0.007, max=0.895, mean=0.26, var=0.039
+Targets: (samples=143, targets=1, processings=['numeric'])
+- numeric: min=42.594, max=1811.171, mean=473.677
+Indexes:
+- partition - "train", processings - ['raw'], excluded - False: 143 samples
+2026-06-03T10:35:41+0200 [INFO ] Starting pipeline config_0e536167 on dataset dataset
+2026-06-03T10:35:41+0200 [WARNING] ReducerTransformer: shape (143, 2151) -> (143, 850)
+2026-06-03T10:38:39+0200 [INFO ] GridSearchCV rmse ↓ [test: 173.7650], (fold: 0, id: 1) - [a3ceba47-9cac-4b]
+2026-06-03T10:38:39+0200 [INFO ] Pipeline Best: GridSearchCV - rmse [test: 173.7650], (fold: 0, id: 1, step: 7) - [a3ceba47-9cac-4b]
+2026-06-03T10:38:39+0200 [INFO ] ================================================================================
+2026-06-03T10:38:39+0200 [INFO ] REFIT MODE: Single criterion
+2026-06-03T10:38:39+0200 [INFO ] Criteria: 1 criterion/criteria
+2026-06-03T10:38:39+0200 [INFO ] ================================================================================
+2026-06-03T10:38:39+0200 [INFO ] Starting refit pass: training winning model on full training set
+2026-06-03T10:38:39+0200 [INFO ] Starting pipeline config_0e536167_refit on dataset dataset
+2026-06-03T10:38:39+0200 [INFO ] Cache hit: reusing fitted ASDTransformer from chain s1.ASDTransformer[src=0,sub=0] (data hash match)
+2026-06-03T10:38:40+0200 [INFO ] Cache hit: reusing fitted RefToAbsTransformer from chain s2.RefToAbsTransformer[src=0,sub=0] (data hash match)
+2026-06-03T10:38:40+0200 [INFO ] Cache hit: reusing fitted ReducerTransformer from chain s3.ReducerTransformer[src=0,sub=0] (data hash match)
+2026-06-03T10:38:40+0200 [WARNING] ReducerTransformer: shape (143, 2151) -> (143, 850)
+2026-06-03T10:38:40+0200 [INFO ] Cache hit: reusing fitted StandardNormalVariate from chain s4.StandardNormalVariate[src=0,sub=0] (stateless params match)
+2026-06-03T10:38:40+0200 [INFO ] Cache hit: reusing fitted SavitzkyGolay from chain s5.SavitzkyGolay[src=0,sub=0] (stateless params match)
+2026-06-03T10:43:13+0200 [INFO ] GridSearchCV rmse ↓, (fold: 0, id: 1) - [d22f9df9-fbe3-44]
+2026-06-03T10:43:13+0200 [WARNING] No test set available for refit evaluation. final_score is set to None.
+2026-06-03T10:43:13+0200 [INFO ] Refit pass completed successfully
+2026-06-03T10:43:13+0200 [INFO ] Refit completed: 1 prediction(s) added with fold_id='final'
+2026-06-03T10:43:13+0200 [INFO ] Preparing to print results for dataset 'dataset': 3 predictions
+2026-06-03T10:43:13+0200 [INFO ] ========================================================================================================================

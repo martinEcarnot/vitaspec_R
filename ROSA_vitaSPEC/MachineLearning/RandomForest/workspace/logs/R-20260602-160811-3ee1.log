@@ -1,0 +1,14 @@
+2026-06-02T16:08:11+0200 [INFO ] ========================================================================================================================
+2026-06-02T16:08:11+0200 [INFO ] Starting Nirs4all run(s) with 1 pipeline(s) on 1 dataset(s) (1 total runs).
+2026-06-02T16:08:11+0200 [INFO ] ========================================================================================================================
+2026-06-02T16:08:11+0200 [INFO ] Run 1/1: pipeline 'config_03a5bbe8' on dataset 'dataset'
+2026-06-02T16:08:11+0200 [INFO ] [Dataset] dataset (regression)
+Features (samples=143, sources=1):
+- Source 0: (143, 1, 2151), processings=['raw'], min=0.007, max=0.895, mean=0.26, var=0.039
+Targets: (samples=143, targets=1, processings=['numeric'])
+- numeric: min=42.594, max=1811.171, mean=473.677
+Indexes:
+- partition - "train", processings - ['raw'], excluded - False: 143 samples
+2026-06-02T16:08:11+0200 [INFO ] Starting pipeline config_03a5bbe8 on dataset dataset
+2026-06-02T16:08:11+0200 [ERROR] Pipeline config_03a5bbe8 on dataset dataset failed: Pipeline step 1 failed: asd_splice_correction_R() missing 1 required positional argument: 'X'
+2026-06-02T16:08:11+0200 [ERROR] Dataset 'dataset' failed: Pipeline step 1 failed: asd_splice_correction_R() missing 1 required positional argument: 'X'
