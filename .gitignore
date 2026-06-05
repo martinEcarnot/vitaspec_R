@@ -38,3 +38,5 @@ __pycache__/
 .RDataTmp21
 .RDataTmp22
 .positai
+.out
+.err
