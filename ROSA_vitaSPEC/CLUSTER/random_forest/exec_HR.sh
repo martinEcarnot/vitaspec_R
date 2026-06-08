@@ -32,7 +32,7 @@ COMPOSES=(
 
 for c in "${COMPOSES[@]}"; do
     echo "lancement de $c"
-    sbatch run_opti.slurm "$c" "$FICHIER_DATA" "$ID_PARAM"
+    sbatch run_opti.slurm "$c" "$DATA" "$ID_PARAM"
 done
 
 
