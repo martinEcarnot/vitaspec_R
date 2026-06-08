@@ -9,23 +9,23 @@ import numpy as np
 
 import nirs4all
 
-## Splitting chemio
+## splitting chemio
 from nirs4all.operators.splitters import KennardStoneSplitter
 
-## Mod
+## mod
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, KFold
 
-# Graphs
+# graphs
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-## Pathing
+## pathing
 d0 = Path(
     "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/"
 )
-sys.path.append(str((d0/"commun").resolve()))
-sys.path.append(str((d0/"random_forest").resolve()))
+sys.path.append(str((d0 / "commun").resolve()))
+sys.path.append(str((d0 / "random_forest").resolve()))
 
 ## Fonctions
 from diy_functions.pre_translation import pre_translation
@@ -160,7 +160,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
             "Compose": compose,
             "ID_Pretraitement": id_pre + 1,
             "Code_R_Pretraitement": chaine_r_brute,
-            "Meilleurs_Hyperparam_RF": str(meilleurs_params), 
+            "Meilleurs_Hyperparam_RF": str(meilleurs_params),
             "Rc": round(rc, 4),
             "Rp": round(rp, 4),
             "RMSEC": round(rmsec, 4),
@@ -226,7 +226,7 @@ else:
 
 ## GRAPHS
 if meilleur_modele_joblib is not None:
-    sns.set_theme(style="whitegrid")  
+    sns.set_theme(style="whitegrid")
 
     ## graph robustesse (obverfitting)
     plt.figure(figsize=(10, 6))

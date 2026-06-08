@@ -9,32 +9,37 @@ import numpy as np
 
 import nirs4all
 
-## Splitting chemio
+## splitting chemio
 from nirs4all.operators.splitters import KennardStoneSplitter
 
-## Mod (Changement 1: Import de XGBoost)
+## mod
 from xgboost import XGBRegressor
 from sklearn.model_selection import GridSearchCV, KFold
 
-# Graphs
+# graphs
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-## Pathing
+## pathing
 d0 = Path(
     "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/"
 )
-sys.path.append(str(d0 / "commun".resolve()))
-sys.path.append(str(d0 / "xgboost".resolve()))
+sys.path.append(str((d0 / "commun").resolve()))
+sys.path.append(str((d0 / "xgboost").resolve()))
 
 ## Fonctions
 from diy_functions.pre_translation import pre_translation
 from diy_functions.metrics import calculer_metriques
 
+
 # %% CHARGEMENT DONNEES
 
-idparam = "meso_silica"
-DATA = d0 / "commun" / "dat_mean_Meso_sec_2425_DIADE.csv"
+# récupère les variables
+compose = sys.argv[1]
+fichier_data = sys.argv[2]
+idparam = sys.argv[3]
+
+DATA = d0 / "commun" / fichier_data
 
 ## Lecture du fichier R pretraitements
 list_pre_tot = d0 / "commun" / "diy_functions" / "list_pre_test_tot.R"
@@ -52,7 +57,7 @@ print(f"{len(df_data)} échantillons.")
 print(f"{len(col_spectres)} longueurs d'ondes")
 print(f"{len(liste_pretraitements_r)} prétraitements")
 
-# %% CONFIG MOD XGBOOST (Changement 2: La grille)
+# %% CONFIG MOD XGBOOST
 
 ## GridSearchCV
 param_grid = {
@@ -65,17 +70,6 @@ param_grid = {
 kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
 # %% SÉLECTION DU COMPOSÉ
-
-# verifie que l'argument est présent
-if len(sys.argv) < 2:
-    print("error : spécifier un composé en argument")
-    print("exemple : python XGB_sec.py trans.beta.carotene")
-    sys.exit(1)
-
-# récupère le nom du composé
-compose = sys.argv[1]
-
-print(f"execution XGBoost pour {compose}")
 
 ## X et Y
 df_propre = df_data.dropna(subset=[compose])
@@ -94,7 +88,7 @@ tableau_compose = []
 
 ## Boucle sur les 174 composés
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
-    # gridSearch (Changement 3: L'estimateur)
+    # gridSearch
     grid_search = GridSearchCV(
         estimator=XGBRegressor(
             random_state=42, n_jobs=-1, objective="reg:squarederror"
@@ -193,7 +187,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         print(f"error {id_pre + 1} : {e}")
         continue
 
-## Save (Changement 4: Séparation dans Results_XGB)
+## Save
 dossier_compose = d0 / "xgboost" / "Results" / idparam / compose
 dossier_compose.mkdir(parents=True, exist_ok=True)
 
