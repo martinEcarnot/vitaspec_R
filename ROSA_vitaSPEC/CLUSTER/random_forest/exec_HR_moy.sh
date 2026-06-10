@@ -1,23 +1,19 @@
 #!/bin/bash
 
-DATA="dat_mean_Meso_sec_2425_DIADE.csv"
-ID_PARAM="meso_silica"
+DATA="dat_HR_25_DIADE_clean.csv"
+ID_PARAM="HR"
 
 # liste des composés
 COMPOSES=(
-    "eau"
     "C14.0"
     "C16.0"
     "C18.0"
     "C18.1n9"
-    "C18.1n7"
     "C18.2"
-    "C18.3"
-    "C20.0"
-    "tlip.MS"
+    "FFA"
     "trans.alpha.carotene"
     "trans.beta.carotene"
-    "total.trans.carotene.natif"
+    "total.trans.carotenes.natif"
     "ratio.alpha.beta"
     "ratio.alpha.natif"
     "ratio.beta.natif"
@@ -25,12 +21,19 @@ COMPOSES=(
     "X9.cis.beta.carotene"
     "total.beta.carotene"
     "total.carotene"
+    "lycopene"
+    "aT"
+    "aT3"
+    "gT3"
+    "dT3"
+    "total.T3"
+    "total.toco"
 )
 
 for c in "${COMPOSES[@]}"; do
     echo "lancement de $c"
-    sbatch run_opti.slurm "$c" "$DATA" "$ID_PARAM"
+    sbatch run_moyennes.slurm "$c" "$DATA" "$ID_PARAM"
 done
 
 
-echo "Jobs tous lancés"
+echo "Jobs tous lances"

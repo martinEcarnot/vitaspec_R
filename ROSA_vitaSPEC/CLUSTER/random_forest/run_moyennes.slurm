@@ -8,6 +8,7 @@
 #SBATCH --output=/storage/simple/users/ecarnotm/logs/RF_opti_%j.out
 #SBATCH --error=/storage/simple/users/ecarnotm/logs/RF_opti_%j.err
 
+
 COMPOSE=$1
 DATA=$2
 ID_PARAM=$3
@@ -15,15 +16,18 @@ ID_PARAM=$3
 
 echo "execution de $COMPOSE"
 
-# nettoyage + miniconda + env virtuel
+# nettoyage + Miniconda + Env virtuel
 module purge
-source /storage/replicated/cirad_users/ecarnotm/miniconda3/bin/activate
+source /storage/replicated/cirad_users/ecarnotm/miniconda3/etc/profile.d/conda.sh
 conda activate env_nirs_v2
 
-# path
-cd /storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/random_forest/
+# dossier racine
+DOSSIER_RACINE="/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/random_forest/moyennes"
 
+# sous dossir
+mkdir -p "$DOSSIER_RACINE/workspaces_isoles/work_${ID_PARAM}_${COMPOSE}"
+cd "$DOSSIER_RACINE/workspaces_isoles/work_${ID_PARAM}_${COMPOSE}"
 # exec
-python RF.py "$COMPOSE" "$DATA" "$ID_PARAM"
+python ../../../RF_moyennes.py "$COMPOSE" "$DATA" "$ID_PARAM"
 
 echo "fin de $COMPOSE"

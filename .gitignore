@@ -40,3 +40,6 @@ __pycache__/
 .positai
 .out
 .err
+ROSA_vitaSPEC/CLUSTER/random_forest/workspaces_isoles
+ROSA_vitaSPEC/CLUSTER/random_forest/moyennes/workspaces_isoles
+ROSA_vitaSPEC/CLUSTER/random_forest/repetitions/workspaces_isoles

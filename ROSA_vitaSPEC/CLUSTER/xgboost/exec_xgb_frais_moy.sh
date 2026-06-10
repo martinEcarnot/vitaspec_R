@@ -1,19 +1,23 @@
 #!/bin/bash
 
-DATA="dat_HR_25_DIADE_clean.csv"
-ID_PARAM="HR"
+DATA="dat_mean_Meso_frais_2425.csv"
+ID_PARAM="meso_frais"
 
 # liste des composés
 COMPOSES=(
+    "eau"
     "C14.0"
     "C16.0"
     "C18.0"
     "C18.1n9"
+    "C18.1n7"
     "C18.2"
-    "FFA"
+    "C18.3"
+    "C20.0"
+    "tlip.MS"
     "trans.alpha.carotene"
     "trans.beta.carotene"
-    "total.trans.carotenes.natif"
+    "total.trans.carotene.natif"
     "ratio.alpha.beta"
     "ratio.alpha.natif"
     "ratio.beta.natif"
@@ -21,19 +25,11 @@ COMPOSES=(
     "X9.cis.beta.carotene"
     "total.beta.carotene"
     "total.carotene"
-    "lycopene"
-    "aT"
-    "aT3"
-    "gT3"
-    "dT3"
-    "total.T3"
-    "total.toco"
 )
 
 for c in "${COMPOSES[@]}"; do
-    echo "lancement de $c"
-    sbatch run_opti.slurm "$c" "$DATA" "$ID_PARAM"
+    echo "lancement XGB pour $c"
+    sbatch run_moyennes_xgb.slurm "$c" "$DATA" "$ID_PARAM"
 done
 
-
-echo "Jobs tous lancés"
+echo "XGB tous lancés"

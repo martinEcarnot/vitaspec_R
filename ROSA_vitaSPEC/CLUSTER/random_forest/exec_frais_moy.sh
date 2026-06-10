@@ -29,8 +29,8 @@ COMPOSES=(
 
 for c in "${COMPOSES[@]}"; do
     echo "lancement de $c"
-    sbatch run_opti.slurm "$c" "$DATA" "$ID_PARAM"
+    sbatch run_moyennes.slurm "$c" "$DATA" "$ID_PARAM"
 done
 
 
-echo "Jobs tous lancés"
+echo "Jobs tous lances"

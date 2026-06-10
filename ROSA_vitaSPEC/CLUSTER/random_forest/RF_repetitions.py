@@ -9,12 +9,9 @@ import numpy as np
 
 import nirs4all
 
-## splitting chemio
-from nirs4all.operators.splitters import KennardStoneSplitter
-
 ## mod
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import RandomizedSearchCV, GroupKFold
 
 # graphs
 import matplotlib.pyplot as plt
@@ -36,7 +33,6 @@ from diy_functions.metrics import calculer_metriques
 fichier_data = sys.argv[2]
 idparam = sys.argv[3]
 
-idparam = "meso_silica"
 DATA = d0 / "commun" / fichier_data
 
 ## Lecture du fichier R pretraitements
@@ -48,6 +44,7 @@ with open(list_pre_tot, "r", encoding="utf-8") as f:
 liste_pretraitements_r = re.findall(r"rbind\((.*)\)", contenu_r)
 
 ## Data
+
 df_data = pd.read_csv(DATA)
 col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
 
@@ -57,12 +54,13 @@ print(f"{len(liste_pretraitements_r)} prétraitements")
 
 # %% CONFIG MOD
 
-## GridSearchCV
+## RandomizedSearchCV
 param_grid = {
     "n_estimators": [100, 200, 300, 500],
     "max_depth": [None, 10, 20],
-    "min_samples_split": [2, 5, 10],
-    "min_samples_leaf": [1, 2, 4],
+    "min_samples_split": [10, 15, 20],
+    "min_samples_leaf": [5, 10, 15],
+    "max_features": ["sqrt", "log2", 0.3],
 }
 
 kf = KFold(n_splits=10, shuffle=True, random_state=42)
@@ -81,11 +79,33 @@ compose = sys.argv[1]
 print(f"execution {compose}")
 
 ## X et Y
-df_propre = df_data.dropna(subset=[compose])
-print(f"Échantillons valides : {len(df_propre)} / {len(df_data)}")
 
-y = df_propre[compose].values
-X = df_propre[col_spectres].values
+df_data[compose] = pd.to_numeric(df_data[compose], errors='coerce')
+df_propre = df_data.dropna(subset=[compose])
+print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
+
+# lecture du jeu de validation externe
+chemin_test_externe = d0 / "commun" / f"valid_externe_{compose}.csv"
+try:
+    df_sanctuaire = pd.read_csv(chemin_test_externe)
+    ech_interdits = df_sanctuaire['ech'].unique()
+except FileNotFoundError:
+    print(f"error : pas de {chemin_test_externe}, lancer d'abord RF_moyennes.")
+    sys.exit(1)
+
+# séparation basée sur ech
+df_test_externe = df_propre[df_propre['ech'].isin(ech_interdits)]
+df_train_val = df_propre[~df_propre['ech'].isin(ech_interdits)]
+
+print(f"echantillons pour train + test : {len(df_train_val)}")
+
+y = df_train_val[compose].values
+X = df_train_val[col_spectres].values
+groupes = df_train_val['ech'].values
+
+# pré-calcul des plis de CV groupés
+gkf = GroupKFold(n_splits=5)
+cv_splits = list(gkf.split(X, y, groups=groupes))
 
 # variables pour le meilleur
 meilleur_rmsecv_global = float("inf")
@@ -97,19 +117,20 @@ tableau_compose = []
 
 ## Boucle sur les 174 composés
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
-    # gridSearch
-    grid_search = GridSearchCV(
+    # randomSearch
+    random_search = RandomizedSearchCV(
         estimator=RandomForestRegressor(random_state=42, n_jobs=-1),
-        param_grid=param_grid,
-        cv=kf,
+        param_distributions=param_grid,
+        n_iter=30,
+        cv=cv_splits,
         scoring="neg_mean_squared_error",
+        random_state=42
     )
 
     # pipeline
     etapes_pretraitement = pre_translation(chaine_r_brute)
     pipeline = etapes_pretraitement + [
-        KennardStoneSplitter(test_size=0.3),
-        {"model": grid_search},
+        {"model": random_search},
     ]
 
     try:
@@ -195,17 +216,17 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         continue
 
 ## Save
-dossier_compose = d0 / "random_forest" / "Results" / idparam / compose
+dossier_compose = d0 / "random_forest" / "repetitions" / "Results" / idparam / compose
 dossier_compose.mkdir(parents=True, exist_ok=True)
 
 # tableau du compose
 df_compose = pd.DataFrame(tableau_compose)
 
-chemin_csv_compose = dossier_compose / f"GRIDSEARCH_DETAILS_{compose}.csv"
+chemin_csv_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_{compose}.csv"
 df_compose.to_csv(chemin_csv_compose, sep=";", index=False)
 
 try:
-    chemin_excel_compose = dossier_compose / f"GRIDSEARCH_DETAILS_{compose}.xlsx"
+    chemin_excel_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_{compose}.xlsx"
     df_compose.to_excel(chemin_excel_compose, index=False)
 except ModuleNotFoundError:
     pass
@@ -214,12 +235,36 @@ except ModuleNotFoundError:
 if meilleur_modele_joblib is not None:
     print(f"meilleur {compose} RMSECV: {meilleur_rmsecv_global:.4f}")
 
+    # Test sur les 15 échantillons externes
+    try:
+        X_ext = df_test_externe[col_spectres].values
+        y_ext_true = df_test_externe[compose].values
+        
+        pred_ext = meilleur_modele_joblib.predict(X_ext)
+        if isinstance(pred_ext, dict) and "y_pred" in pred_ext:
+             pred_ext = np.array(pred_ext["y_pred"]).ravel()
+        else:
+             pred_ext = np.array(pred_ext).ravel()
+
+        _, _, _, rmsep_ext, rpd_ext = calculer_metriques(
+            y_ext_true, pred_ext, y_ext_true, pred_ext 
+        )
+        
+        rapport_du_champion["Crash_Test_Externe"] = {
+            "RMSEP_Externe": round(rmsep_ext, 4),
+            "RPD_Externe": round(rpd_ext, 4)
+        }
+        print(f"Test externe -> RMSEP: {rmsep_ext:.4f} | RPD: {rpd_ext:.4f}")
+        
+    except Exception as e_test:
+        print(f"error test externe : {e_test}")
+
     # Sauvegarde du modèle physique (.joblib)
-    chemin_modele = dossier_compose / f"modele_RF_{compose}.joblib"
+    chemin_modele = dossier_compose / f"modele_RF_A_{compose}.joblib"
     joblib.dump(meilleur_modele_joblib, chemin_modele)
 
     # Sauvegarde du rapport JSON
-    with open(dossier_compose / f"rapport_{compose}.json", "w", encoding="utf-8") as f:
+    with open(dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8") as f:
         json.dump(rapport_du_champion, f, indent=4)
 else:
     print(f"no mod pour {compose}.")
