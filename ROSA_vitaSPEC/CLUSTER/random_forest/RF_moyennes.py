@@ -34,7 +34,7 @@ sys.path.append(str((d0 / "random_forest").resolve()))
 from diy_functions.pre_translation import pre_translation
 from diy_functions.metrics import calculer_metriques
 
-# %% CHARGEMENT DONNEES 
+# %% CHARGEMENT DONNEES
 
 if len(sys.argv) < 4:
     print("error : il manque des arguments")
@@ -81,17 +81,19 @@ print(f"exécution RF moyennes pour {compose}")
 
 ## X et Y
 
-df_data[compose] = pd.to_numeric(df_data[compose], errors='coerce')
+df_data[compose] = pd.to_numeric(df_data[compose], errors="coerce")
 df_propre = df_data.dropna(subset=[compose])
 print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
 
 # isole 15 ech pour la valid externe (Le Sanctuaire)
-df_train_val, df_test_externe = train_test_split(df_propre, test_size=15, random_state=SEED)
+df_train_val, df_test_externe = train_test_split(
+    df_propre, test_size=15, random_state=SEED
+)
 
 # save jeu valid
-chemin_test_externe = d0 / "commun" / f"valid_externe_{compose}.csv"
+chemin_test_externe = d0 / "commun" / idparam / f"valid_externe_{compose}.csv"
+chemin_test_externe.parent.mkdir(parents=True, exist_ok=True)
 df_test_externe.to_csv(chemin_test_externe, index=False)
-print(f"echantillons pour train + test : {len(df_train_val)}")
 
 y = df_train_val[compose].values
 X = df_train_val[col_spectres].values
@@ -106,7 +108,6 @@ tableau_compose = []
 
 ## Boucle sur les prétraitements
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
-    
     # randomSearch avec 5-Fold
     random_search = RandomizedSearchCV(
         estimator=RandomForestRegressor(random_state=SEED, n_jobs=-1),
@@ -114,7 +115,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         n_iter=30,
         cv=kf,
         scoring="neg_mean_squared_error",
-        random_state=SEED
+        random_state=SEED,
     )
 
     # pipeline épuré
@@ -220,23 +221,23 @@ if meilleur_modele_joblib is not None:
     try:
         X_ext = df_test_externe[col_spectres].values
         y_ext_true = df_test_externe[compose].values
-        
+
         pred_ext = meilleur_modele_joblib.predict(X_ext)
         if isinstance(pred_ext, dict) and "y_pred" in pred_ext:
-             pred_ext = np.array(pred_ext["y_pred"]).ravel()
+            pred_ext = np.array(pred_ext["y_pred"]).ravel()
         else:
-             pred_ext = np.array(pred_ext).ravel()
+            pred_ext = np.array(pred_ext).ravel()
 
         _, _, _, rmsep_ext, rpd_ext = calculer_metriques(
-            y_ext_true, pred_ext, y_ext_true, pred_ext 
+            y_ext_true, pred_ext, y_ext_true, pred_ext
         )
-        
+
         rapport_du_champion["Crash_Test_Externe"] = {
             "RMSEP_Externe": round(rmsep_ext, 4),
-            "RPD_Externe": round(rpd_ext, 4)
+            "RPD_Externe": round(rpd_ext, 4),
         }
         print(f"test : RMSEP: {rmsep_ext:.4f} | RPD: {rpd_ext:.4f}")
-        
+
     except Exception as e_test:
         print(f"error test : {e_test}")
 
@@ -245,14 +246,16 @@ if meilleur_modele_joblib is not None:
     joblib.dump(meilleur_modele_joblib, chemin_modele)
 
     # Save du rapport JSON
-    with open(dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8") as f:
+    with open(
+        dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8"
+    ) as f:
         json.dump(rapport_du_champion, f, indent=4)
 else:
     print(f"no mod pour {compose}.")
 
 ## GRAPHS
 if meilleur_modele_joblib is not None:
-    sns.set_theme(style="whitegrid")  
+    sns.set_theme(style="whitegrid")
 
     ## graph robustesse (obverfitting)
     # on trace RMSECV vs RMSEC car le RMSEP interne n'existe plus

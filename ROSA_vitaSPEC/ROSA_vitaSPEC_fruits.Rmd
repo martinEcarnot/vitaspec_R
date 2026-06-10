@@ -168,7 +168,7 @@ Yvalue_HR <- carot_HR %>%
   relocate(ech,`C14.0`,`C16.0`,`C18.0`,`C18.1n9`,`C18.2`,`FFA`,trans.alpha.carotene,trans.beta.carotene,X13.cis.beta.carotene,X9.cis.beta.carotene,total.beta.carotene,total.carotene,lycopene,aT,aT3,gT3,dT3,total.T3,total.toco)
 
 ### export
-# wr ite.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
+# write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
 # write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
 
 ```
@@ -634,8 +634,10 @@ mean_HR_2425_TOT <- mean_spectres_matrix(HR_2425_TOT_matrix)
 ### chimie
 
 # le fichier Yvalue avec les 4 variables carotene en plus 
-Y <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx")) 
-Y_HR <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus_HR.xlsx"))
+Y <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx")) %>% 
+  mutate(ech = as.numeric(ech))
+Y_HR <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus_HR.xlsx")) %>% 
+  mutate(ech = as.numeric(ech))
 
 
 ag <- Y %>%
@@ -725,6 +727,32 @@ join_HR <- function(data){
 # write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_TOT.csv"),row.names = FALSE)
 # dat <- join_HR(mean_HR_2425_TOT)
 # write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_TOT.csv"),row.names = FALSE)
+
+
+
+
+
+file <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_DIADE_O.csv")) %>% 
+  mutate(ech = as.numeric(str_extract(ech, "\\d+")),
+         rep = as.numeric(rep))
+
+# write_xlsx(file,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_O.xlsx"))
+# write.csv(file, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_O.csv"),row.names = FALSE)
+
+  
+dat <- join(file)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE_repet.csv"),row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

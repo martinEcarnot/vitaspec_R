@@ -80,28 +80,28 @@ print(f"execution {compose}")
 
 ## X et Y
 
-df_data[compose] = pd.to_numeric(df_data[compose], errors='coerce')
+df_data[compose] = pd.to_numeric(df_data[compose], errors="coerce")
 df_propre = df_data.dropna(subset=[compose])
 print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
 
 # lecture du jeu de validation externe
-chemin_test_externe = d0 / "commun" / f"valid_externe_{compose}.csv"
+chemin_test_externe = d0 / "commun" / idparam / f"valid_externe_{compose}.csv"
 try:
     df_sanctuaire = pd.read_csv(chemin_test_externe)
-    ech_interdits = df_sanctuaire['ech'].unique()
+    ech_interdits = df_sanctuaire["ech"].unique()
 except FileNotFoundError:
     print(f"error : pas de {chemin_test_externe}, lancer d'abord RF_moyennes.")
     sys.exit(1)
 
 # séparation basée sur ech
-df_test_externe = df_propre[df_propre['ech'].isin(ech_interdits)]
-df_train_val = df_propre[~df_propre['ech'].isin(ech_interdits)]
+df_test_externe = df_propre[df_propre["ech"].isin(ech_interdits)]
+df_train_val = df_propre[~df_propre["ech"].isin(ech_interdits)]
 
 print(f"echantillons pour train + test : {len(df_train_val)}")
 
 y = df_train_val[compose].values
 X = df_train_val[col_spectres].values
-groupes = df_train_val['ech'].values
+groupes = df_train_val["ech"].values
 
 # pré-calcul des plis de CV groupés
 gkf = GroupKFold(n_splits=5)
@@ -124,7 +124,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         n_iter=30,
         cv=cv_splits,
         scoring="neg_mean_squared_error",
-        random_state=42
+        random_state=42,
     )
 
     # pipeline
@@ -239,23 +239,23 @@ if meilleur_modele_joblib is not None:
     try:
         X_ext = df_test_externe[col_spectres].values
         y_ext_true = df_test_externe[compose].values
-        
+
         pred_ext = meilleur_modele_joblib.predict(X_ext)
         if isinstance(pred_ext, dict) and "y_pred" in pred_ext:
-             pred_ext = np.array(pred_ext["y_pred"]).ravel()
+            pred_ext = np.array(pred_ext["y_pred"]).ravel()
         else:
-             pred_ext = np.array(pred_ext).ravel()
+            pred_ext = np.array(pred_ext).ravel()
 
         _, _, _, rmsep_ext, rpd_ext = calculer_metriques(
-            y_ext_true, pred_ext, y_ext_true, pred_ext 
+            y_ext_true, pred_ext, y_ext_true, pred_ext
         )
-        
+
         rapport_du_champion["Crash_Test_Externe"] = {
             "RMSEP_Externe": round(rmsep_ext, 4),
-            "RPD_Externe": round(rpd_ext, 4)
+            "RPD_Externe": round(rpd_ext, 4),
         }
         print(f"Test externe -> RMSEP: {rmsep_ext:.4f} | RPD: {rpd_ext:.4f}")
-        
+
     except Exception as e_test:
         print(f"error test externe : {e_test}")
 
@@ -264,7 +264,9 @@ if meilleur_modele_joblib is not None:
     joblib.dump(meilleur_modele_joblib, chemin_modele)
 
     # Sauvegarde du rapport JSON
-    with open(dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8") as f:
+    with open(
+        dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8"
+    ) as f:
         json.dump(rapport_du_champion, f, indent=4)
 else:
     print(f"no mod pour {compose}.")
