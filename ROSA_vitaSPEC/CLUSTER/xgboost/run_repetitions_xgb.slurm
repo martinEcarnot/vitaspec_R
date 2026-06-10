@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=XGB_moy             
+#SBATCH --job-name=XGB_repet              
 #SBATCH --cpus-per-task=5              
 #SBATCH --mem=8G                        
 #SBATCH -p cpu-dedicated                 
@@ -22,13 +22,13 @@ source /storage/replicated/cirad_users/ecarnotm/miniconda3/etc/profile.d/conda.s
 conda activate env_nirs_v2
 
 # dossier racine
-DOSSIER_RACINE="/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/xgboost/moyennes"
+DOSSIER_RACINE="/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/xgboost/repetitions"
 
 # sous dossier
 mkdir -p "$DOSSIER_RACINE/workspaces_isoles/work_${ID_PARAM}_${COMPOSE}"
 cd "$DOSSIER_RACINE/workspaces_isoles/work_${ID_PARAM}_${COMPOSE}"
 
 # exec
-python ../../../XGB_moyennes.py "$COMPOSE" "$DATA" "$ID_PARAM"
+python ../../../XGB_repetitions.py "$COMPOSE" "$DATA" "$ID_PARAM"
 
 echo "fin de $COMPOSE"

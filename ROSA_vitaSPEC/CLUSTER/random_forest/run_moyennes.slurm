@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=RF_opti               
+#SBATCH --job-name=RF_moy              
 #SBATCH --cpus-per-task=5              
 #SBATCH --mem=8G                        
 #SBATCH -p cpu-dedicated                 

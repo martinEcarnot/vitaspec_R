@@ -75,8 +75,9 @@ kf = KFold(n_splits=5, shuffle=True, random_state=SEED)
 
 # %% SÉLECTION DU COMPOSÉ
 
-## X et Y
+print(f"exécution XGBoost moyennes pour {compose}")
 
+## X et Y
 df_data[compose] = pd.to_numeric(df_data[compose], errors='coerce')
 df_propre = df_data.dropna(subset=[compose])
 print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
@@ -84,9 +85,11 @@ print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
 # isole 15 ech pour la valid externe
 df_train_val, df_test_externe = train_test_split(df_propre, test_size=15, random_state=SEED)
 
-# save jeu valid
-chemin_test_externe = d0 / "commun" / f"valid_externe_{compose}.csv"
+# save jeu valid encapsulé dans idparam 
+chemin_test_externe = d0 / "commun" / idparam / f"valid_externe_{compose}.csv"
+chemin_test_externe.parent.mkdir(parents=True, exist_ok=True)
 df_test_externe.to_csv(chemin_test_externe, index=False)
+
 print(f"echantillons pour train + test : {len(df_train_val)}")
 
 y = df_train_val[compose].values
@@ -100,7 +103,7 @@ rapport_du_champion = None
 # la liste qui va contenir les 174 lignes JUSTE pour ce composé
 tableau_compose = []
 
-## Boucle sur les 174 composés
+## Boucle sur les prétraitements
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
     # randomSearch
     random_search = RandomizedSearchCV(
@@ -121,6 +124,9 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
     ]
 
     try:
+        # exec
+        resultat = nirs4all.run(dataset=(X, y), pipeline=pipeline)
+
         # extraction des pred
         results = resultat.predictions.to_dicts()
         y_train_true, pred_train = [], []
@@ -131,28 +137,39 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
                 y_train_true = np.array(bloc.get("y_true", [])).ravel()
                 pred_train = np.array(bloc.get("y_pred", [])).ravel()
 
-        # extraction des meilleurs hyperparamètres et du RMSECV
-        df_summary = resultat.predictions.to_pandas()
-        meilleurs_params = df_summary.iloc[0].get("best_params", "Non trouvé")
-
-        def securiser_nombre(valeur):
-            if valeur is None:
-                return 0.0
-            try:
-                return float(valeur)
-            except:
-                return 0.0
-
-        if "rmsecv" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["rmsecv"])
-        elif "val_score" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["val_score"])
-        else:
-            rmsecv = securiser_nombre(getattr(resultat, "best_rmse", 0.0))
-
         modele_actuel = getattr(resultat, "final", resultat)
 
-        # metrics internes (uniquement sur le train)
+        # cherhce
+        meilleurs_params = "{}"
+        rmsecv = 0.0
+        
+        def trouver_search_cv(obj):
+            if hasattr(obj, "best_score_") and hasattr(obj, "best_params_"):
+                return obj
+            if hasattr(obj, "steps"):
+                return trouver_search_cv(obj.steps[-1][1])
+            if hasattr(obj, "__getitem__") and not isinstance(obj, (str, dict, pd.DataFrame, np.ndarray)):
+                try:
+                    return trouver_search_cv(obj[-1])
+                except:
+                    pass
+            if isinstance(obj, dict) and "model" in obj:
+                return trouver_search_cv(obj["model"])
+            if hasattr(obj, "model"):
+                return trouver_search_cv(obj.model)
+            return None
+
+        recherche_sk = trouver_search_cv(modele_actuel)
+
+        if recherche_sk is not None:
+            meilleurs_params = str(recherche_sk.best_params_)
+            score_neg_mse = recherche_sk.best_score_
+            rmsecv = float(np.sqrt(abs(score_neg_mse)))
+        else:
+            meilleurs_params = "Erreur extraction"
+            rmsecv = 0.0 
+
+        # metrics internes
         rc, _, rmsec, _, _ = calculer_metriques(
             y_train_true, pred_train, y_train_true, pred_train
         )
@@ -169,7 +186,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         }
         tableau_compose.append(ligne_resultat)
 
-        # si meilleur : on garde
+        # si meilleur : on garde (La condition va enfin pouvoir s'activer !)
         if rmsecv > 0 and rmsecv < meilleur_rmsecv_global:
             meilleur_rmsecv_global = rmsecv
             meilleur_modele_joblib = modele_actuel
@@ -185,6 +202,11 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
                     "RMSECV": round(rmsecv, 4),
                 },
             }
+
+    except Exception as e:
+        print(f"error {id_pre + 1} : {e}")
+        continue
+
 ## Save
 dossier_compose = d0 / "xgboost" / "moyennes" / "Results" / idparam / compose
 dossier_compose.mkdir(parents=True, exist_ok=True)
@@ -238,7 +260,6 @@ if meilleur_modele_joblib is not None:
         json.dump(rapport_du_champion, f, indent=4)
 else:
     print(f"no mod pour {compose}.")
-
 
 
 ## GRAPHS
@@ -303,71 +324,68 @@ if meilleur_modele_joblib is not None:
 
     ## graph feature importance (stem plot)
     try:
-        if hasattr(meilleur_modele_joblib, "__getitem__"):
-            dernier_element = meilleur_modele_joblib[-1]
-            if isinstance(dernier_element, dict) and "model" in dernier_element:
-                fitted_xgb = dernier_element["model"].best_estimator_
+        recherche_sk_finale = trouver_search_cv(meilleur_modele_joblib)
+        
+        if recherche_sk_finale is not None:
+            fitted_xgb = recherche_sk_finale.best_estimator_
+            importances = fitted_xgb.feature_importances_
+
+            plt.figure(figsize=(10, 5))
+
+            toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
+            pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
+
+            match_reduction = re.search(
+                r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
+            )
+
+            if match_reduction:
+                drop_start = int(match_reduction.group(1))
+                drop_end = int(match_reduction.group(2))
+                step = int(match_reduction.group(3))
+
+                end_idx = len(toutes_longueurs) - drop_end
+                x_values = toutes_longueurs[drop_start:end_idx:step]
             else:
-                fitted_xgb = dernier_element.best_estimator_
+                x_values = toutes_longueurs
+
+            xlabel_text = "longueur d'onde (nm)"
+
+            plt.vlines(
+                x=x_values, ymin=0, ymax=importances, color="forestgreen", linewidth=1
+            )
+            plt.plot(
+                x_values,
+                importances,
+                marker="o",
+                markersize=2,
+                color="forestgreen",
+                linestyle="None",
+            )
+            plt.title(
+                f"XGBoost - {compose} (Variables: {len(importances)})",
+                fontsize=16,
+                fontweight="bold",
+                pad=15,
+            )
+            plt.ylabel("Importance", fontsize=12)
+            plt.xlabel(xlabel_text, fontsize=12)
+
+            plt.grid(False)
+            plt.gca().spines["top"].set_visible(True)
+            plt.gca().spines["right"].set_visible(True)
+
+            chemin_graph_importance_png = (
+                dossier_compose / f"Graph_feature_importance_XGB_{compose}.png"
+            )
+            chemin_graph_importance_pdf = (
+                dossier_compose / f"Graph_feature_importance_XGB_{compose}.pdf"
+            )
+            plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
+            plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
+            plt.close()
         else:
-            fitted_xgb = meilleur_modele_joblib.best_estimator_
-
-        importances = fitted_xgb.feature_importances_
-
-        plt.figure(figsize=(10, 5))
-
-        toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
-        pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
-
-        match_reduction = re.search(
-            r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
-        )
-
-        if match_reduction:
-            drop_start = int(match_reduction.group(1))
-            drop_end = int(match_reduction.group(2))
-            step = int(match_reduction.group(3))
-
-            end_idx = len(toutes_longueurs) - drop_end
-            x_values = toutes_longueurs[drop_start:end_idx:step]
-        else:
-            x_values = toutes_longueurs
-
-        xlabel_text = "longueur d'onde (nm)"
-
-        plt.vlines(
-            x=x_values, ymin=0, ymax=importances, color="forestgreen", linewidth=1
-        )
-        plt.plot(
-            x_values,
-            importances,
-            marker="o",
-            markersize=2,
-            color="forestgreen",
-            linestyle="None",
-        )
-        plt.title(
-            f"XGBoost - {compose} (Variables: {len(importances)})",
-            fontsize=16,
-            fontweight="bold",
-            pad=15,
-        )
-        plt.ylabel("Importance", fontsize=12)
-        plt.xlabel(xlabel_text, fontsize=12)
-
-        plt.grid(False)
-        plt.gca().spines["top"].set_visible(True)
-        plt.gca().spines["right"].set_visible(True)
-
-        chemin_graph_importance_png = (
-            dossier_compose / f"Graph_feature_importance_XGB_{compose}.png"
-        )
-        chemin_graph_importance_pdf = (
-            dossier_compose / f"Graph_feature_importance_XGB_{compose}.pdf"
-        )
-        plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
-        plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
-        plt.close()
+            print("Impossible d'extraire les importances.")
 
     except Exception as e_graph:
         print(f"error graph importance pour {compose} : {e_graph}")

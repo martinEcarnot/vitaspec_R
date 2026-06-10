@@ -6,8 +6,14 @@ from pathlib import Path
 import joblib
 import json
 import numpy as np
+import random
 
 import nirs4all
+
+# Seed globale pour la reproductibilité absolue
+SEED = 42
+np.random.seed(SEED)
+random.seed(SEED)
 
 ## mod
 from sklearn.ensemble import RandomForestRegressor
@@ -28,8 +34,13 @@ sys.path.append(str((d0 / "random_forest").resolve()))
 from diy_functions.pre_translation import pre_translation
 from diy_functions.metrics import calculer_metriques
 
-# %% CHARGEMENT DONNEES +
+# %% CHARGEMENT DONNEES 
 
+if len(sys.argv) < 4:
+    print("error : il manque des arguments")
+    sys.exit(1)
+
+compose = sys.argv[1]
 fichier_data = sys.argv[2]
 idparam = sys.argv[3]
 
@@ -44,11 +55,14 @@ with open(list_pre_tot, "r", encoding="utf-8") as f:
 liste_pretraitements_r = re.findall(r"rbind\((.*)\)", contenu_r)
 
 ## Data
-
 df_data = pd.read_csv(DATA)
+# Nettoyage des colonnes inutiles pour nirs4all
+colonnes_a_retirer = ["campagne", "source", "etat"]
+df_data = df_data.drop(columns=[col for col in colonnes_a_retirer if col in df_data.columns])
+
 col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
 
-print(f"{len(df_data)} échantillons.")
+print(f"{len(df_data)} spectres au total.")
 print(f"{len(col_spectres)} longueurs d'ondes")
 print(f"{len(liste_pretraitements_r)} prétraitements")
 
@@ -63,47 +77,39 @@ param_grid = {
     "max_features": ["sqrt", "log2", 0.3],
 }
 
-kf = KFold(n_splits=10, shuffle=True, random_state=42)
+# %% SÉLECTION DU COMPOSÉ ET SYNCHRONISATION DU TEST EXTERNE
 
-# %% SÉLECTION DU COMPOSÉ
-
-# verifie que l'argument est présent
-if len(sys.argv) < 2:
-    print("error : spécifier un composé en argument")
-    print("exemple : python RF_sec.py trans.beta.carotene")
-    sys.exit(1)
-
-# récupère le nom du composé
-compose = sys.argv[1]
-
-print(f"execution {compose}")
+print(f"exécution RF Répétitions pour {compose}")
 
 ## X et Y
+# 1. FORÇAGE NUMÉRIQUE : Convertit tout en nombres. Les textes bizarres ("ND", ",") deviennent des NaN.
+df_data[compose] = pd.to_numeric(df_data[compose], errors='coerce')
 
-df_data[compose] = pd.to_numeric(df_data[compose], errors="coerce")
+# 2. NETTOYAGE
 df_propre = df_data.dropna(subset=[compose])
-print(f"echantillons valides : {len(df_propre)} / {len(df_data)}")
+print(f"spectres valides : {len(df_propre)} / {len(df_data)}")
 
-# lecture du jeu de validation externe
+# Lecture du sanctuaire créé par le Modèle A (encapsulé dans idparam)
 chemin_test_externe = d0 / "commun" / idparam / f"valid_externe_{compose}.csv"
 try:
     df_sanctuaire = pd.read_csv(chemin_test_externe)
-    ech_interdits = df_sanctuaire["ech"].unique()
+    ech_interdits = df_sanctuaire['ech'].unique()
 except FileNotFoundError:
-    print(f"error : pas de {chemin_test_externe}, lancer d'abord RF_moyennes.")
+    print(f"error : Le fichier {chemin_test_externe} n'existe pas. Lancez d'abord le Modèle A.")
     sys.exit(1)
 
-# séparation basée sur ech
-df_test_externe = df_propre[df_propre["ech"].isin(ech_interdits)]
-df_train_val = df_propre[~df_propre["ech"].isin(ech_interdits)]
+# Séparation via les identifiants 'ech'
+df_test_externe = df_propre[df_propre['ech'].isin(ech_interdits)]
+df_train_val = df_propre[~df_propre['ech'].isin(ech_interdits)]
 
-print(f"echantillons pour train + test : {len(df_train_val)}")
+print(f"Spectres pour l'entraînement/CV : {len(df_train_val)}")
+print(f"Spectres isolés pour le crash-test : {len(df_test_externe)}")
 
-y = df_train_val[compose].values
+y = df_train_val[compose].values.astype(float) 
 X = df_train_val[col_spectres].values
-groupes = df_train_val["ech"].values
+groupes = df_train_val['ech'].values
 
-# pré-calcul des plis de CV groupés
+# Pré-calcul des plis GroupKFold (5 plis)
 gkf = GroupKFold(n_splits=5)
 cv_splits = list(gkf.split(X, y, groups=groupes))
 
@@ -112,22 +118,23 @@ meilleur_rmsecv_global = float("inf")
 meilleur_modele_joblib = None
 rapport_du_champion = None
 
-# la liste qui va contenir les 174 lignes JUSTE pour ce composé
+# la liste qui va contenir les résultats JUSTE pour ce composé
 tableau_compose = []
 
-## Boucle sur les 174 composés
+## Boucle sur les prétraitements
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
-    # randomSearch
+    
+    # randomSearch avec les cv_splits pré-calculés
     random_search = RandomizedSearchCV(
-        estimator=RandomForestRegressor(random_state=42, n_jobs=-1),
+        estimator=RandomForestRegressor(random_state=SEED, n_jobs=-1),
         param_distributions=param_grid,
         n_iter=30,
-        cv=cv_splits,
+        cv=cv_splits, 
         scoring="neg_mean_squared_error",
-        random_state=42,
+        random_state=SEED
     )
 
-    # pipeline
+    # pipeline épuré
     etapes_pretraitement = pre_translation(chaine_r_brute)
     pipeline = etapes_pretraitement + [
         {"model": random_search},
@@ -137,44 +144,55 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         # exec
         resultat = nirs4all.run(dataset=(X, y), pipeline=pipeline)
 
-        # extraction des pred
+        # extraction des pred (Uniquement Train)
         results = resultat.predictions.to_dicts()
-        y_train_true, pred_train, y_test_true, pred_test = [], [], [], []
+        y_train_true, pred_train = [], []
 
         for bloc in results:
             partition = bloc.get("partition", "")
             if partition == "train":
                 y_train_true = np.array(bloc.get("y_true", [])).ravel()
                 pred_train = np.array(bloc.get("y_pred", [])).ravel()
-            elif partition == "test":
-                y_test_true = np.array(bloc.get("y_true", [])).ravel()
-                pred_test = np.array(bloc.get("y_pred", [])).ravel()
 
-        # extraction des meilleurs hyperparamètres et du RMSECV
-        df_summary = resultat.predictions.to_pandas()
-        meilleurs_params = df_summary.iloc[0].get("best_params", "Non trouvé")
-
-        def securiser_nombre(valeur):
-            if valeur is None:
-                return 0.0
-            try:
-                return float(valeur)
-            except:
-                return 0.0
-
-        if "rmsecv" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["rmsecv"])
-        elif "val_score" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["val_score"])
-        else:
-            rmsecv = securiser_nombre(getattr(resultat, "best_rmse", 0.0))
+        # metrics internes (uniquement sur le train)
+        rc, _, rmsec, _, _ = calculer_metriques(
+            y_train_true, pred_train, y_train_true, pred_train
+        )
 
         modele_actuel = getattr(resultat, "final", resultat)
 
-        # metrics
-        rc, rp, rmsec, rmsep, rpd = calculer_metriques(
-            y_train_true, pred_train, y_test_true, pred_test
-        )
+        # --- NOUVELLE EXTRACTION ROBUSTE DU RMSECV ET PARAMS ---
+        meilleurs_params = "{}"
+        rmsecv = 0.0
+        
+        # Fonction "tête chercheuse" pour fouiller dans la boîte noire de nirs4all
+        def trouver_search_cv(obj):
+            if hasattr(obj, "best_score_") and hasattr(obj, "best_params_"):
+                return obj
+            if hasattr(obj, "steps"): # Pipeline Sklearn
+                return trouver_search_cv(obj.steps[-1][1])
+            if hasattr(obj, "__getitem__") and not isinstance(obj, (str, dict, pd.DataFrame, np.ndarray)):
+                try:
+                    return trouver_search_cv(obj[-1])
+                except:
+                    pass
+            if isinstance(obj, dict) and "model" in obj:
+                return trouver_search_cv(obj["model"])
+            if hasattr(obj, "model"): # Wrapper nirs4all
+                return trouver_search_cv(obj.model)
+            return None
+
+        # On lance la recherche
+        recherche_sk = trouver_search_cv(modele_actuel)
+
+        if recherche_sk is not None:
+            meilleurs_params = str(recherche_sk.best_params_)
+            score_neg_mse = recherche_sk.best_score_
+            # Scikit-Learn renvoie l'erreur en Négatif, on la remet en positif puis racine carrée
+            rmsecv = float(np.sqrt(abs(score_neg_mse)))
+        else:
+            meilleurs_params = "Erreur extraction"
+            rmsecv = 0.0 
 
         # ajoute cette combinaison dans le tableau géant
         ligne_resultat = {
@@ -183,11 +201,8 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
             "Code_R_Pretraitement": chaine_r_brute,
             "Meilleurs_Hyperparam_RF": str(meilleurs_params),
             "Rc": round(rc, 4),
-            "Rp": round(rp, 4),
             "RMSEC": round(rmsec, 4),
             "RMSECV": round(rmsecv, 4),
-            "RMSEP": round(rmsep, 4),
-            "RPD": round(rpd, 4),
         }
         tableau_compose.append(ligne_resultat)
 
@@ -201,13 +216,10 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
                 "Compose": compose,
                 "Pretraitement_Gagnant": chaine_r_brute,
                 "Meilleurs_Parametres": meilleurs_params,
-                "Metriques": {
+                "Metriques_Internes": {
                     "Rc": round(rc, 4),
-                    "Rp": round(rp, 4),
                     "RMSEC": round(rmsec, 4),
                     "RMSECV": round(rmsecv, 4),
-                    "RMSEP": round(rmsep, 4),
-                    "RPD": round(rpd, 4),
                 },
             }
 
@@ -222,58 +234,57 @@ dossier_compose.mkdir(parents=True, exist_ok=True)
 # tableau du compose
 df_compose = pd.DataFrame(tableau_compose)
 
-chemin_csv_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_{compose}.csv"
+chemin_csv_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_REP_{compose}.csv"
 df_compose.to_csv(chemin_csv_compose, sep=";", index=False)
 
 try:
-    chemin_excel_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_{compose}.xlsx"
+    chemin_excel_compose = dossier_compose / f"RANDOMSEARCH_DETAILS_REP_{compose}.xlsx"
     df_compose.to_excel(chemin_excel_compose, index=False)
 except ModuleNotFoundError:
     pass
 
-# json meilleur
+# json meilleur et TEST EXTERNE
 if meilleur_modele_joblib is not None:
-    print(f"meilleur {compose} RMSECV: {meilleur_rmsecv_global:.4f}")
+    print(f"🏆 Meilleur modèle Répétitions validé (RMSECV: {meilleur_rmsecv_global:.4f})")
 
-    # Test sur les 15 échantillons externes
+    # ÉPREUVE DU FEU : Test sur les répétitions du sanctuaire
     try:
         X_ext = df_test_externe[col_spectres].values
         y_ext_true = df_test_externe[compose].values
-
+        
         pred_ext = meilleur_modele_joblib.predict(X_ext)
         if isinstance(pred_ext, dict) and "y_pred" in pred_ext:
-            pred_ext = np.array(pred_ext["y_pred"]).ravel()
+             pred_ext = np.array(pred_ext["y_pred"]).ravel()
         else:
-            pred_ext = np.array(pred_ext).ravel()
+             pred_ext = np.array(pred_ext).ravel()
 
         _, _, _, rmsep_ext, rpd_ext = calculer_metriques(
-            y_ext_true, pred_ext, y_ext_true, pred_ext
+            y_ext_true, pred_ext, y_ext_true, pred_ext 
         )
-
+        
         rapport_du_champion["Crash_Test_Externe"] = {
+            "Avertissement": "Score sur les répétitions des échantillons isolés du Modèle A.",
             "RMSEP_Externe": round(rmsep_ext, 4),
-            "RPD_Externe": round(rpd_ext, 4),
+            "RPD_Externe": round(rpd_ext, 4)
         }
-        print(f"Test externe -> RMSEP: {rmsep_ext:.4f} | RPD: {rpd_ext:.4f}")
-
+        print(f"🔥 SCORE INVIOLABLE (Modèle B - Répétitions) -> RMSEP: {rmsep_ext:.4f} | RPD: {rpd_ext:.4f}")
+        
     except Exception as e_test:
-        print(f"error test externe : {e_test}")
+        print(f"⚠️ error test externe : {e_test}")
 
     # Sauvegarde du modèle physique (.joblib)
-    chemin_modele = dossier_compose / f"modele_RF_A_{compose}.joblib"
+    chemin_modele = dossier_compose / f"modele_RF_B_{compose}.joblib"
     joblib.dump(meilleur_modele_joblib, chemin_modele)
 
     # Sauvegarde du rapport JSON
-    with open(
-        dossier_compose / f"rapport_A_{compose}.json", "w", encoding="utf-8"
-    ) as f:
+    with open(dossier_compose / f"rapport_B_{compose}.json", "w", encoding="utf-8") as f:
         json.dump(rapport_du_champion, f, indent=4)
 else:
     print(f"no mod pour {compose}.")
 
 ## GRAPHS
 if meilleur_modele_joblib is not None:
-    sns.set_theme(style="whitegrid")
+    sns.set_theme(style="whitegrid")  
 
     ## graph robustesse (obverfitting)
     plt.figure(figsize=(10, 6))
@@ -281,7 +292,7 @@ if meilleur_modele_joblib is not None:
     sns.scatterplot(
         data=df_compose,
         x="RMSECV",
-        y="RMSEP",
+        y="RMSEC",
         color="lightgray",
         alpha=0.8,
         edgecolor="gray",
@@ -291,7 +302,7 @@ if meilleur_modele_joblib is not None:
     champion_row = df_compose.loc[df_compose["RMSECV"].idxmin()]
     plt.scatter(
         champion_row["RMSECV"],
-        champion_row["RMSEP"],
+        champion_row["RMSEC"],
         color="crimson",
         s=150,
         edgecolor="black",
@@ -300,97 +311,9 @@ if meilleur_modele_joblib is not None:
         zorder=5,
     )
 
-    min_val = min(df_compose["RMSECV"].min(), df_compose["RMSEP"].min())
-    max_val = max(df_compose["RMSECV"].max(), df_compose["RMSEP"].max())
+    min_val = min(df_compose["RMSECV"].min(), df_compose["RMSEC"].min())
+    max_val = max(df_compose["RMSECV"].max(), df_compose["RMSEC"].max())
 
     plt.plot(
         [min_val * 0.9, max_val * 1.1],
-        [min_val * 0.9, max_val * 1.1],
-        "k--",
-        alpha=0.5,
-        label="y = x",
-    )
-
-    plt.title(
-        f"overfitting_pretrait_{compose}",
-        fontsize=14,
-        fontweight="bold",
-    )
-    plt.xlabel("RMSEcv", fontsize=12)
-    plt.ylabel("RMSEP", fontsize=12)
-    plt.legend()
-
-    chemin_graph_robustesse_png = dossier_compose / f"Graph_robustesse_{compose}.png"
-    chemin_graph_robustesse_pdf = dossier_compose / f"Graph_robustesse_{compose}.pdf"
-    plt.savefig(chemin_graph_robustesse_png, dpi=300, bbox_inches="tight")
-    plt.savefig(chemin_graph_robustesse_pdf, dpi=300, bbox_inches="tight")
-    plt.close()
-
-    ## graph feature importance (stem plot)
-    try:
-        if hasattr(meilleur_modele_joblib, "__getitem__"):
-            dernier_element = meilleur_modele_joblib[-1]
-            if isinstance(dernier_element, dict) and "model" in dernier_element:
-                fitted_rf = dernier_element["model"].best_estimator_
-            else:
-                fitted_rf = dernier_element.best_estimator_
-        else:
-            fitted_rf = meilleur_modele_joblib.best_estimator_
-
-        importances = fitted_rf.feature_importances_
-
-        plt.figure(figsize=(10, 5))
-
-        toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
-        pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
-
-        match_reduction = re.search(
-            r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
-        )
-
-        if match_reduction:
-            drop_start = int(match_reduction.group(1))
-            drop_end = int(match_reduction.group(2))
-            step = int(match_reduction.group(3))
-
-            end_idx = len(toutes_longueurs) - drop_end
-            x_values = toutes_longueurs[drop_start:end_idx:step]
-        else:
-            x_values = toutes_longueurs
-
-        xlabel_text = "longueur d'onde (nm)"
-
-        plt.vlines(x=x_values, ymin=0, ymax=importances, color="blue", linewidth=1)
-        plt.plot(
-            x_values,
-            importances,
-            marker="o",
-            markersize=2,
-            color="blue",
-            linestyle="None",
-        )
-        plt.title(
-            f"RF - {compose} (Variables: {len(importances)})",
-            fontsize=16,
-            fontweight="bold",
-            pad=15,
-        )
-        plt.ylabel("Importance", fontsize=12)
-        plt.xlabel(xlabel_text, fontsize=12)
-
-        plt.grid(False)
-        plt.gca().spines["top"].set_visible(True)
-        plt.gca().spines["right"].set_visible(True)
-
-        chemin_graph_importance_png = (
-            dossier_compose / f"Graph_feature_importance_{compose}.png"
-        )
-        chemin_graph_importance_pdf = (
-            dossier_compose / f"Graph_feature_importance_{compose}.pdf"
-        )
-        plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
-        plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
-        plt.close()
-
-    except Exception as e_graph:
-        print(f"error pour {compose} : {e_graph}")
+        [min

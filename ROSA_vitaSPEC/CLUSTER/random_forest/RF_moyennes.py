@@ -95,7 +95,7 @@ chemin_test_externe = d0 / "commun" / idparam / f"valid_externe_{compose}.csv"
 chemin_test_externe.parent.mkdir(parents=True, exist_ok=True)
 df_test_externe.to_csv(chemin_test_externe, index=False)
 
-y = df_train_val[compose].values
+y = df_train_val[compose].values.astype(float) 
 X = df_train_val[col_spectres].values
 
 # variables pour le meilleur
@@ -128,7 +128,7 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         # exec
         resultat = nirs4all.run(dataset=(X, y), pipeline=pipeline)
 
-        # extraction des pred (Uniquement Train)
+        # extraction des pred
         results = resultat.predictions.to_dicts()
         y_train_true, pred_train = [], []
 
@@ -138,31 +138,69 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
                 y_train_true = np.array(bloc.get("y_true", [])).ravel()
                 pred_train = np.array(bloc.get("y_pred", [])).ravel()
 
-        # extraction des meilleurs hyperparamètres et du RMSECV
-        df_summary = resultat.predictions.to_pandas()
-        meilleurs_params = df_summary.iloc[0].get("best_params", "Non trouvé")
-
-        def securiser_nombre(valeur):
-            if valeur is None:
-                return 0.0
-            try:
-                return float(valeur)
-            except:
-                return 0.0
-
-        if "rmsecv" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["rmsecv"])
-        elif "val_score" in df_summary.columns:
-            rmsecv = securiser_nombre(df_summary.iloc[0]["val_score"])
-        else:
-            rmsecv = securiser_nombre(getattr(resultat, "best_rmse", 0.0))
-
-        modele_actuel = getattr(resultat, "final", resultat)
-
         # metrics internes (uniquement sur le train)
         rc, _, rmsec, _, _ = calculer_metriques(
             y_train_true, pred_train, y_train_true, pred_train
         )
+
+        # extraction
+        meilleurs_params = "{}"
+        rmsecv = 0.0
+
+        def chercher_search_cv_global(obj, vus=None):
+            if vus is None:
+                vus = set()
+            if obj is None or id(obj) in vus:
+                return None
+            vus.add(id(obj))
+            
+            # Si on détecte les attributs magiques de Sklearn
+            if hasattr(obj, "best_score_") and hasattr(obj, "best_params_"):
+                return obj
+                
+            # Si c'est un dictionnaire
+            if isinstance(obj, dict):
+                for v in obj.values():
+                    res = chercher_search_cv_global(v, vus)
+                    if res is not None:
+                        return res
+            # Si c'est une liste ou un tuple
+            elif isinstance(obj, (list, tuple)):
+                for item in obj:
+                    res = chercher_search_cv_global(item, vus)
+                    if res is not None:
+                        return res
+            # Pour tout autre objet, on explore ses attributs vivants
+            elif hasattr(obj, "__dict__") or hasattr(obj, "__slots__"):
+                # On évite de crawler les structures de données massives de calcul
+                if isinstance(obj, (pd.DataFrame, pd.Series, np.ndarray, str, int, float)):
+                    return None
+                try:
+                    for attr in dir(obj):
+                        # On zappe les méthodes privées et les données pures pour aller très vite
+                        if attr.startswith('__') or attr in ['predictions', 'dataset', 'X', 'y']:
+                            continue
+                        try:
+                            val = getattr(obj, attr)
+                            res = chercher_search_cv_global(val, vus)
+                            if res is not None:
+                                return res
+                        except:
+                            pass
+                except:
+                    pass
+            return None
+
+        # On lance le crawler sur l'INTEGRALITÉ de l'objet resultat retourné par nirs4all
+        recherche_sk = chercher_search_cv_global(resultat)
+
+        if recherche_sk is not None:
+            meilleurs_params = str(recherche_sk.best_params_)
+            score_neg_mse = recherche_sk.best_score_
+            rmsecv = float(np.sqrt(abs(score_neg_mse)))
+        else:
+            meilleurs_params = "Erreur de ciblage"
+            rmsecv = 0.0
 
         # ajoute cette combinaison dans le tableau géant
         ligne_resultat = {
@@ -311,69 +349,70 @@ if meilleur_modele_joblib is not None:
 
     ## graph feature importance (stem plot)
     try:
-        if hasattr(meilleur_modele_joblib, "__getitem__"):
-            dernier_element = meilleur_modele_joblib[-1]
-            if isinstance(dernier_element, dict) and "model" in dernier_element:
-                fitted_rf = dernier_element["model"].best_estimator_
+        # réutilise la recherche dynamiqu --> trouve estimateur final
+        recherche_sk_finale = trouver_search_cv(meilleur_modele_joblib)
+        
+        if recherche_sk_finale is not None:
+            fitted_mod = recherche_sk_finale.best_estimator_
+            importances = fitted_mod.feature_importances_
+            
+            plt.figure(figsize=(10, 5))
+
+            toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
+            pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
+
+            match_reduction = re.search(
+                r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
+            )
+
+            if match_reduction:
+                drop_start = int(match_reduction.group(1))
+                drop_end = int(match_reduction.group(2))
+                step = int(match_reduction.group(3))
+
+                end_idx = len(toutes_longueurs) - drop_end
+                x_values = toutes_longueurs[drop_start:end_idx:step]
             else:
-                fitted_rf = dernier_element.best_estimator_
+                x_values = toutes_longueurs
+
+            xlabel_text = "longueur d'onde (nm)"
+            
+            
+            couleur_graph = "forestgreen" 
+            
+            plt.vlines(x=x_values, ymin=0, ymax=importances, color=couleur_graph, linewidth=1)
+            plt.plot(
+                x_values,
+                importances,
+                marker="o",
+                markersize=2,
+                color=couleur_graph,
+                linestyle="None",
+            )
+            plt.title(
+                f"Modèle - {compose} (Variables: {len(importances)})",
+                fontsize=16,
+                fontweight="bold",
+                pad=15,
+            )
+            plt.ylabel("Importance", fontsize=12)
+            plt.xlabel(xlabel_text, fontsize=12)
+
+            plt.grid(False)
+            plt.gca().spines["top"].set_visible(True)
+            plt.gca().spines["right"].set_visible(True)
+
+            chemin_graph_importance_png = (
+                dossier_compose / f"Graph_feature_importance_{compose}.png"
+            )
+            chemin_graph_importance_pdf = (
+                dossier_compose / f"Graph_feature_importance_{compose}.pdf"
+            )
+            plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
+            plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
+            plt.close()
         else:
-            fitted_rf = meilleur_modele_joblib.best_estimator_
-
-        importances = fitted_rf.feature_importances_
-
-        plt.figure(figsize=(10, 5))
-
-        toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
-        pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
-
-        match_reduction = re.search(
-            r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
-        )
-
-        if match_reduction:
-            drop_start = int(match_reduction.group(1))
-            drop_end = int(match_reduction.group(2))
-            step = int(match_reduction.group(3))
-
-            end_idx = len(toutes_longueurs) - drop_end
-            x_values = toutes_longueurs[drop_start:end_idx:step]
-        else:
-            x_values = toutes_longueurs
-
-        xlabel_text = "longueur d'onde (nm)"
-
-        plt.vlines(x=x_values, ymin=0, ymax=importances, color="blue", linewidth=1)
-        plt.plot(
-            x_values,
-            importances,
-            marker="o",
-            markersize=2,
-            color="blue",
-            linestyle="None",
-        )
-        plt.title(
-            f"RF - {compose} (Variables: {len(importances)})",
-            fontsize=16,
-            fontweight="bold",
-            pad=15,
-        )
-        plt.ylabel("Importance", fontsize=12)
-        plt.xlabel(xlabel_text, fontsize=12)
-
-        plt.grid(False)
-        plt.gca().spines["top"].set_visible(True)
-        plt.gca().spines["right"].set_visible(True)
-
-        chemin_graph_importance_png = (
-            dossier_compose / f"Graph_feature_importance_{compose}.png"
-        )
-        chemin_graph_importance_pdf = (
-            dossier_compose / f"Graph_feature_importance_{compose}.pdf"
-        )
-        plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
-        plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
-        plt.close()
+            print("Impossible d'extraire les importances du modèle.")
 
     except Exception as e_graph:
-        print(f"error pour {compose} : {e_graph}")
+        print(f"error graph importance pour {compose} : {e_graph}")
