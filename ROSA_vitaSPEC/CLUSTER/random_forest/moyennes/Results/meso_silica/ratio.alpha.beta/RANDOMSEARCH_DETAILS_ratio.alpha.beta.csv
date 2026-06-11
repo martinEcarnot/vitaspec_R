@@ -1,172 +1,172 @@
 Compose;ID_Pretraitement;Code_R_Pretraitement;Meilleurs_Hyperparam_RF;Rc;RMSEC;RMSECV
-ratio.alpha.beta;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));Erreur extraction;0.9451;0.2299;0.0
-ratio.alpha.beta;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9573;0.2021;0.0
-ratio.alpha.beta;3;list('adj',''), list('red',c(1,1300,1));Erreur extraction;0.9042;0.2461;0.0
-ratio.alpha.beta;4;list('adj',''),list('red',c(950,700,1)),list('snv','');Erreur extraction;0.7968;0.3104;0.0
-ratio.alpha.beta;5;list('adj',''),list('red',c(950,750,1)),list('snv','');Erreur extraction;0.808;0.3067;0.0
-ratio.alpha.beta;6;list('adj',''), list('red',c(1,1000,1)), list('snv','');Erreur extraction;0.8262;0.3122;0.0
-ratio.alpha.beta;7;list('adj',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.9081;0.2485;0.0
-ratio.alpha.beta;8;list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9351;0.2298;0.0
-ratio.alpha.beta;9;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 9));Erreur extraction;0.9018;0.2494;0.0
-ratio.alpha.beta;10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 15));Erreur extraction;0.896;0.2518;0.0
-ratio.alpha.beta;11;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.8938;0.2533;0.0
-ratio.alpha.beta;12;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.8905;0.2541;0.0
-ratio.alpha.beta;13;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.895;0.2532;0.0
-ratio.alpha.beta;14;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.8929;0.2541;0.0
-ratio.alpha.beta;15;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 25));Erreur extraction;0.8953;0.2519;0.0
-ratio.alpha.beta;16;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 31));Erreur extraction;0.8946;0.252;0.0
-ratio.alpha.beta;17;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 5));Erreur extraction;0.904;0.2795;0.0
-ratio.alpha.beta;18;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 9));Erreur extraction;0.9663;0.1955;0.0
-ratio.alpha.beta;19;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 11));Erreur extraction;0.9201;0.2414;0.0
-ratio.alpha.beta;20;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 15));Erreur extraction;0.929;0.2474;0.0
-ratio.alpha.beta;21;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 21));Erreur extraction;0.909;0.2609;0.0
-ratio.alpha.beta;22;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 25));Erreur extraction;0.8872;0.2791;0.0
-ratio.alpha.beta;23;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 31));Erreur extraction;0.8818;0.2804;0.0
-ratio.alpha.beta;24;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 35));Erreur extraction;0.8803;0.2816;0.0
-ratio.alpha.beta;25;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 5));Erreur extraction;0.9341;0.2597;0.0
-ratio.alpha.beta;26;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));Erreur extraction;0.9689;0.2001;0.0
-ratio.alpha.beta;27;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 11));Erreur extraction;0.9039;0.2791;0.0
-ratio.alpha.beta;28;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 15));Erreur extraction;0.9733;0.1823;0.0
-ratio.alpha.beta;29;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 21));Erreur extraction;0.9689;0.1835;0.0
-ratio.alpha.beta;30;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 25));Erreur extraction;0.8973;0.2771;0.0
-ratio.alpha.beta;31;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 31));Erreur extraction;0.8919;0.2768;0.0
-ratio.alpha.beta;32;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 35));Erreur extraction;0.8928;0.2756;0.0
-ratio.alpha.beta;33;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 9));Erreur extraction;0.9763;0.1596;0.0
-ratio.alpha.beta;34;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 11));Erreur extraction;0.9395;0.2341;0.0
-ratio.alpha.beta;35;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 15));Erreur extraction;0.9778;0.1788;0.0
-ratio.alpha.beta;36;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 21));Erreur extraction;0.9438;0.1984;0.0
-ratio.alpha.beta;37;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 25));Erreur extraction;0.9709;0.1532;0.0
-ratio.alpha.beta;38;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31));Erreur extraction;0.9669;0.1752;0.0
-ratio.alpha.beta;39;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 35));Erreur extraction;0.9625;0.1763;0.0
-ratio.alpha.beta;40;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 9));Erreur extraction;0.9764;0.1596;0.0
-ratio.alpha.beta;41;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 11));Erreur extraction;0.9403;0.2344;0.0
-ratio.alpha.beta;42;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 15));Erreur extraction;0.9783;0.178;0.0
-ratio.alpha.beta;43;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 21));Erreur extraction;0.9716;0.1548;0.0
-ratio.alpha.beta;44;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 25));Erreur extraction;0.9709;0.1539;0.0
-ratio.alpha.beta;45;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 31));Erreur extraction;0.9662;0.1759;0.0
-ratio.alpha.beta;46;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 35));Erreur extraction;0.9639;0.1758;0.0
-ratio.alpha.beta;47;list('adj',''), list('red',c(1,1400,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9371;0.2286;0.0
-ratio.alpha.beta;48;list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.9303;0.2349;0.0
-ratio.alpha.beta;49;list('adj',''), list('red',c(800,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9316;0.2704;0.0
-ratio.alpha.beta;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.8999;0.28;0.0
-ratio.alpha.beta;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8972;0.2846;0.0
-ratio.alpha.beta;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9222;0.2977;0.0
-ratio.alpha.beta;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9206;0.2697;0.0
-ratio.alpha.beta;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));Erreur extraction;0.9615;0.1878;0.0
-ratio.alpha.beta;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.9747;0.1926;0.0
-ratio.alpha.beta;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9661;0.2062;0.0
-ratio.alpha.beta;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));Erreur extraction;0.8062;0.307;0.0
-ratio.alpha.beta;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));Erreur extraction;0.806;0.3073;0.0
-ratio.alpha.beta;59;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,25));Erreur extraction;0.8047;0.3075;0.0
-ratio.alpha.beta;60;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.8045;0.3079;0.0
-ratio.alpha.beta;61;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.9244;0.2403;0.0
-ratio.alpha.beta;62;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9219;0.2399;0.0
-ratio.alpha.beta;63;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.9142;0.2455;0.0
-ratio.alpha.beta;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.9142;0.2448;0.0
-ratio.alpha.beta;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9149;0.2866;0.0
-ratio.alpha.beta;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9303;0.2531;0.0
-ratio.alpha.beta;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9212;0.2703;0.0
-ratio.alpha.beta;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');Erreur extraction;0.961;0.178;0.0
-ratio.alpha.beta;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');Erreur extraction;0.857;0.2876;0.0
-ratio.alpha.beta;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');Erreur extraction;0.9661;0.1747;0.0
-ratio.alpha.beta;75;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,21)), list('snv','');Erreur extraction;0.9271;0.2311;0.0
-ratio.alpha.beta;76;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('snv','');Erreur extraction;0.9641;0.1924;0.0
-ratio.alpha.beta;77;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,21)), list('snv','');Erreur extraction;0.9789;0.1547;0.0
-ratio.alpha.beta;78;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.8183;0.3065;0.0
-ratio.alpha.beta;79;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3');Erreur extraction;0.8183;0.3065;0.0
-ratio.alpha.beta;80;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.7983;0.3122;0.0
-ratio.alpha.beta;81;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.7977;0.3126;0.0
-ratio.alpha.beta;82;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.8207;0.3018;0.0
-ratio.alpha.beta;83;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.7981;0.3124;0.0
-ratio.alpha.beta;84;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.9283;0.2326;0.0
-ratio.alpha.beta;85;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.9288;0.2355;0.0
-ratio.alpha.beta;86;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.8162;0.3072;0.0
-ratio.alpha.beta;87;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.8165;0.307;0.0
-ratio.alpha.beta;88;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.8163;0.3073;0.0
-ratio.alpha.beta;89;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.8822;0.2903;0.0
-ratio.alpha.beta;90;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 11));Erreur extraction;0.8767;0.2904;0.0
-ratio.alpha.beta;91;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.9328;0.2342;0.0
-ratio.alpha.beta;92;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 21));Erreur extraction;0.9258;0.2368;0.0
-ratio.alpha.beta;93;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 15));Erreur extraction;0.9783;0.178;0.0
-ratio.alpha.beta;94;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 21));Erreur extraction;0.9716;0.1548;0.0
-ratio.alpha.beta;95;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(1, 3, 15));Erreur extraction;0.9328;0.2342;0.0
-ratio.alpha.beta;96;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2, 3, 21));Erreur extraction;0.9716;0.1548;0.0
-ratio.alpha.beta;97;list('adj',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.9042;0.2461;0.0
-ratio.alpha.beta;98;list('adj',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7676;0.3337;0.0
-ratio.alpha.beta;99;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 2, 15));Erreur extraction;0.8896;0.2573;0.0
-ratio.alpha.beta;100;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 3, 21));Erreur extraction;0.888;0.258;0.0
-ratio.alpha.beta;101;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 5));Erreur extraction;0.9379;0.2418;0.0
-ratio.alpha.beta;102;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 11));Erreur extraction;0.9268;0.2521;0.0
-ratio.alpha.beta;103;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 15));Erreur extraction;0.9293;0.2517;0.0
-ratio.alpha.beta;104;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 21));Erreur extraction;0.9184;0.2542;0.0
-ratio.alpha.beta;105;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 31));Erreur extraction;0.9127;0.2586;0.0
-ratio.alpha.beta;106;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 5));Erreur extraction;0.9188;0.2692;0.0
-ratio.alpha.beta;107;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 11));Erreur extraction;0.9367;0.2462;0.0
-ratio.alpha.beta;108;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 15));Erreur extraction;0.9387;0.2445;0.0
-ratio.alpha.beta;109;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 21));Erreur extraction;0.8836;0.2887;0.0
-ratio.alpha.beta;110;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 31));Erreur extraction;0.922;0.2513;0.0
-ratio.alpha.beta;111;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 11));Erreur extraction;0.9828;0.1754;0.0
-ratio.alpha.beta;112;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));Erreur extraction;0.9743;0.1742;0.0
-ratio.alpha.beta;113;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 21));Erreur extraction;0.9578;0.2074;0.0
-ratio.alpha.beta;114;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 31));Erreur extraction;0.95;0.2079;0.0
-ratio.alpha.beta;115;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 11));Erreur extraction;0.9848;0.172;0.0
-ratio.alpha.beta;116;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 15));Erreur extraction;0.9805;0.1656;0.0
-ratio.alpha.beta;117;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 21));Erreur extraction;0.9766;0.1655;0.0
-ratio.alpha.beta;118;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 31));Erreur extraction;0.9515;0.2086;0.0
-ratio.alpha.beta;119;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.9107;0.2472;0.0
-ratio.alpha.beta;120;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,21));Erreur extraction;0.9079;0.2479;0.0
-ratio.alpha.beta;121;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('msc','');Erreur extraction;0.9387;0.2445;0.0
-ratio.alpha.beta;122;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('msc','');Erreur extraction;0.9805;0.1656;0.0
-ratio.alpha.beta;123;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2');Erreur extraction;0.8546;0.3057;0.0
-ratio.alpha.beta;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3');Erreur extraction;0.8546;0.3057;0.0
-ratio.alpha.beta;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.9731;0.1859;0.0
-ratio.alpha.beta;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9805;0.1656;0.0
-ratio.alpha.beta;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));Erreur extraction;0.9779;0.1816;0.0
-ratio.alpha.beta;128;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1));Erreur extraction;0.8926;0.253;0.0
-ratio.alpha.beta;129;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.9607;0.1911;0.0
-ratio.alpha.beta;130;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv','');Erreur extraction;0.804;0.3122;0.0
-ratio.alpha.beta;131;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.9572;0.1902;0.0
-ratio.alpha.beta;132;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.9561;0.1897;0.0
-ratio.alpha.beta;133;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.9661;0.1704;0.0
-ratio.alpha.beta;134;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.9557;0.1933;0.0
-ratio.alpha.beta;135;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.96;0.1912;0.0
-ratio.alpha.beta;136;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.9604;0.1895;0.0
-ratio.alpha.beta;137;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.9681;0.1702;0.0
-ratio.alpha.beta;138;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.9696;0.1675;0.0
-ratio.alpha.beta;139;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.9667;0.1707;0.0
-ratio.alpha.beta;140;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,2,11));Erreur extraction;0.9732;0.177;0.0
-ratio.alpha.beta;141;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9673;0.1849;0.0
-ratio.alpha.beta;142;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.9728;0.1833;0.0
-ratio.alpha.beta;143;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9796;0.186;0.0
-ratio.alpha.beta;144;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9765;0.1665;0.0
-ratio.alpha.beta;145;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9673;0.1849;0.0
-ratio.alpha.beta;146;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.9359;0.2678;0.0
-ratio.alpha.beta;147;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.9335;0.2662;0.0
-ratio.alpha.beta;148;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9765;0.1665;0.0
-ratio.alpha.beta;149;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.8262;0.3005;0.0
-ratio.alpha.beta;150;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.8623;0.282;0.0
-ratio.alpha.beta;151;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.9276;0.2266;0.0
-ratio.alpha.beta;152;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.8762;0.2709;0.0
-ratio.alpha.beta;153;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.9304;0.2244;0.0
-ratio.alpha.beta;154;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.932;0.2247;0.0
-ratio.alpha.beta;155;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.8613;0.2824;0.0
-ratio.alpha.beta;156;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.8272;0.3003;0.0
-ratio.alpha.beta;157;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.8771;0.271;0.0
-ratio.alpha.beta;158;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9084;0.2489;0.0
-ratio.alpha.beta;159;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.9121;0.2471;0.0
-ratio.alpha.beta;160;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.9131;0.2465;0.0
-ratio.alpha.beta;161;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9145;0.2786;0.0
-ratio.alpha.beta;162;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.8872;0.2748;0.0
-ratio.alpha.beta;163;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.7976;0.3181;0.0
-ratio.alpha.beta;164;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.7953;0.3197;0.0
-ratio.alpha.beta;165;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.9602;0.211;0.0
-ratio.alpha.beta;166;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.9406;0.2333;0.0
-ratio.alpha.beta;167;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9795;0.186;0.0
-ratio.alpha.beta;168;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.8926;0.253;0.0
-ratio.alpha.beta;169;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7854;0.3237;0.0
-ratio.alpha.beta;170;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.9413;0.2175;0.0
-ratio.alpha.beta;171;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15));Erreur extraction;0.9784;0.1852;0.0
-ratio.alpha.beta;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));Erreur extraction;0.9714;0.1812;0.0
-ratio.alpha.beta;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');Erreur extraction;0.92;0.2553;0.0
-ratio.alpha.beta;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));Erreur extraction;0.946;0.2038;0.0
-ratio.alpha.beta;175;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','');Erreur extraction;0.9012;0.2855;0.0
+ratio.alpha.beta;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9719;0.1817;0.4277
+ratio.alpha.beta;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9575;0.2017;0.4101
+ratio.alpha.beta;3;list('adj',''), list('red',c(1,1300,1));{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': None};0.9044;0.2458;0.4492
+ratio.alpha.beta;4;list('adj',''),list('red',c(950,700,1)),list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7971;0.3104;0.4598
+ratio.alpha.beta;5;list('adj',''),list('red',c(950,750,1)),list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8071;0.307;0.4598
+ratio.alpha.beta;6;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8263;0.3121;0.4767
+ratio.alpha.beta;7;list('adj',''), list('red',c(1,1300,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9081;0.2487;0.432
+ratio.alpha.beta;8;list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9352;0.2297;0.4114
+ratio.alpha.beta;9;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 9));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9589;0.1856;0.4308
+ratio.alpha.beta;10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8956;0.2521;0.4291
+ratio.alpha.beta;11;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8937;0.2533;0.4356
+ratio.alpha.beta;12;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8908;0.2539;0.4331
+ratio.alpha.beta;13;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8905;0.255;0.429
+ratio.alpha.beta;14;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8928;0.2541;0.432
+ratio.alpha.beta;15;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 25));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8954;0.2518;0.4294
+ratio.alpha.beta;16;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 31));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8944;0.2522;0.4335
+ratio.alpha.beta;17;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 5));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9042;0.2795;0.4453
+ratio.alpha.beta;18;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 9));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9767;0.1705;0.4362
+ratio.alpha.beta;19;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 11));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9248;0.2452;0.437
+ratio.alpha.beta;20;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8666;0.2942;0.4433
+ratio.alpha.beta;21;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.908;0.2611;0.4446
+ratio.alpha.beta;22;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8874;0.2791;0.4451
+ratio.alpha.beta;23;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 31));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.882;0.2803;0.4478
+ratio.alpha.beta;24;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 35));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8803;0.2816;0.4467
+ratio.alpha.beta;25;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 5));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None};0.9343;0.2594;0.4468
+ratio.alpha.beta;26;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9687;0.2002;0.4455
+ratio.alpha.beta;27;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 11));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9039;0.2791;0.4436
+ratio.alpha.beta;28;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9736;0.1827;0.4302
+ratio.alpha.beta;29;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 21));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.969;0.1832;0.4327
+ratio.alpha.beta;30;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 25));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9758;0.1641;0.4428
+ratio.alpha.beta;31;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 31));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8919;0.2769;0.44
+ratio.alpha.beta;32;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 35));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.893;0.2755;0.4414
+ratio.alpha.beta;33;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 9));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9774;0.159;0.4141
+ratio.alpha.beta;34;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 11));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9396;0.2341;0.416
+ratio.alpha.beta;35;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9777;0.1786;0.4126
+ratio.alpha.beta;36;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9706;0.1556;0.3981
+ratio.alpha.beta;37;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 25));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9712;0.1531;0.4021
+ratio.alpha.beta;38;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9667;0.1752;0.4037
+ratio.alpha.beta;39;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 35));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9623;0.1766;0.4071
+ratio.alpha.beta;40;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 9));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9772;0.159;0.4144
+ratio.alpha.beta;41;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 11));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9402;0.2346;0.4153
+ratio.alpha.beta;42;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9782;0.1778;0.413
+ratio.alpha.beta;43;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9714;0.1552;0.3927
+ratio.alpha.beta;44;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 25));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9711;0.154;0.4009
+ratio.alpha.beta;45;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 31));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.966;0.1759;0.4038
+ratio.alpha.beta;46;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 35));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9631;0.1767;0.4068
+ratio.alpha.beta;47;list('adj',''), list('red',c(1,1400,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9371;0.2287;0.4093
+ratio.alpha.beta;48;list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None};0.9302;0.2349;0.4145
+ratio.alpha.beta;49;list('adj',''), list('red',c(800,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9317;0.2704;0.4527
+ratio.alpha.beta;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,11));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8997;0.2801;0.4651
+ratio.alpha.beta;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8965;0.285;0.4669
+ratio.alpha.beta;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.9222;0.2977;0.4556
+ratio.alpha.beta;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9208;0.2697;0.4551
+ratio.alpha.beta;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.961;0.1892;0.4365
+ratio.alpha.beta;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.975;0.1928;0.4438
+ratio.alpha.beta;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9457;0.2359;0.4541
+ratio.alpha.beta;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8058;0.3072;0.4598
+ratio.alpha.beta;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8058;0.3075;0.46
+ratio.alpha.beta;59;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8044;0.3077;0.4603
+ratio.alpha.beta;60;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8042;0.3081;0.4599
+ratio.alpha.beta;61;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,11));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9255;0.2399;0.4419
+ratio.alpha.beta;62;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9229;0.2397;0.4446
+ratio.alpha.beta;63;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9144;0.2453;0.4445
+ratio.alpha.beta;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9145;0.2444;0.4454
+ratio.alpha.beta;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.9149;0.2866;0.4567
+ratio.alpha.beta;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9304;0.253;0.4493
+ratio.alpha.beta;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9212;0.2702;0.448
+ratio.alpha.beta;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8832;0.2706;0.4337
+ratio.alpha.beta;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8569;0.2876;0.4369
+ratio.alpha.beta;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.966;0.1751;0.4218
+ratio.alpha.beta;75;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,21)), list('snv','');{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9274;0.2311;0.4362
+ratio.alpha.beta;76;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('snv','');{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9645;0.1922;0.4352
+ratio.alpha.beta;77;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,21)), list('snv','');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9427;0.2249;0.4143
+ratio.alpha.beta;78;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8186;0.3064;0.4479
+ratio.alpha.beta;79;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8186;0.3064;0.4479
+ratio.alpha.beta;80;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7975;0.3125;0.4669
+ratio.alpha.beta;81;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7971;0.3128;0.4673
+ratio.alpha.beta;82;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8202;0.3019;0.4673
+ratio.alpha.beta;83;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7975;0.3125;0.4673
+ratio.alpha.beta;84;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9281;0.2326;0.4452
+ratio.alpha.beta;85;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9286;0.2356;0.4447
+ratio.alpha.beta;86;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8163;0.3072;0.4475
+ratio.alpha.beta;87;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8169;0.3068;0.4481
+ratio.alpha.beta;88;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8164;0.3072;0.4475
+ratio.alpha.beta;89;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8822;0.2902;0.4451
+ratio.alpha.beta;90;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 11));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8764;0.2904;0.4415
+ratio.alpha.beta;91;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9324;0.2341;0.4311
+ratio.alpha.beta;92;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9257;0.2368;0.4341
+ratio.alpha.beta;93;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9782;0.1778;0.413
+ratio.alpha.beta;94;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9713;0.1552;0.3927
+ratio.alpha.beta;95;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(1, 3, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9324;0.2341;0.4311
+ratio.alpha.beta;96;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2, 3, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9713;0.1552;0.3927
+ratio.alpha.beta;97;list('adj',''), list('red',c(1,1300,1)), list('msc','');{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': None};0.9044;0.2458;0.4492
+ratio.alpha.beta;98;list('adj',''), list('red',c(950,750,1)), list('msc','');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.766;0.3343;0.4895
+ratio.alpha.beta;99;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 2, 15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.89;0.2571;0.4522
+ratio.alpha.beta;100;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8886;0.2578;0.4527
+ratio.alpha.beta;101;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 5));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9385;0.2417;0.4512
+ratio.alpha.beta;102;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 11));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9269;0.2537;0.4511
+ratio.alpha.beta;103;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9297;0.2515;0.4501
+ratio.alpha.beta;104;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9187;0.2542;0.4525
+ratio.alpha.beta;105;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9124;0.259;0.4482
+ratio.alpha.beta;106;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 5));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9182;0.2693;0.4479
+ratio.alpha.beta;107;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 11));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.937;0.2463;0.4493
+ratio.alpha.beta;108;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9387;0.2445;0.4474
+ratio.alpha.beta;109;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8835;0.2887;0.4561
+ratio.alpha.beta;110;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 31));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9274;0.2484;0.448
+ratio.alpha.beta;111;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 11));{'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9672;0.2105;0.4219
+ratio.alpha.beta;112;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9728;0.1746;0.4118
+ratio.alpha.beta;113;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9826;0.146;0.4038
+ratio.alpha.beta;114;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 31));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9502;0.2078;0.4079
+ratio.alpha.beta;115;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 11));{'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.97;0.2086;0.423
+ratio.alpha.beta;116;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9811;0.1653;0.4125
+ratio.alpha.beta;117;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9769;0.1655;0.398
+ratio.alpha.beta;118;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 31));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9515;0.2088;0.4066
+ratio.alpha.beta;119;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9108;0.2472;0.4481
+ratio.alpha.beta;120;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,21));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9082;0.2479;0.4493
+ratio.alpha.beta;121;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('msc','');{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9387;0.2445;0.4474
+ratio.alpha.beta;122;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('msc','');{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9811;0.1653;0.4125
+ratio.alpha.beta;123;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8545;0.3057;0.4596
+ratio.alpha.beta;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8545;0.3057;0.4596
+ratio.alpha.beta;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9726;0.1862;0.4427
+ratio.alpha.beta;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9811;0.1653;0.4124
+ratio.alpha.beta;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9785;0.1814;0.4091
+ratio.alpha.beta;128;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8938;0.2525;0.4493
+ratio.alpha.beta;129;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv','');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9731;0.1626;0.4435
+ratio.alpha.beta;130;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8039;0.3122;0.4694
+ratio.alpha.beta;131;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9572;0.1902;0.4387
+ratio.alpha.beta;132;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 25));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9561;0.1907;0.4386
+ratio.alpha.beta;133;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 27));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.95;0.212;0.4433
+ratio.alpha.beta;134;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9561;0.1934;0.4412
+ratio.alpha.beta;135;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.96;0.1911;0.4385
+ratio.alpha.beta;136;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None};0.9606;0.1895;0.4361
+ratio.alpha.beta;137;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 19));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 10};0.9677;0.1694;0.4403
+ratio.alpha.beta;138;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 10};0.9687;0.1676;0.4379
+ratio.alpha.beta;139;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 10};0.9657;0.1701;0.4407
+ratio.alpha.beta;140;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,2,11));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.973;0.1774;0.428
+ratio.alpha.beta;141;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9651;0.1931;0.4405
+ratio.alpha.beta;142;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,21));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9732;0.1827;0.4468
+ratio.alpha.beta;143;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9795;0.1858;0.4317
+ratio.alpha.beta;144;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9764;0.1665;0.4195
+ratio.alpha.beta;145;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9651;0.1931;0.4405
+ratio.alpha.beta;146;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9308;0.2645;0.4606
+ratio.alpha.beta;147;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None};0.9332;0.2664;0.4619
+ratio.alpha.beta;148;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9764;0.1665;0.4195
+ratio.alpha.beta;149;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8262;0.3005;0.4692
+ratio.alpha.beta;150;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 25));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.8613;0.2822;0.469
+ratio.alpha.beta;151;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 27));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9272;0.2265;0.4688
+ratio.alpha.beta;152;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': None};0.8759;0.2708;0.4694
+ratio.alpha.beta;153;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9303;0.2246;0.47
+ratio.alpha.beta;154;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 17));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8033;0.3125;0.47
+ratio.alpha.beta;155;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 19));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.8604;0.2827;0.4696
+ratio.alpha.beta;156;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8272;0.3003;0.4701
+ratio.alpha.beta;157;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': None};0.8769;0.2709;0.4703
+ratio.alpha.beta;158;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9089;0.2487;0.4585
+ratio.alpha.beta;159;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,25));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9118;0.2475;0.4567
+ratio.alpha.beta;160;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9135;0.2463;0.4568
+ratio.alpha.beta;161;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9149;0.2788;0.4675
+ratio.alpha.beta;162;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8863;0.2747;0.4561
+ratio.alpha.beta;163;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7975;0.3182;0.4742
+ratio.alpha.beta;164;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7952;0.3197;0.4736
+ratio.alpha.beta;165;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8965;0.2705;0.4587
+ratio.alpha.beta;166;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9407;0.2333;0.4369
+ratio.alpha.beta;167;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9794;0.1859;0.4318
+ratio.alpha.beta;168;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc','');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8938;0.2525;0.4493
+ratio.alpha.beta;169;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('msc','');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.7856;0.3238;0.4909
+ratio.alpha.beta;170;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9695;0.1806;0.4082
+ratio.alpha.beta;171;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9784;0.1853;0.424
+ratio.alpha.beta;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9769;0.1718;0.4232
+ratio.alpha.beta;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9197;0.2556;0.4246
+ratio.alpha.beta;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9462;0.2036;0.4043
+ratio.alpha.beta;175;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','');{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9011;0.2854;0.4567

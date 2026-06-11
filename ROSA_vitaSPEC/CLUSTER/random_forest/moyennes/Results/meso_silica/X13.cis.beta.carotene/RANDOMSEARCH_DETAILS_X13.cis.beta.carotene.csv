@@ -1,172 +1,172 @@
 Compose;ID_Pretraitement;Code_R_Pretraitement;Meilleurs_Hyperparam_RF;Rc;RMSEC;RMSECV
-X13.cis.beta.carotene;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));Erreur extraction;0.9301;15.3604;0.0
-X13.cis.beta.carotene;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.968;11.2597;0.0
-X13.cis.beta.carotene;3;list('adj',''), list('red',c(1,1300,1));Erreur extraction;0.9381;14.3493;0.0
-X13.cis.beta.carotene;4;list('adj',''),list('red',c(950,700,1)),list('snv','');Erreur extraction;0.7892;24.8317;0.0
-X13.cis.beta.carotene;5;list('adj',''),list('red',c(950,750,1)),list('snv','');Erreur extraction;0.7755;25.214;0.0
-X13.cis.beta.carotene;6;list('adj',''), list('red',c(1,1000,1)), list('snv','');Erreur extraction;0.8902;18.1835;0.0
-X13.cis.beta.carotene;7;list('adj',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.8553;20.0931;0.0
-X13.cis.beta.carotene;8;list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9306;15.1421;0.0
-X13.cis.beta.carotene;9;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 9));Erreur extraction;0.8575;19.9812;0.0
-X13.cis.beta.carotene;10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 15));Erreur extraction;0.8574;19.9782;0.0
-X13.cis.beta.carotene;11;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.8569;20.0034;0.0
-X13.cis.beta.carotene;12;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.857;19.9973;0.0
-X13.cis.beta.carotene;13;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.8576;19.9804;0.0
-X13.cis.beta.carotene;14;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.8573;19.9886;0.0
-X13.cis.beta.carotene;15;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 25));Erreur extraction;0.8578;19.9552;0.0
-X13.cis.beta.carotene;16;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 31));Erreur extraction;0.857;20.0071;0.0
-X13.cis.beta.carotene;17;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 5));Erreur extraction;0.8941;17.9858;0.0
-X13.cis.beta.carotene;18;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 9));Erreur extraction;0.9577;12.2014;0.0
-X13.cis.beta.carotene;19;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 11));Erreur extraction;0.8875;18.2758;0.0
-X13.cis.beta.carotene;20;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 15));Erreur extraction;0.8866;18.3301;0.0
-X13.cis.beta.carotene;21;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 21));Erreur extraction;0.8837;18.477;0.0
-X13.cis.beta.carotene;22;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 25));Erreur extraction;0.8849;18.4208;0.0
-X13.cis.beta.carotene;23;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 31));Erreur extraction;0.9464;13.3886;0.0
-X13.cis.beta.carotene;24;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 35));Erreur extraction;0.8664;19.4575;0.0
-X13.cis.beta.carotene;25;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 5));Erreur extraction;0.9446;13.7302;0.0
-X13.cis.beta.carotene;26;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));Erreur extraction;0.9774;10.0371;0.0
-X13.cis.beta.carotene;27;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 11));Erreur extraction;0.9745;10.4681;0.0
-X13.cis.beta.carotene;28;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 15));Erreur extraction;0.8783;18.9194;0.0
-X13.cis.beta.carotene;29;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 21));Erreur extraction;0.8754;19.0202;0.0
-X13.cis.beta.carotene;30;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 25));Erreur extraction;0.8833;18.5422;0.0
-X13.cis.beta.carotene;31;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 31));Erreur extraction;0.8879;18.2466;0.0
-X13.cis.beta.carotene;32;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 35));Erreur extraction;0.9736;10.5842;0.0
-X13.cis.beta.carotene;33;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 9));Erreur extraction;0.9673;11.016;0.0
-X13.cis.beta.carotene;34;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 11));Erreur extraction;0.939;13.8962;0.0
-X13.cis.beta.carotene;35;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 15));Erreur extraction;0.9037;17.9255;0.0
-X13.cis.beta.carotene;36;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 21));Erreur extraction;0.9133;17.0002;0.0
-X13.cis.beta.carotene;37;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 25));Erreur extraction;0.907;17.3613;0.0
-X13.cis.beta.carotene;38;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31));Erreur extraction;0.8901;18.4534;0.0
-X13.cis.beta.carotene;39;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 35));Erreur extraction;0.9055;17.2372;0.0
-X13.cis.beta.carotene;40;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 9));Erreur extraction;0.9671;11.0402;0.0
-X13.cis.beta.carotene;41;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 11));Erreur extraction;0.939;13.8947;0.0
-X13.cis.beta.carotene;42;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 15));Erreur extraction;0.9155;17.0201;0.0
-X13.cis.beta.carotene;43;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 21));Erreur extraction;0.9135;16.9997;0.0
-X13.cis.beta.carotene;44;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 25));Erreur extraction;0.9211;16.2064;0.0
-X13.cis.beta.carotene;45;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 31));Erreur extraction;0.8911;18.431;0.0
-X13.cis.beta.carotene;46;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 35));Erreur extraction;0.8888;18.4416;0.0
-X13.cis.beta.carotene;47;list('adj',''), list('red',c(1,1400,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9159;16.8845;0.0
-X13.cis.beta.carotene;48;list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.9311;14.8756;0.0
-X13.cis.beta.carotene;49;list('adj',''), list('red',c(800,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9024;19.7813;0.0
-X13.cis.beta.carotene;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.833;23.4716;0.0
-X13.cis.beta.carotene;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8335;23.4374;0.0
-X13.cis.beta.carotene;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8503;22.7632;0.0
-X13.cis.beta.carotene;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.8737;20.7489;0.0
-X13.cis.beta.carotene;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));Erreur extraction;0.8586;21.8533;0.0
-X13.cis.beta.carotene;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.9012;19.2472;0.0
-X13.cis.beta.carotene;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8489;22.6711;0.0
-X13.cis.beta.carotene;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));Erreur extraction;0.7768;25.1839;0.0
-X13.cis.beta.carotene;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));Erreur extraction;0.7772;25.1695;0.0
-X13.cis.beta.carotene;59;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,25));Erreur extraction;0.7773;25.157;0.0
-X13.cis.beta.carotene;60;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.7785;25.1124;0.0
-X13.cis.beta.carotene;61;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.8122;23.9443;0.0
-X13.cis.beta.carotene;62;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8169;23.709;0.0
-X13.cis.beta.carotene;63;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.813;23.8769;0.0
-X13.cis.beta.carotene;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.864;21.5622;0.0
-X13.cis.beta.carotene;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9384;16.1004;0.0
-X13.cis.beta.carotene;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8855;20.3068;0.0
-X13.cis.beta.carotene;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8645;21.7716;0.0
-X13.cis.beta.carotene;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');Erreur extraction;0.9439;13.7834;0.0
-X13.cis.beta.carotene;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');Erreur extraction;0.9433;13.8533;0.0
-X13.cis.beta.carotene;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');Erreur extraction;0.9562;12.6086;0.0
-X13.cis.beta.carotene;75;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,21)), list('snv','');Erreur extraction;0.9638;11.607;0.0
-X13.cis.beta.carotene;76;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('snv','');Erreur extraction;0.9108;16.6185;0.0
-X13.cis.beta.carotene;77;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,21)), list('snv','');Erreur extraction;0.9757;10.0046;0.0
-X13.cis.beta.carotene;78;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.9678;10.9406;0.0
-X13.cis.beta.carotene;79;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3');Erreur extraction;0.9678;10.9406;0.0
-X13.cis.beta.carotene;80;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.8802;19.8177;0.0
-X13.cis.beta.carotene;81;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.8803;19.7906;0.0
-X13.cis.beta.carotene;82;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.8796;19.8591;0.0
-X13.cis.beta.carotene;83;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.8801;19.794;0.0
-X13.cis.beta.carotene;84;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.8192;23.7318;0.0
-X13.cis.beta.carotene;85;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.8401;22.7701;0.0
-X13.cis.beta.carotene;86;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.9683;10.9186;0.0
-X13.cis.beta.carotene;87;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.9673;11.0425;0.0
-X13.cis.beta.carotene;88;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.9687;10.8582;0.0
-X13.cis.beta.carotene;89;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.9109;16.51;0.0
-X13.cis.beta.carotene;90;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 11));Erreur extraction;0.9689;10.817;0.0
-X13.cis.beta.carotene;91;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.9633;11.7068;0.0
-X13.cis.beta.carotene;92;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 21));Erreur extraction;0.9755;9.9654;0.0
-X13.cis.beta.carotene;93;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 15));Erreur extraction;0.9155;17.0202;0.0
-X13.cis.beta.carotene;94;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 21));Erreur extraction;0.9135;17.0;0.0
-X13.cis.beta.carotene;95;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(1, 3, 15));Erreur extraction;0.9633;11.7068;0.0
-X13.cis.beta.carotene;96;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2, 3, 21));Erreur extraction;0.9135;17.0;0.0
-X13.cis.beta.carotene;97;list('adj',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.9381;14.3493;0.0
-X13.cis.beta.carotene;98;list('adj',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7384;28.1928;0.0
-X13.cis.beta.carotene;99;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 2, 15));Erreur extraction;0.9394;14.2041;0.0
-X13.cis.beta.carotene;100;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 3, 21));Erreur extraction;0.939;14.2504;0.0
-X13.cis.beta.carotene;101;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 5));Erreur extraction;0.8988;17.5489;0.0
-X13.cis.beta.carotene;102;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 11));Erreur extraction;0.8665;19.8313;0.0
-X13.cis.beta.carotene;103;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 15));Erreur extraction;0.8776;19.1378;0.0
-X13.cis.beta.carotene;104;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 21));Erreur extraction;0.8771;19.1705;0.0
-X13.cis.beta.carotene;105;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 31));Erreur extraction;0.8879;18.0139;0.0
-X13.cis.beta.carotene;106;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 5));Erreur extraction;0.9051;16.9794;0.0
-X13.cis.beta.carotene;107;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 11));Erreur extraction;0.9017;17.4141;0.0
-X13.cis.beta.carotene;108;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 15));Erreur extraction;0.9011;17.6992;0.0
-X13.cis.beta.carotene;109;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 21));Erreur extraction;0.899;17.7971;0.0
-X13.cis.beta.carotene;110;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 31));Erreur extraction;0.8659;19.828;0.0
-X13.cis.beta.carotene;111;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 11));Erreur extraction;0.9678;11.1947;0.0
-X13.cis.beta.carotene;112;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));Erreur extraction;0.9512;12.9477;0.0
-X13.cis.beta.carotene;113;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 21));Erreur extraction;0.9096;16.785;0.0
-X13.cis.beta.carotene;114;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 31));Erreur extraction;0.9111;17.1164;0.0
-X13.cis.beta.carotene;115;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 11));Erreur extraction;0.9593;12.1663;0.0
-X13.cis.beta.carotene;116;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 15));Erreur extraction;0.9518;12.8587;0.0
-X13.cis.beta.carotene;117;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 21));Erreur extraction;0.9106;16.6929;0.0
-X13.cis.beta.carotene;118;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 31));Erreur extraction;0.9499;13.6365;0.0
-X13.cis.beta.carotene;119;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.8047;24.3028;0.0
-X13.cis.beta.carotene;120;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,21));Erreur extraction;0.7994;24.4258;0.0
-X13.cis.beta.carotene;121;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('msc','');Erreur extraction;0.9011;17.6992;0.0
-X13.cis.beta.carotene;122;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('msc','');Erreur extraction;0.9518;12.8587;0.0
-X13.cis.beta.carotene;123;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2');Erreur extraction;0.8762;18.9428;0.0
-X13.cis.beta.carotene;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3');Erreur extraction;0.8762;18.9428;0.0
-X13.cis.beta.carotene;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.8799;18.6006;0.0
-X13.cis.beta.carotene;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9518;12.8589;0.0
-X13.cis.beta.carotene;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));Erreur extraction;0.9505;12.953;0.0
-X13.cis.beta.carotene;128;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1));Erreur extraction;0.9424;14.0078;0.0
-X13.cis.beta.carotene;129;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.8945;17.6751;0.0
-X13.cis.beta.carotene;130;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv','');Erreur extraction;0.7743;25.2553;0.0
-X13.cis.beta.carotene;131;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.8962;17.5736;0.0
-X13.cis.beta.carotene;132;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.8986;17.3671;0.0
-X13.cis.beta.carotene;133;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.8972;17.4301;0.0
-X13.cis.beta.carotene;134;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.8975;17.4654;0.0
-X13.cis.beta.carotene;135;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.8976;17.5574;0.0
-X13.cis.beta.carotene;136;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.8934;17.8305;0.0
-X13.cis.beta.carotene;137;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.8964;17.6472;0.0
-X13.cis.beta.carotene;138;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.8965;17.6029;0.0
-X13.cis.beta.carotene;139;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.8971;17.5168;0.0
-X13.cis.beta.carotene;140;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,2,11));Erreur extraction;0.976;9.9072;0.0
-X13.cis.beta.carotene;141;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9738;10.3517;0.0
-X13.cis.beta.carotene;142;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.9769;9.9176;0.0
-X13.cis.beta.carotene;143;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9701;10.6016;0.0
-X13.cis.beta.carotene;144;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.946;13.2642;0.0
-X13.cis.beta.carotene;145;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9738;10.3517;0.0
-X13.cis.beta.carotene;146;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.949;13.1442;0.0
-X13.cis.beta.carotene;147;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.9516;12.9483;0.0
-X13.cis.beta.carotene;148;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.946;13.2642;0.0
-X13.cis.beta.carotene;149;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.7721;25.3198;0.0
-X13.cis.beta.carotene;150;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.7742;25.2426;0.0
-X13.cis.beta.carotene;151;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.7749;25.2302;0.0
-X13.cis.beta.carotene;152;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.7719;25.2989;0.0
-X13.cis.beta.carotene;153;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.7733;25.2954;0.0
-X13.cis.beta.carotene;154;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.7727;25.3023;0.0
-X13.cis.beta.carotene;155;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.7731;25.2822;0.0
-X13.cis.beta.carotene;156;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.7722;25.316;0.0
-X13.cis.beta.carotene;157;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.7738;25.2464;0.0
-X13.cis.beta.carotene;158;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8135;23.8266;0.0
-X13.cis.beta.carotene;159;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.8103;23.9383;0.0
-X13.cis.beta.carotene;160;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.8121;23.8812;0.0
-X13.cis.beta.carotene;161;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.824;23.9158;0.0
-X13.cis.beta.carotene;162;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.8876;18.125;0.0
-X13.cis.beta.carotene;163;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.7877;24.6975;0.0
-X13.cis.beta.carotene;164;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.7886;24.6707;0.0
-X13.cis.beta.carotene;165;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.8916;17.8202;0.0
-X13.cis.beta.carotene;166;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.954;12.4912;0.0
-X13.cis.beta.carotene;167;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9701;10.6017;0.0
-X13.cis.beta.carotene;168;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.9424;14.0078;0.0
-X13.cis.beta.carotene;169;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7504;27.6886;0.0
-X13.cis.beta.carotene;170;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.8823;18.505;0.0
-X13.cis.beta.carotene;171;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15));Erreur extraction;0.9217;15.8371;0.0
-X13.cis.beta.carotene;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));Erreur extraction;0.9357;14.7399;0.0
-X13.cis.beta.carotene;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');Erreur extraction;0.9727;10.0548;0.0
-X13.cis.beta.carotene;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));Erreur extraction;0.9695;10.5492;0.0
-X13.cis.beta.carotene;175;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','');Erreur extraction;0.9708;10.2393;0.0
+X13.cis.beta.carotene;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9308;15.331;27.4919
+X13.cis.beta.carotene;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9676;11.2858;26.6443
+X13.cis.beta.carotene;3;list('adj',''), list('red',c(1,1300,1));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.938;14.3543;27.5826
+X13.cis.beta.carotene;4;list('adj',''),list('red',c(950,700,1)),list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7895;24.8281;35.3411
+X13.cis.beta.carotene;5;list('adj',''),list('red',c(950,750,1)),list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7757;25.2078;35.6516
+X13.cis.beta.carotene;6;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8905;18.17;28.5111
+X13.cis.beta.carotene;7;list('adj',''), list('red',c(1,1300,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8551;20.1;29.54
+X13.cis.beta.carotene;8;list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9645;11.6891;26.929
+X13.cis.beta.carotene;9;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 9));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8574;19.9878;29.5095
+X13.cis.beta.carotene;10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8571;19.9889;29.4708
+X13.cis.beta.carotene;11;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8569;19.9988;29.5153
+X13.cis.beta.carotene;12;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8568;20.0011;29.498
+X13.cis.beta.carotene;13;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8572;19.9931;29.4698
+X13.cis.beta.carotene;14;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8572;19.9851;29.4889
+X13.cis.beta.carotene;15;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8577;19.9568;29.4599
+X13.cis.beta.carotene;16;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8569;20.005;29.4787
+X13.cis.beta.carotene;17;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 5));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.894;17.9892;28.1301
+X13.cis.beta.carotene;18;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 9));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8926;18.0138;28.4087
+X13.cis.beta.carotene;19;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 11));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8877;18.2639;28.3009
+X13.cis.beta.carotene;20;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8865;18.3379;28.6499
+X13.cis.beta.carotene;21;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8837;18.4765;28.6816
+X13.cis.beta.carotene;22;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.885;18.4164;28.8859
+X13.cis.beta.carotene;23;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9458;13.4048;28.8134
+X13.cis.beta.carotene;24;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 35));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8664;19.4528;28.8812
+X13.cis.beta.carotene;25;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 5));{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': None};0.944;13.7728;28.2209
+X13.cis.beta.carotene;26;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9773;10.0;28.1644
+X13.cis.beta.carotene;27;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 11));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8945;17.9028;28.2046
+X13.cis.beta.carotene;28;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9761;10.0244;27.9714
+X13.cis.beta.carotene;29;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8753;19.0231;28.3479
+X13.cis.beta.carotene;30;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8833;18.5399;28.6398
+X13.cis.beta.carotene;31;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 31));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8878;18.2471;28.6868
+X13.cis.beta.carotene;32;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 35));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9732;10.6212;28.6509
+X13.cis.beta.carotene;33;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 9));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9398;13.8267;27.1181
+X13.cis.beta.carotene;34;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 11));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.939;13.8858;27.1855
+X13.cis.beta.carotene;35;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.915;17.0506;27.3222
+X13.cis.beta.carotene;36;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9133;17.0;27.2485
+X13.cis.beta.carotene;37;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9069;17.3628;27.4442
+X13.cis.beta.carotene;38;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.89;18.4554;27.8853
+X13.cis.beta.carotene;39;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 35));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9055;17.2383;27.6123
+X13.cis.beta.carotene;40;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 9));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9403;13.811;27.0709
+X13.cis.beta.carotene;41;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 11));{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9389;13.8869;27.1259
+X13.cis.beta.carotene;42;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None};0.9249;15.4552;27.2956
+X13.cis.beta.carotene;43;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9135;16.9971;27.1713
+X13.cis.beta.carotene;44;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 25));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9078;17.3075;27.3845
+X13.cis.beta.carotene;45;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 31));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9157;16.5345;27.7367
+X13.cis.beta.carotene;46;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 35));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8887;18.4461;27.6215
+X13.cis.beta.carotene;47;list('adj',''), list('red',c(1,1400,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9159;16.8735;27.0833
+X13.cis.beta.carotene;48;list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9305;14.9283;26.9496
+X13.cis.beta.carotene;49;list('adj',''), list('red',c(800,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9028;19.7618;33.8379
+X13.cis.beta.carotene;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,11));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8331;23.4596;34.634
+X13.cis.beta.carotene;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8336;23.4385;34.5121
+X13.cis.beta.carotene;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8503;22.7599;33.8948
+X13.cis.beta.carotene;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8739;20.7312;33.5407
+X13.cis.beta.carotene;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8587;21.848;34.4035
+X13.cis.beta.carotene;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9011;19.2681;33.6129
+X13.cis.beta.carotene;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8488;22.6746;34.0693
+X13.cis.beta.carotene;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7772;25.173;35.6617
+X13.cis.beta.carotene;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7774;25.1655;35.6385
+X13.cis.beta.carotene;59;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7776;25.1502;35.6239
+X13.cis.beta.carotene;60;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7787;25.1075;35.6471
+X13.cis.beta.carotene;61;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,11));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8122;23.9425;35.7992
+X13.cis.beta.carotene;62;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8168;23.7081;35.7762
+X13.cis.beta.carotene;63;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8649;21.5597;35.8058
+X13.cis.beta.carotene;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8635;21.5804;35.7921
+X13.cis.beta.carotene;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9583;14.4913;33.9232
+X13.cis.beta.carotene;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8854;20.3074;33.9311
+X13.cis.beta.carotene;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8645;21.7712;33.9799
+X13.cis.beta.carotene;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 20};0.9429;13.8199;28.5488
+X13.cis.beta.carotene;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': None};0.9358;14.5099;28.9428
+X13.cis.beta.carotene;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');{'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 20};0.9321;15.0314;28.5239
+X13.cis.beta.carotene;75;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,21)), list('snv','');{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9635;11.6482;28.103
+X13.cis.beta.carotene;76;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('snv','');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9102;16.648;28.3211
+X13.cis.beta.carotene;77;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,21)), list('snv','');{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 20};0.9759;10.0006;27.9697
+X13.cis.beta.carotene;78;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9668;11.2016;29.5253
+X13.cis.beta.carotene;79;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9668;11.2016;29.5253
+X13.cis.beta.carotene;80;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8809;19.7791;33.8084
+X13.cis.beta.carotene;81;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8809;19.7544;33.7927
+X13.cis.beta.carotene;82;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8798;19.8349;33.9858
+X13.cis.beta.carotene;83;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.8807;19.7573;33.7878
+X13.cis.beta.carotene;84;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8194;23.7247;35.3262
+X13.cis.beta.carotene;85;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8403;22.7663;35.3547
+X13.cis.beta.carotene;86;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9689;10.9605;29.5564
+X13.cis.beta.carotene;87;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10};0.9484;13.2014;29.4423
+X13.cis.beta.carotene;88;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9695;10.8963;29.3642
+X13.cis.beta.carotene;89;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9109;16.5022;28.2736
+X13.cis.beta.carotene;90;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 11));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9594;11.9686;28.3667
+X13.cis.beta.carotene;91;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9624;11.774;28.6853
+X13.cis.beta.carotene;92;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 10};0.9417;14.0662;28.317
+X13.cis.beta.carotene;93;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None};0.9249;15.4552;27.2859
+X13.cis.beta.carotene;94;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9135;16.9973;27.1726
+X13.cis.beta.carotene;95;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(1, 3, 15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9624;11.774;28.6853
+X13.cis.beta.carotene;96;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2, 3, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.9135;16.9973;27.1726
+X13.cis.beta.carotene;97;list('adj',''), list('red',c(1,1300,1)), list('msc','');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.938;14.3543;27.5826
+X13.cis.beta.carotene;98;list('adj',''), list('red',c(950,750,1)), list('msc','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7389;28.178;40.4234
+X13.cis.beta.carotene;99;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 2, 15));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.939;14.2318;27.8863
+X13.cis.beta.carotene;100;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 3, 21));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9387;14.2626;27.9092
+X13.cis.beta.carotene;101;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 5));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8999;17.4904;28.1908
+X13.cis.beta.carotene;102;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 11));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8667;19.8238;28.7123
+X13.cis.beta.carotene;103;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 15));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.8775;19.1434;28.5269
+X13.cis.beta.carotene;104;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 21));{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.877;19.1741;28.6031
+X13.cis.beta.carotene;105;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 31));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.888;18.0151;28.4604
+X13.cis.beta.carotene;106;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 5));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9047;17.0032;28.6124
+X13.cis.beta.carotene;107;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 11));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9021;17.3864;28.7256
+X13.cis.beta.carotene;108;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 15));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8991;17.8042;28.7676
+X13.cis.beta.carotene;109;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8992;17.7693;28.4683
+X13.cis.beta.carotene;110;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8659;19.8296;28.6347
+X13.cis.beta.carotene;111;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 11));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.968;11.1535;27.4825
+X13.cis.beta.carotene;112;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9363;14.2119;27.7995
+X13.cis.beta.carotene;113;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9096;16.7902;28.9028
+X13.cis.beta.carotene;114;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.95;13.6294;29.2827
+X13.cis.beta.carotene;115;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 11));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9662;11.3432;27.5929
+X13.cis.beta.carotene;116;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9362;14.2186;27.7953
+X13.cis.beta.carotene;117;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9106;16.6984;28.9398
+X13.cis.beta.carotene;118;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9492;13.7047;29.3299
+X13.cis.beta.carotene;119;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8047;24.3067;35.5565
+X13.cis.beta.carotene;120;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7993;24.4299;35.3984
+X13.cis.beta.carotene;121;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('msc','');{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8991;17.8042;28.7676
+X13.cis.beta.carotene;122;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('msc','');{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9362;14.2186;27.7953
+X13.cis.beta.carotene;123;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8763;18.935;29.8948
+X13.cis.beta.carotene;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8763;18.935;29.8948
+X13.cis.beta.carotene;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8799;18.5949;29.5168
+X13.cis.beta.carotene;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 10};0.9362;14.2189;27.7886
+X13.cis.beta.carotene;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 20};0.9509;12.9682;28.2467
+X13.cis.beta.carotene;128;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9426;13.9818;27.811
+X13.cis.beta.carotene;129;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv','');{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.8944;17.6916;29.2445
+X13.cis.beta.carotene;130;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv','');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7743;25.2565;36.4627
+X13.cis.beta.carotene;131;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8963;17.5701;29.0767
+X13.cis.beta.carotene;132;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 25));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8988;17.3501;29.1456
+X13.cis.beta.carotene;133;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 27));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8975;17.4129;29.2118
+X13.cis.beta.carotene;134;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8977;17.4673;29.1929
+X13.cis.beta.carotene;135;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8978;17.5596;29.0798
+X13.cis.beta.carotene;136;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8938;17.8195;29.0544
+X13.cis.beta.carotene;137;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 19));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8967;17.635;29.0754
+X13.cis.beta.carotene;138;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8966;17.6013;29.0892
+X13.cis.beta.carotene;139;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.8974;17.51;29.1405
+X13.cis.beta.carotene;140;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,2,11));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9763;9.8649;27.8003
+X13.cis.beta.carotene;141;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9741;10.3361;28.026
+X13.cis.beta.carotene;142;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,21));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9768;9.9085;28.0653
+X13.cis.beta.carotene;143;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9705;10.5632;27.2274
+X13.cis.beta.carotene;144;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9464;13.2282;26.6563
+X13.cis.beta.carotene;145;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 10};0.9741;10.3361;28.026
+X13.cis.beta.carotene;146;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 20};0.9491;13.1549;28.0755
+X13.cis.beta.carotene;147;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9512;12.9847;27.8628
+X13.cis.beta.carotene;148;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9464;13.2282;26.6563
+X13.cis.beta.carotene;149;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7722;25.3268;36.5276
+X13.cis.beta.carotene;150;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7745;25.2433;36.441
+X13.cis.beta.carotene;151;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 27));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.775;25.2343;36.413
+X13.cis.beta.carotene;152;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7721;25.2989;36.3784
+X13.cis.beta.carotene;153;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7735;25.2923;36.5112
+X13.cis.beta.carotene;154;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 17));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.773;25.2993;36.4953
+X13.cis.beta.carotene;155;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 19));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7733;25.2813;36.5065
+X13.cis.beta.carotene;156;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7724;25.3141;36.549
+X13.cis.beta.carotene;157;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7741;25.2409;36.4824
+X13.cis.beta.carotene;158;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8138;23.8183;36.0436
+X13.cis.beta.carotene;159;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,25));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8103;23.9384;35.9535
+X13.cis.beta.carotene;160;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8121;23.8847;35.8143
+X13.cis.beta.carotene;161;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.8241;23.9114;35.3704
+X13.cis.beta.carotene;162;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.8939;17.4346;28.626
+X13.cis.beta.carotene;163;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7875;24.7046;35.6036
+X13.cis.beta.carotene;164;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.7885;24.6798;35.6305
+X13.cis.beta.carotene;165;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));{'n_estimators': 100, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.892;17.8023;28.7434
+X13.cis.beta.carotene;166;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,15));{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10};0.9545;12.4195;28.9869
+X13.cis.beta.carotene;167;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2,3,15));{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20};0.9706;10.5569;27.2124
+X13.cis.beta.carotene;168;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc','');{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10};0.9426;13.9818;27.811
+X13.cis.beta.carotene;169;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('msc','');{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': None};0.7506;27.6902;40.4488
+X13.cis.beta.carotene;170;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1,3,15));{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'log2', 'max_depth': 10};0.882;18.5199;27.5427
+X13.cis.beta.carotene;171;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15));{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9225;15.7474;27.5304
+X13.cis.beta.carotene;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None};0.9479;13.8074;27.6769
+X13.cis.beta.carotene;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');{'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': 10};0.9204;16.2539;28.9269
+X13.cis.beta.carotene;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10};0.9704;10.494;26.8505
+X13.cis.beta.carotene;175;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','');{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20};0.9215;15.3925;28.5216

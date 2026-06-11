@@ -105,7 +105,8 @@ df_train_val = df_propre[~df_propre['ech'].isin(ech_interdits)]
 print(f"Spectres pour l'entraînement/CV : {len(df_train_val)}")
 print(f"Spectres isolés pour le crash-test : {len(df_test_externe)}")
 
-y = df_train_val[compose].values
+# Forçage du type pour éviter l'erreur de classification nirs4all, et ajout d'un très léger bruit de fond
+y = df_train_val[compose].values.astype(float) + np.random.normal(0, 1e-5, size=len(df_train_val))
 X = df_train_val[col_spectres].values
 groupes = df_train_val['ech'].values
 
@@ -116,6 +117,7 @@ cv_splits = list(gkf.split(X, y, groups=groupes))
 # variables pour le meilleur
 meilleur_rmsecv_global = float("inf")
 meilleur_modele_joblib = None
+meilleur_pipeline_pre = []
 rapport_du_champion = None
 
 # la liste qui va contenir les résultats de l'exploration
@@ -123,94 +125,76 @@ tableau_compose = []
 
 ## Boucle sur les prétraitements
 for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
-    
-    # randomSearch XGBoost couplé avec le découpage groupé
-    random_search = RandomizedSearchCV(
-        estimator=XGBRegressor(
-            random_state=SEED, n_jobs=-1, objective="reg:squarederror"
-        ),
-        param_distributions=param_grid,
-        n_iter=30,
-        cv=cv_splits, 
-        scoring="neg_mean_squared_error",
-        random_state=SEED
-    )
-
-    # pipeline
-    etapes_pretraitement = pre_translation(chaine_r_brute)
-    pipeline = etapes_pretraitement + [
-        {"model": random_search},
-    ]
-
     try:
-        # exec
-        resultat = nirs4all.run(dataset=(X, y), pipeline=pipeline)
-
-        # extraction des pred (Uniquement Train)
-        results = resultat.predictions.to_dicts()
-        y_train_true, pred_train = [], []
-
-        for bloc in results:
-            partition = bloc.get("partition", "")
-            if partition == "train":
-                y_train_true = np.array(bloc.get("y_true", [])).ravel()
-                pred_train = np.array(bloc.get("y_pred", [])).ravel()
-
-        # metrics internes (uniquement sur le train)
-        rc, _, rmsec, _, _ = calculer_metriques(
-            y_train_true, pred_train, y_train_true, pred_train
-        )
-
-        modele_actuel = getattr(resultat, "final", resultat)
-
-        # --- MACHINE D'EXTRACTION ROBUSTE DU RMSECV ET DES PARAMÈTRES ---
-        meilleurs_params = "{}"
-        rmsecv = 0.0
+        etapes_pretraitement = pre_translation(chaine_r_brute)
         
-        def trouver_search_cv(obj):
-            if hasattr(obj, "best_score_") and hasattr(obj, "best_params_"):
-                return obj
-            if hasattr(obj, "steps"): 
-                return trouver_search_cv(obj.steps[-1][1])
-            if hasattr(obj, "__getitem__") and not isinstance(obj, (str, dict, pd.DataFrame, np.ndarray)):
-                try:
-                    return trouver_search_cv(obj[-1])
-                except:
-                    pass
-            if isinstance(obj, dict) and "model" in obj:
-                return trouver_search_cv(obj["model"])
-            if hasattr(obj, "model"): 
-                return trouver_search_cv(obj.model)
-            return None
-
-        recherche_sk = trouver_search_cv(modele_actuel)
-
-        if recherche_sk is not None:
-            meilleurs_params = str(recherche_sk.best_params_)
-            score_neg_mse = recherche_sk.best_score_
-            rmsecv = float(np.sqrt(abs(score_neg_mse)))
+        # ---------------------------------------------------------
+        # ÉTAPE 1 : PRÉTRAITEMENT PUR AVEC NIRS4ALL
+        # ---------------------------------------------------------
+        if len(etapes_pretraitement) > 0:
+            from sklearn.dummy import DummyRegressor
+            class InterceptorRegressor(DummyRegressor):
+                def fit(self, X_t, y_t, **kwargs):
+                    self.X_intercepted = X_t
+                    return super().fit(X_t, y_t, **kwargs)
+            
+            interceptor = InterceptorRegressor()
+            pipeline_intercept = etapes_pretraitement + [{"model": interceptor}]
+            nirs4all.run(dataset=(X, y), pipeline=pipeline_intercept)
+            
+            X_transforme = interceptor.X_intercepted
         else:
-            meilleurs_params = "Erreur extraction"
-            rmsecv = 0.0 
+            X_transforme = X
+            
+        if X_transforme.shape[1] == 0:
+            raise ValueError(f"Le prétraitement a supprimé toutes les variables.")
 
-        # ajoute cette combinaison dans le tableau géant
+        # ---------------------------------------------------------
+        # ÉTAPE 2 : ENTRAÎNEMENT PUR ET TRANSPARENT AVEC SCIKIT-LEARN
+        # ---------------------------------------------------------
+        random_search = RandomizedSearchCV(
+            estimator=XGBRegressor(random_state=SEED, n_jobs=-1, objective="reg:squarederror"),
+            param_distributions=param_grid,
+            n_iter=30,
+            cv=cv_splits, 
+            scoring="neg_mean_squared_error",
+            random_state=SEED,
+        )
+        
+        random_search.fit(X_transforme, y)
+        
+        # ---------------------------------------------------------
+        # ÉTAPE 3 : EXTRACTION GARANTIE
+        # ---------------------------------------------------------
+        meilleurs_params = str(random_search.best_params_)
+        score_neg_mse = random_search.best_score_
+        rmsecv = float(np.sqrt(abs(score_neg_mse)))
+
+        pred_train = random_search.predict(X_transforme)
+        rc, _, rmsec, _, _ = calculer_metriques(y, pred_train, y, pred_train)
+
         ligne_resultat = {
             "Compose": compose,
             "ID_Pretraitement": id_pre + 1,
             "Code_R_Pretraitement": chaine_r_brute,
-            "Meilleurs_Hyperparam_XGB": str(meilleurs_params),
+            "Meilleurs_Hyperparam_XGB": meilleurs_params,
             "Rc": round(rc, 4),
             "RMSEC": round(rmsec, 4),
             "RMSECV": round(rmsecv, 4),
         }
         tableau_compose.append(ligne_resultat)
 
+        # --- SÉCURITÉ FAIL-FAST ---
+        if id_pre == 0 and rmsecv == 0.0:
+            print("\n?? FAIL-FAST: RMSECV à 0 dès le premier modèle. L'entraînement explicite Scikit-Learn a échoué.")
+            sys.exit(1)
+
         # si meilleur : on garde
         if rmsecv > 0 and rmsecv < meilleur_rmsecv_global:
             meilleur_rmsecv_global = rmsecv
-            meilleur_modele_joblib = modele_actuel
+            meilleur_modele_joblib = random_search 
+            meilleur_pipeline_pre = etapes_pretraitement
 
-            # json du meilleur
             rapport_du_champion = {
                 "Compose": compose,
                 "Pretraitement_Gagnant": chaine_r_brute,
@@ -223,11 +207,11 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
             }
 
     except Exception as e:
-        print(f"error {id_pre + 1} : {e}")
+        print(f"error {id_pre + 1} ({chaine_r_brute}) : {e}")
         continue
 
 ## Save
-dossier_compose = d0 / "xgboost" / "repetitions" / "Results" / idparam / compose
+dossier_compose = d0 / "xgboost" / "Repetitions" / "Results" / idparam / compose
 dossier_compose.mkdir(parents=True, exist_ok=True)
 
 # tableau du compose
@@ -251,18 +235,30 @@ if meilleur_modele_joblib is not None:
         X_ext = df_test_externe[col_spectres].values
         y_ext_true = df_test_externe[compose].values
         
-        pred_ext = meilleur_modele_joblib.predict(X_ext)
-        if isinstance(pred_ext, dict) and "y_pred" in pred_ext:
-             pred_ext = np.array(pred_ext["y_pred"]).ravel()
+        # Application du meilleur prétraitement à X_ext
+        if len(meilleur_pipeline_pre) > 0:
+            from sklearn.dummy import DummyRegressor
+            class InterceptorPredict(DummyRegressor):
+                def fit(self, X_t, y_t, **kwargs):
+                    self.X_intercepted = X_t
+                    return super().fit(X_t, y_t, **kwargs)
+                    
+            interceptor_ext = InterceptorPredict()
+            pipeline_ext = meilleur_pipeline_pre + [{"model": interceptor_ext}]
+            nirs4all.run(dataset=(X_ext, y_ext_true), pipeline=pipeline_ext)
+            X_ext_transforme = interceptor_ext.X_intercepted
         else:
-             pred_ext = np.array(pred_ext).ravel()
+            X_ext_transforme = X_ext
 
+        # Prédiction avec le modèle pur XGBoost
+        pred_ext = meilleur_modele_joblib.predict(X_ext_transforme)
+        
         _, _, _, rmsep_ext, rpd_ext = calculer_metriques(
             y_ext_true, pred_ext, y_ext_true, pred_ext 
         )
         
         rapport_du_champion["Crash_Test_Externe"] = {
-            "Avertissement": "Validation finale calculée sur l'intégralité des spectres répétitions des 15 individus exclus.",
+            "Avertissement": "Validation finale calculée sur l'intégralité des spectres répétitions des individus exclus.",
             "RMSEP_Externe": round(rmsep_ext, 4),
             "RPD_Externe": round(rpd_ext, 4)
         }
@@ -327,4 +323,79 @@ if meilleur_modele_joblib is not None:
         fontweight="bold",
     )
     plt.xlabel("RMSEcv", fontsize=12)
-    plt.ylabel("RMSEC
+    plt.ylabel("RMSEC", fontsize=12)
+    plt.legend()
+
+    chemin_graph_robustesse_png = dossier_compose / f"Graph_robustesse_XGB_{compose}.png"
+    chemin_graph_robustesse_pdf = dossier_compose / f"Graph_robustesse_XGB_{compose}.pdf"
+    plt.savefig(chemin_graph_robustesse_png, dpi=300, bbox_inches="tight")
+    plt.savefig(chemin_graph_robustesse_pdf, dpi=300, bbox_inches="tight")
+    plt.close()
+
+    ## graph feature importance (stem plot)
+    try:
+        fitted_mod = meilleur_modele_joblib.best_estimator_
+        importances = fitted_mod.feature_importances_
+        
+        plt.figure(figsize=(10, 5))
+
+        toutes_longueurs = [float(str(c).replace("x.", "")) for c in col_spectres]
+        pre_gagnant = rapport_du_champion["Pretraitement_Gagnant"]
+
+        match_reduction = re.search(
+            r"list\('red',\s*c\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)", pre_gagnant
+        )
+
+        if match_reduction:
+            drop_start = int(match_reduction.group(1))
+            drop_end = int(match_reduction.group(2))
+            step = int(match_reduction.group(3))
+
+            end_idx = len(toutes_longueurs) - drop_end
+            x_values = toutes_longueurs[drop_start:end_idx:step]
+        else:
+            x_values = toutes_longueurs
+
+        if len(x_values) != len(importances):
+            print(f"?? Alignement forcé : {len(x_values)} longueurs d'ondes vs {len(importances)} importances.")
+            x_values = list(range(len(importances)))
+            xlabel_text = "Index des variables (longueurs d'ondes désalignées)"
+        else:
+            xlabel_text = "Longueur d'onde (nm)"
+
+        couleur_graph = "forestgreen" 
+        
+        plt.vlines(x=x_values, ymin=0, ymax=importances, color=couleur_graph, linewidth=1, alpha=0.7)
+        plt.plot(
+            x_values,
+            importances,
+            marker="o",
+            markersize=2.5,
+            color=couleur_graph,
+            linestyle="None",
+        )
+        plt.title(
+            f"Importance des variables (XGBoost Répétitions) - {compose}",
+            fontsize=16,
+            fontweight="bold",
+            pad=15,
+        )
+        plt.ylabel("Importance", fontsize=12)
+        plt.xlabel(xlabel_text, fontsize=12)
+
+        plt.grid(True, linestyle="--", alpha=0.5)
+        plt.gca().spines["top"].set_visible(False)
+        plt.gca().spines["right"].set_visible(False)
+
+        chemin_graph_importance_png = (
+            dossier_compose / f"Graph_feature_importance_XGB_{compose}.png"
+        )
+        chemin_graph_importance_pdf = (
+            dossier_compose / f"Graph_feature_importance_XGB_{compose}.pdf"
+        )
+        plt.savefig(chemin_graph_importance_png, dpi=300, bbox_inches="tight")
+        plt.savefig(chemin_graph_importance_pdf, dpi=300, bbox_inches="tight")
+        plt.close()
+
+    except Exception as e_graph:
+        print(f"? error graph importance pour {compose} : {e_graph}")
