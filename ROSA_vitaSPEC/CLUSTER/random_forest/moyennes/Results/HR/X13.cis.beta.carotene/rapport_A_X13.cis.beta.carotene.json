@@ -1,0 +1,16 @@
+{
+    "Compose": "X13.cis.beta.carotene",
+    "Pretraitement_Gagnant": "list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','')",
+    "Meilleurs_Parametres": "{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 10}",
+    "Metriques_Internes": {
+        "Rc": 0.9469,
+        "R2cv": 1.5101,
+        "RMSEC": 11.6934,
+        "RMSECV": 24.3142
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.3629,
+        "RMSEP_Externe": 23.6794,
+        "RPD_Externe": 1.2743
+    }
+}

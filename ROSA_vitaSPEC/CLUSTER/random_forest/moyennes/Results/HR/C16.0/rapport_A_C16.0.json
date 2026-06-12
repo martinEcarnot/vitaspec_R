@@ -1,0 +1,16 @@
+{
+    "Compose": "C16.0",
+    "Pretraitement_Gagnant": "list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21))",
+    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None}",
+    "Metriques_Internes": {
+        "Rc": 0.9841,
+        "R2cv": 1.271,
+        "RMSEC": 0.5712,
+        "RMSECV": 1.3813
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.9087,
+        "RMSEP_Externe": 0.6762,
+        "RPD_Externe": 3.367
+    }
+}

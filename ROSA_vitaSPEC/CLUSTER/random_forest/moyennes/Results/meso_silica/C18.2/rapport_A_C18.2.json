@@ -4,6 +4,7 @@
     "Meilleurs_Parametres": "{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.3, 'max_depth': 20}",
     "Metriques_Internes": {
         "Rc": 0.9573,
+        "R2cv": 1.5631,
         "RMSEC": 0.645,
         "RMSECV": 1.2689
     },
