@@ -3,13 +3,14 @@
     "Pretraitement_Gagnant": "list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25))",
     "Meilleurs_Parametres": "{'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 20}",
     "Metriques_Internes": {
-        "Rc": 0.9811,
-        "R2cv": 1.5091,
-        "RMSEC": 9.6086,
-        "RMSECV": 26.7089
+        "Rc": 0.9791,
+        "R2cv": 0.4631,
+        "RMSEC": 10.4733,
+        "RMSECV": 27.5021
     },
     "Crash_Test_Externe": {
-        "RMSEP_Externe": 30.7918,
-        "RPD_Externe": 1.3094
+        "R2p_Externe": 0.6009,
+        "RMSEP_Externe": 23.9057,
+        "RPD_Externe": 1.61
     }
 }

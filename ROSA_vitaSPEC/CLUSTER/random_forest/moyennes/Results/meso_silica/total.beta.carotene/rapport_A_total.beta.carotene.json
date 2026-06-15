@@ -1,15 +1,16 @@
 {
     "Compose": "total.beta.carotene",
-    "Pretraitement_Gagnant": "list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','')",
-    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20}",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31))",
+    "Meilleurs_Parametres": "{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10}",
     "Metriques_Internes": {
-        "Rc": 0.9835,
-        "R2cv": 1.2332,
-        "RMSEC": 86.6539,
-        "RMSECV": 212.9705
+        "Rc": 0.9758,
+        "R2cv": 0.7578,
+        "RMSEC": 99.5935,
+        "RMSECV": 211.777
     },
     "Crash_Test_Externe": {
-        "RMSEP_Externe": 301.0565,
-        "RPD_Externe": 1.1484
+        "R2p_Externe": 0.826,
+        "RMSEP_Externe": 181.0637,
+        "RPD_Externe": 2.4381
     }
 }
