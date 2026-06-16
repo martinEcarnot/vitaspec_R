@@ -1,0 +1,16 @@
+{
+    "Compose": "gT3",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'subsample': 0.7, 'n_estimators': 200, 'max_depth': 5, 'learning_rate': 0.1, 'colsample_bytree': 0.5}",
+    "Metriques_Internes": {
+        "Rc": 1.0,
+        "R2cv": 0.251,
+        "RMSEC": 0.098,
+        "RMSECV": 96.5212
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.4234,
+        "RMSEP_Externe": 78.019,
+        "RPD_Externe": 1.3394
+    }
+}

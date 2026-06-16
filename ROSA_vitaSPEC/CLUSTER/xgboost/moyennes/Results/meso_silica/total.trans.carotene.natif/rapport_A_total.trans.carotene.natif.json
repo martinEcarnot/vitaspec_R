@@ -1,0 +1,16 @@
+{
+    "Compose": "total.trans.carotene.natif",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'subsample': 0.8, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.1, 'colsample_bytree': 0.8}",
+    "Metriques_Internes": {
+        "Rc": 1.0,
+        "R2cv": 0.7593,
+        "RMSEC": 0.0004,
+        "RMSECV": 317.6983
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.7902,
+        "RMSEP_Externe": 324.0186,
+        "RPD_Externe": 2.2207
+    }
+}

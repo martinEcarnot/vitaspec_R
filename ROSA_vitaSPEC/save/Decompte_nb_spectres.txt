@@ -1,0 +1,61 @@
+20240325_Vitaspec_Pobe : 1004
+20240405_VitaSPEC_S_AGAP : 946
+20240405_VitaSPEC_S_DIADE : 943
+20240424_VitaSPEC_HR_AGAP : 241
+20240424_VitaSPEC_HR_DIADE : 235
+20241209_Vitaspec_HR_AGAP : 345
+20241209_Vitaspec_HR_DIADE : 345           			 
+								TOTAL2024 = 4059                                    
+20250224_Vitaspec_Pobe : 1387
+20250313_Vitaspec_S_AGAP : 948
+20250313_Vitaspec_S_DIADE : 952
+20250317_Vitaspec_HR_AGAP : 574
+20250317_Vitaspec_HR_DIADE : 575
+20250319_Vitaspec_Lyoph_AGAP : 1263
+20250319_Vitaspec_Lyoph_DIADE : 1261
+20250321_Vitaspec_Lyoph_AGAP : 457
+20250321_Vitaspec_Lyoph_DIADE : 457
+20250603_Vitaspec_HR_DIADE : 261
+20250908_Vitaspec_HR_DIADE : 516
+20250909_Vitaspec_HR_DIADE : 249
+								TOTAL2025 = 8900
+20260223_Vitaspec_Pobe_AGAP : 810
+20260224_Vitaspec_Pobe_AGAP : 1605
+20260224_Vitaspec_Pobe_DIADE : 1620
+20260225_Vitaspec_Pobe_AGAP : 1620
+20260225_Vitaspec_Test_Methode_Copeaux : 301
+20260226_Vitaspec_Pobe_AGAP : 1605
+20260227_Vitaspec_Pobe_ManipA : 450
+20260227_Vitaspec_Pobe_ManipB : 840
+20260227_Vitaspec_Pobe_ManipC : 360
+20260304_Vitaspec_S_DIADE : 1621
+20260305_Vitaspec_S_DIADE : 1620
+20260306_Vitaspec_S_DIADE : 1620
+20260309_R6_FACILE_Vitaspec_S_DIADE : 900
+20260309_R7_FACILE_Vitaspec_S_DIADE : 900
+20260309_Vitaspec_S_DIADE : 1800
+20260309_Vitaspec_S_DIADE_ManipC : 270
+20260311_Vitaspec_S_stock_DIADE : 885
+20260312_Vitaspec_S_stock_DIADE : 900
+20260313_Vitaspec_S_stock_DIADE : 900
+20260407_VitaSpec_S_stock_DIADE : 900
+20260408_VitaSpec_S_stock_DIADE : 900
+20260409_VitaSpec_S_stock_DIADE : 900
+20260410_Vitaspec_HR_DIADE : 440                        
+							TOTAL2026 = 23767
+---------------------------------------------------------------------
+							TOTAL = 36726
+							    
+========================================================================================================
+20231013_palmeIRD : 75
+20231020_palmeIRD : 30
+20231023_PalmeIRD : 50 
+20231107_PalmeIRD : 40
+20231219_PalmeIRD : 70
+20231219_PalmeIRD : 65
+20240305_PalmeIRD : 20
+							TOTALpalmeIRD = 350
+202050317_Raman_HR_1to42 : ???
+20250318_Raman_HR_43to117 : ???
+==========================================================================================================
+

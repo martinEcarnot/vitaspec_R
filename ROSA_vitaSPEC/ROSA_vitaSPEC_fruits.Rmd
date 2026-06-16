@@ -1,0 +1,2994 @@
+---
+title: "ROSA_vitaSPEC_fruits"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.align = "center",
+                      fig.width = 6, fig.height = 4)
+
+library(ggplot2)
+library(dplyr)
+library(writexl)
+library(openxlsx)
+library(nirsextra)
+library(tidyverse)
+library(rchemo)
+library(stringr)
+library(purrr)
+library(stringr)
+library(ggpmisc)
+library(pls)
+library(tidymodels)
+library(future)
+library(furrr)
+library(future.callr)
+library(cowplot)
+
+
+
+d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+source(paste0(d0,"vitaspec_R/vitaspec_load.R"))
+source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
+load(paste0(d0,"vitaspec_R/vitaspec_fruit"))
+
+```
+
+# Load & Save data
+
+## Yvalue
+
+```{r, echo=FALSE}
+#FRUIT
+### AG
+AG_new <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/AG_new.csv"),
+                     sep = ",",
+                     header = TRUE,
+                     dec = ".") %>% 
+  mutate(ech = sub("-.*", "", code_nirs))
+AG <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.2.csv"), 
+                 sep=";", 
+                 header=TRUE, 
+                 dec=",") %>%
+  mutate(ech = sub("-.*", "", code_nirs)) %>% 
+  bind_rows(AG_new) %>% 
+  select(-c(1,2))
+
+### carotène
+# carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
+#                     sep=";", 
+#                     header=TRUE, 
+#                     dec=",") %>%
+#   mutate(ech = sub("-.*", "", code_nirs)) %>% 
+#   select(-c(1,2))
+carot <- read.xlsx(paste0(d0,"analyses_ref/fruits/méso-carot-sets_1-3=51_éch_Amel+92_Antoine_v2.xlsx")) %>%
+  mutate(ech = sub("-.*", "", code_nirs),
+         trans.alpha.carotene = `trans-alpha-carotène`,
+         trans.beta.carotene = `trans-beta-carotène`,
+         total.trans.carotene.natif = trans.alpha.carotene + trans.beta.carotene,
+         ratio.alpha.beta = trans.alpha.carotene / trans.beta.carotene,
+         ratio.alpha.natif = trans.alpha.carotene / total.trans.carotene.natif,
+         ratio.beta.natif = trans.beta.carotene / total.trans.carotene.natif,
+         X13.cis.beta.carotene = `13.cis-beta-carotène`,
+         X9.cis.beta.carotene = `9.cis-beta-carotène`,
+         total.beta.carotene = `total.beta-carotènes`,
+         total.carotene = `total.carotènes`) %>% 
+  select(-c(1:8))
+
+### lip totaux
+# tlip_new <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Tlip_new.csv"), 
+#                 sep=",", 
+#                 header=TRUE, 
+#                 dec=".") %>% 
+#   mutate(ech = sub("-.*", "", code_nirs))
+# tlip <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.4.csv"), 
+#                    sep=";", 
+#                    header=TRUE, 
+#                    dec=",") %>%
+#   mutate(ech = sub("-.*", "", code_nirs)) %>% 
+#   select(-c(1,3))
+
+tlip <- read.xlsx(paste0(d0,"analyses_ref/fruits/méso-lip%MS-sets1-3=49échAmel+96Antoine.xlsx")) %>%
+  mutate(ech = sub("-.*", "", code_nirs)) %>% 
+  select(-c(1,3)) %>% 
+  dplyr::rename( tlip.MS = `tlip%MS`)
+  
+  
+### eau
+meso <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/V4_Vitaspec_cpx_meso_M1àM306_fm1_sd_me.csv"), 
+                   sep=";", 
+                   header=TRUE, 
+                   dec=",") %>% 
+  dplyr::rename(eau = `TE1...MF.`)
+eau <- meso %>% 
+  select(ech,eau)
+
+### merge 
+Yvalue <- eau %>%
+  full_join(AG, by = "ech") %>%
+  full_join(tlip, by = "ech") %>% 
+  full_join(carot, by = "ech")
+
+### export
+# write.csv(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.csv"),row.names = FALSE)
+# write_xlsx(Yvalue, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx"))
+
+
+
+#HUILE
+### AG
+AG_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/Partie_1.2.xlsx")) %>% 
+  mutate(ech = as.character(str_extract(ID, "(?<=#)[^-]+")),
+         C14.0 = `C14:0`,
+         C16.0 = `C16:0`,
+         C18.0 = `C18:0`,
+         C18.1n9 = `C18:1n9`,
+         C18.2 = `C18:2`) %>% 
+  select(-c(1:6))
+
+###carotene
+carot_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/HR-carot-sets_1_à_3-115_ech_Amel+51_Marcel_v2.xlsx")) %>% 
+  mutate(ech = as.character(str_extract(`#`, "(?<=#)[^-]+")),
+         trans.alpha.carotene = `trans-alpha-carotène`,
+         trans.beta.carotene = `trans-beta-carotène`,
+         X13.cis.beta.carotene = `13.cis-beta-carotène`,
+         X9.cis.beta.carotene = `9.cis-beta-carotène`,
+         total.beta.carotene = `total.beta-carotènes`,
+         total.carotene = total.carotènes,
+         lycopene = `Lycopène`) %>% 
+  select(-c(1:9))
+
+###AGL
+AGL_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/Partie_1.4.xlsx")) %>% 
+  mutate(ech = as.character(`#`),
+         FFA = `FFA(%)`) %>% 
+  select(-c(1:3))
+
+###TOCO
+TOCO_HR <- read.xlsx(paste0(d0,"analyses_ref/huile_rouge/HR-toco-sets_1_à_3-114_ech_Amel+50_Marcel.xlsx")) %>% 
+  mutate(ech = as.character(str_extract(`#`, "(?<=#)[^-]+")),
+         total.toco = TOTAL,
+         total.T3 = TOTAL.T3) %>% 
+  select(-c(1:3,8:9))
+
+### merge 
+Yvalue_HR <- carot_HR %>%
+  full_join(AG_HR, by = "ech") %>%
+  full_join(AGL_HR, by = "ech") %>% 
+  full_join(TOCO_HR, by = "ech") %>% 
+  relocate(ech,`C14.0`,`C16.0`,`C18.0`,`C18.1n9`,`C18.2`,`FFA`,trans.alpha.carotene,trans.beta.carotene,X13.cis.beta.carotene,X9.cis.beta.carotene,total.beta.carotene,total.carotene,lycopene,aT,aT3,gT3,dT3,total.T3,total.toco)
+
+### export
+# write.csv(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.csv"),row.names = FALSE)
+# write_xlsx(Yvalue_HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_HR.xlsx"))
+
+```
+
+## Xvalue
+
+```{r, echo=FALSE}
+# FRUITS
+### Load spectra
+dirs2024 <- list.dirs(paste0(d0, "spectres/"), recursive = FALSE) %>%
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%  
+  filter(!grepl("HR", value)) %>% 
+  filter(grepl("2024",value)) %>% 
+  pull(value)                        # retours sous forme de liste
+
+dirs2025 <- list.dirs(paste0(d0,"spectres/"), recursive = FALSE) %>% 
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%
+  filter(!grepl("HR", value)) %>%
+  filter(grepl("2025",value)) %>% 
+  pull(value) 
+
+dirs2026 <- list.dirs(paste0(d0,"spectres/"), recursive = FALSE) %>% 
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%
+  filter(!grepl("HR", value)) %>%
+  filter(grepl("2026",value)) %>% 
+  pull(value) 
+
+dirs2026_vrai <- dirs2026[-c(5,7:9,15:16)]
+dirs2026_test <- dirs2026[-c(1:4,6,10:16)]
+
+### merge de tous les campagnes de spectres
+Xvalue2024_fruit <- map_dfr(dirs2024, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2024
+  data$source <- case_when(
+    str_detect(dossier, "AGAP") ~ "AGAP",
+    str_detect(dossier, "DIADE") ~ "DIADE",
+    str_detect(dossier, "Pobe") ~ "AGAP",
+    TRUE ~ NA_character_)
+  data$etat <- case_when(
+    str_detect(dossier, "Pobe") & str_detect(data$spname, "X") ~ "Exo",
+    str_detect(dossier, "Pobe") & !str_detect(data$spname, "X") ~ "Meso_frais",
+    str_detect(dossier, "S_DIADE|S_AGAP") ~ "Meso_Silica",
+    TRUE ~ NA_character_)
+  return(data)
+})
+Xvalue2025_fruit <- map_dfr(dirs2025, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2025
+  data$source <- case_when(
+    str_detect(dossier, "AGAP") ~ "AGAP",
+    str_detect(dossier, "DIADE") ~ "DIADE",
+    str_detect(dossier, "Pobe") ~ "AGAP",
+    TRUE ~ NA_character_)
+  data$etat <- case_when(
+    str_detect(dossier, "Pobe") & str_detect(data$spname, "X") ~ "Exo",
+    str_detect(dossier, "Pobe") & !str_detect(data$spname, "X") ~ "Meso_frais",
+    str_detect(dossier, "S_DIADE|S_AGAP") ~ "Meso_Silica",
+    str_detect(dossier, "Lyoph") ~ "Meso_Lyoph",
+    TRUE ~ NA_character_)
+  return(data)
+})
+Xvalue2026_fruit <- map_dfr(dirs2026_vrai, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2026
+  data$source <- case_when(
+    str_detect(dossier, "AGAP") ~ "AGAP",
+    str_detect(dossier, "DIADE") ~ "DIADE",
+    TRUE ~ NA_character_)
+  data$etat <- case_when(
+    str_detect(dossier, "Pobe") & str_detect(data$spname, "X") ~ "Exo",
+    str_detect(dossier, "Pobe") & !str_detect(data$spname, "X") ~ "Meso_frais",
+    str_detect(dossier, "S_DIADE|S_AGAP") ~ "Meso_Silica",
+    TRUE ~ NA_character_)
+  return(data)
+})
+Xvalue2026_fruit_spe <- map_dfr(dirs2026_test, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2026
+  data$source <- case_when(
+    str_detect(dossier, "_Manip") ~ "AGAP",
+    str_detect(dossier, "Test") ~ "AGAP",
+    TRUE ~ NA_character_)
+  data$etat <- "Meso_frais"
+  return(data)
+})
+
+### clean des spectres sans nom (erreur manip)
+Xvalue2024_fruit <- Xvalue2024_fruit %>% 
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  mutate(
+    ech = sub("-.*", "", spname),
+    rep = as.numeric(substr(spname, 
+                            nchar(spname)-4, 
+                            nchar(spname)
+                            )))
+Xvalue2025_fruit <- Xvalue2025_fruit %>% 
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  mutate(
+    ech = sub("-.*", "", spname),
+    rep = as.numeric(substr(spname, 
+                            nchar(spname)-4, 
+                            nchar(spname)
+                            )))
+Xvalue2026_fruit <- Xvalue2026_fruit %>% 
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  mutate(
+    ech = substr(spname, 1, nchar(spname) - 5),
+    rep = as.numeric(substr(spname, 
+                            nchar(spname)-4, 
+                            nchar(spname)
+                            )))
+Xvalue2026_fruit_spe <- Xvalue2026_fruit_spe %>%
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage")) %>% 
+  mutate(
+    ech = substr(spname, 1, nchar(spname) - 5),
+    rep = as.numeric(substr(spname, 
+                            nchar(spname)-4, 
+                            nchar(spname)
+                            )))
+
+### clean noms colonnes
+Xvalue2024_fruit <- Xvalue2024_fruit %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec")) %>% 
+  select(-2)
+Xvalue2025_fruit <- Xvalue2025_fruit %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec")) %>% 
+  select(-2)
+Xvalue2026_fruit <- Xvalue2026_fruit %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec"))
+Xvalue2026_fruit_spe <- Xvalue2026_fruit_spe %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec"))
+
+
+
+
+
+#HUILES
+### Load spectra
+dirs2024_HR <- list.dirs(paste0(d0, "spectres/"), recursive = FALSE) %>%
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%  
+  filter(grepl("HR", value)) %>% 
+  filter(grepl("2024",value)) %>% 
+  pull(value)                        # retours sous forme de liste
+
+dirs2025_HR <- list.dirs(paste0(d0,"spectres/"), recursive = FALSE) %>% 
+  basename() %>%                     # recup le nom des dossiers
+  as_tibble() %>%                    # tibble pour dyplr
+  filter(grepl("_Vita", value)) %>%
+  filter(grepl("HR", value)) %>%
+  filter(grepl("2025",value)) %>% 
+  pull(value) 
+
+### merge de tous les campagnes de spectres
+Xvalue2024_HR <- map_dfr(dirs2024_HR, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2024
+  data$source <- case_when(
+    str_detect(dossier, "_AGAP") ~ "AGAP",
+    str_detect(dossier, "_DIADE") ~ "DIADE",
+    TRUE ~ NA_character_)
+  data$etat <- "HR"
+  return(data)
+})
+Xvalue2025_HR <- map_dfr(dirs2025_HR, function(dossier) {
+  data <- vitaspec_load(paste0(d0, "spectres/"), dossier)
+  data$campagne <- 2025
+  data$source <- case_when(
+    str_detect(dossier, "AGAP") ~ "AGAP",
+    str_detect(dossier, "DIADE") ~ "DIADE",
+    TRUE ~ NA_character_)
+  data$etat <- "HR"
+  return(data)
+})
+
+### clean des spectres sans nom (erreur manip)
+Xvalue2024_HR <- Xvalue2024_HR %>% 
+  filter(!str_detect(spname, "Spectrum|blanc|test nettoyage|^73-")) %>% 
+  mutate(
+    ech = sub("-.*", "", spname),
+    rep = as.numeric(str_extract(spname, "(?<=0)[1-9][0-9]*$"))
+  )
+Xvalue2025_HR <- Xvalue2025_HR %>% 
+  filter(
+    !str_detect(spname, "Spectrum|blanc|test nettoyage|^165-|^73-"),
+    !str_detect(spname, "marcel")
+  ) %>% 
+  mutate(
+    ech = sub("-.*", "", spname),
+    rep = as.numeric(str_extract(spname, "(?<=0)[1-9][0-9]*$"))
+  )
+### clean noms colonnes
+Xvalue2024_HR <- Xvalue2024_HR %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec")) %>% 
+  select(-2)
+Xvalue2025_HR <- Xvalue2025_HR %>% 
+  rename_with(~ str_remove_all(.x, "(?i)_Vitaspec")) %>% 
+  select(-2)
+
+```
+
+### Prep data 
+```{r, echo=FALSE, warning=FALSE, results='asis'}
+### spectres
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
+
+
+## FRAIS
+Meso_frais_24_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240325_Pobe"),filtre_etat = "Meso_frais")
+Meso_frais_25_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250224_Pobe"),filtre_etat = "Meso_frais")
+Meso_frais_26_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectres = c("x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
+Meso_frais_2425_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Meso_frais")
+Meso_frais_242526_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240325_Pobe","x20250224_Pobe","x20260224_Pobe_AGAP","x20260225_Pobe_AGAP","x20260226_Pobe_AGAP"),filtre_etat = "Meso_frais")
+
+# write.csv(Meso_frais_26_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_26.csv"),row.names = FALSE)
+
+
+
+##SEC
+#DIADE
+Meso_sec_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE"),filtre_etat = "Meso_Silica")
+Meso_sec_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
+Meso_sec_26_DIADE_matrix <- compile_spectres_matrix(Xvalue2026_fruit,colonnes_spectres = c("x20260304_S_DIADE","x20260305_S_DIADE","x20260306_S_DIADE","x20260309_R6_FACILE_S_DIADE","x20260309_R7_FACILE_S_DIADE"),filtre_etat = "Meso_Silica")
+Meso_sec_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE"),filtre_etat = "Meso_Silica")
+Meso_sec_242526_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,Xvalue2026_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20260304_S_DIADE","x20260305_S_DIADE","x20260306_S_DIADE","x20260309_R6_FACILE_S_DIADE","x20260309_R7_FACILE_S_DIADE"),filtre_etat = "Meso_Silica")
+  
+# write.csv(Meso_sec_24_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_24_DIADE.csv"),row.names = FALSE)
+
+#AGAP
+Meso_sec_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+
+# write.csv(Meso_sec_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_AGAP.csv"),row.names = FALSE)
+
+#TOT
+Meso_sec_24_TOT_matrix <- compile_spectres_matrix(Xvalue2024_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20240405_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250313_S_DIADE","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+Meso_sec_2425_TOT_matrix <- compile_spectres_matrix(Xvalue2024_fruit,Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Silica")
+
+# write.csv(Meso_sec_2425_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_TOT.csv"),row.names = FALSE)
+
+
+
+##LYOPH
+#DIADE
+Meso_lyoph_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_DIADE","x20250321_Lyoph_DIADE"),filtre_etat = "Meso_Lyoph")
+
+#AGAP
+Meso_lyoph_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20250319_Lyoph_AGAP","x20250321_Lyoph_AGAP"),filtre_etat = "Meso_Lyoph")
+
+Meso_lyoph_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_fruit,colonnes_spectres = c("x20240405_S_DIADE","x20250313_S_DIADE","x20240405_S_AGAP","x20250313_S_AGAP"),filtre_etat = "Meso_Lyoph")
+
+# write.csv(Meso_lyoph_25_TOT_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_lyoph_25_TOT.csv"),row.names = FALSE)
+
+
+
+##EXO
+# Exo_frais_matrix <- compile_spectres_matrix(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Exo")
+# Exo_frais_df <- compile_spectres_df(Xvalue_fruit,c("x20240325_Pobe","x20250224_Pobe"),filtre_etat = "Exo")
+
+
+##HYUILE
+#DIADE
+HR_24_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE"),filtre_etat = "HR")
+HR_25_DIADE_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
+HR_2425_DIADE_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE"),filtre_etat = "HR")
+
+# write.csv(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_DIADE.csv"),row.names = FALSE)
+# write_xlsx(HR_2425_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/HR_2425_DIADE.xlsx"))
+
+#AGAP
+HR_24_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP"),filtre_etat = "HR")
+HR_25_AGAP_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_AGAP"),filtre_etat = "HR")
+HR_2425_AGAP_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_AGAP","x20241209_AGAP","x20250317_AGAP"),filtre_etat = "HR")
+
+# write.csv(HR_2425_AGAP_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_2425_AGAP.csv"),row.names = FALSE)
+
+# TOT
+HR_24_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20240424_AGAP","x20241209_AGAP"),filtre_etat = "HR")
+HR_25_TOT_matrix <- compile_spectres_matrix(Xvalue2025_HR,colonnes_spectres = c("x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
+HR_2425_TOT_matrix <- compile_spectres_matrix(Xvalue2024_HR,Xvalue2025_HR,colonnes_spectres = c("x20240424_DIADE","x20241209_DIADE","x20240424_AGAP","x20241209_AGAP","x20250317_DIADE","x20250603_DIADE","x20250908_DIADE","x20250909_DIADE","x20250317_AGAP"),filtre_etat = "HR")
+
+# write.csv(HR_25_DIADE_matrix, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv"),row.names = FALSE)
+
+
+
+```
+
+### SD + OD (distances outlier)
+```{r}
+MAT <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>% 
+  mutate(id_spectre = paste0(ech, "_", rep)) %>% 
+  select(-campagne, -source, -etat, -ech, -rep) %>%
+  column_to_rownames(var = "id_spectre") %>%
+  as.matrix()
+
+
+# acp
+res.pca <- pcasvd(MAT, nlv = 10)
+
+
+# calcul distances
+res_scordis <- scordis(res.pca, nlv = 10)
+sd <- res_scordis$res.train %>% 
+  mutate(sdstand = dstand) %>% 
+  select(-d,-gh,-dstand) %>% 
+  rownames_to_column(var = "id_spectre")
+# sd_gh <- sd %>% 
+#   select(-sdstand)
+
+res_odis <- odis(res.pca, Xtrain = MAT, nlv=10)
+od <- res_odis$res.train %>% 
+  mutate(odstand = dstand) %>% 
+  select(-d, -dstand) %>% 
+  rownames_to_column(var = "id_spectre")
+
+dist <- sd %>%
+  inner_join(od, by = "id_spectre") %>%
+  column_to_rownames(var = "id_spectre")
+
+
+S = 1.5
+O = 1
+
+plot_data <- dist %>%
+  rownames_to_column(var = "id_spectre") %>%
+  mutate(statut = case_when(
+    sdstand <= S & odstand <= O ~ "ok x2",
+    sdstand > S  & odstand <= O ~ "ok",
+    sdstand <= S & odstand > O  ~ "outlier ortho",
+    sdstand > S  & odstand > O  ~ "outlier x2"
+  ))
+liste_outliers <- plot_data %>% 
+  filter(statut %in% c("ok", "outlier ortho", "outlier x2"))
+
+write_xlsx(liste_outliers,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/sd_od/liste_outliers_T2-lim",S,".xlsx"))
+
+#graph
+ggplot(plot_data, aes(x = sdstand, y = odstand)) +
+
+  geom_point(aes(color = statut), size = 2.5, alpha = 0.8) +
+  
+  # seuil à 1
+  geom_vline(xintercept = S, linetype = "dashed", color = "firebrick", linewidth = 0.7) +
+  geom_hline(yintercept = O, linetype = "dashed", color = "firebrick", linewidth = 0.7) +
+  
+
+  geom_text(data = filter(plot_data, sdstand > S | odstand > O),
+            aes(label = id_spectre), vjust = -0.7, size = 3, check_overlap = TRUE) +
+  
+  scale_color_manual(values = c(
+    "ok x2" = "forestgreen", 
+    "ok" = "darkorange", 
+    "outlier ortho" = "purple", 
+    "outlier x2" = "red"
+  )) +
+  
+  labs(
+    title = "Carte des outliers",
+    x = "distance d'Hotelling (T2)",
+    y = "distance résiduelle (Q)",
+    color = "Statut du spectre"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+
+ggsave(
+  filename = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/sd_od/carte_outliers_T2-lim",S,".pdf"), 
+  width = 8,                                
+  height = 5.5,                             
+  dpi = 300,                                
+  bg = "white"                              
+)
+
+
+# on sort les spectres flag
+spectres_a_exclure <- liste_outliers %>%
+  filter(statut %in% c("ok", "outlier x2")) %>%
+  select(id_spectre)
+
+HR <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>%
+  mutate(id_spectre = paste0(ech, "_", rep)) %>%
+  anti_join(spectres_a_exclure, by = "id_spectre") %>%
+  select(-id_spectre)
+
+write.csv(HR, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv"))
+
+```
+
+### mean
+```{r}
+
+### MEAN NORMAL
+mean_spectres_matrix <- function(data){
+  data %>%
+    group_by(ech) %>%
+    summarise(
+      x = matrix(colMeans(x, na.rm = TRUE), nrow = 1),
+      .groups = "drop"
+    )
+  }
+mean_spectres_df <- function(data){
+  data %>% 
+    select(-rep) %>% 
+    group_by(ech) %>% 
+    summarise(
+      across(where(is.numeric), ~ mean(.x, na.rm = TRUE)),
+      .groups = "drop")
+  }
+
+mean_Meso_frais_24 <- mean_spectres_matrix(Meso_frais_24_matrix)
+mean_Meso_frais_25 <- mean_spectres_matrix(Meso_frais_25_matrix)
+mean_Meso_frais_26 <- mean_spectres_matrix(Meso_frais_26_matrix)
+mean_Meso_frais_2425 <- mean_spectres_matrix(Meso_frais_2425_matrix)
+mean_Meso_frais_242526 <- mean_spectres_matrix(Meso_frais_242526_matrix)
+
+
+mean_Meso_sec_24_DIADE <- mean_spectres_matrix(Meso_sec_24_DIADE_matrix)
+mean_Meso_sec_25_DIADE <- mean_spectres_matrix(Meso_sec_25_DIADE_matrix)
+mean_Meso_sec_26_DIADE <- mean_spectres_matrix(Meso_sec_26_DIADE_matrix)
+mean_Meso_sec_2425_DIADE <- mean_spectres_matrix(Meso_sec_2425_DIADE_matrix)
+mean_Meso_sec_242526_DIADE <- mean_spectres_matrix(Meso_sec_242526_DIADE_matrix)
+
+mean_Meso_sec_24_AGAP <- mean_spectres_matrix(Meso_sec_24_AGAP_matrix)
+mean_Meso_sec_25_AGAP <- mean_spectres_matrix(Meso_sec_25_AGAP_matrix)
+mean_Meso_sec_2425_AGAP <- mean_spectres_matrix(Meso_sec_2425_AGAP_matrix)
+
+mean_Meso_sec_24_TOT <- mean_spectres_matrix(Meso_sec_24_TOT_matrix)
+mean_Meso_sec_25_TOT <- mean_spectres_matrix(Meso_sec_25_TOT_matrix)
+mean_Meso_sec_2425_TOT <- mean_spectres_matrix(Meso_sec_2425_TOT_matrix)
+
+
+mean_Meso_lyoph_25_DIADE <- mean_spectres_matrix(Meso_lyoph_25_DIADE_matrix)
+mean_Meso_lyoph_25_AGAP <- mean_spectres_matrix(Meso_lyoph_25_AGAP_matrix)
+mean_Meso_lyoph_25_TOT <- mean_spectres_matrix(Meso_lyoph_25_TOT_matrix)
+
+
+mean_HR_24_DIADE <- mean_spectres_matrix(HR_24_DIADE_matrix)
+mean_HR_25_DIADE <- mean_spectres_matrix(HR_25_DIADE_matrix)
+mean_HR_2425_DIADE <- mean_spectres_matrix(HR_2425_DIADE_matrix)
+
+mean_HR_24_AGAP <- mean_spectres_matrix(HR_24_AGAP_matrix)
+mean_HR_25_AGAP <- mean_spectres_matrix(HR_25_AGAP_matrix)
+mean_HR_2425_AGAP <- mean_spectres_matrix(HR_2425_AGAP_matrix)
+
+mean_HR_24_TOT <- mean_spectres_matrix(HR_24_TOT_matrix)
+mean_HR_25_TOT <- mean_spectres_matrix(HR_25_TOT_matrix)
+mean_HR_2425_TOT <- mean_spectres_matrix(HR_2425_TOT_matrix)
+
+# write.csv(mean_HR_25_TOT, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/mean_HR_25_TOT.csv"),row.names = FALSE)
+
+
+
+### chimie
+
+# le fichier Yvalue avec les 4 variables carotene en plus 
+Y <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_new_FRUIT.xlsx")) %>% 
+  mutate(ech = as.numeric(ech))
+Y_HR <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/Analyses_chimiques_4var_en_plus_HR.xlsx")) %>% 
+  mutate(ech = as.numeric(ech))
+
+
+ag <- Y %>%
+  select(2:21) %>%
+  colnames()
+ag_HR <- Y_HR %>% 
+  select(2:24) %>% 
+  colnames()
+
+# write.csv(ag, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag.csv"),row.names = FALSE)
+# write.csv(ag, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/ag.csv"),row.names = FALSE)
+
+join <- function(data){
+  data %>% 
+    left_join(Y, by = "ech")
+}
+join_HR <- function(data){
+  data %>% 
+    left_join(Y_HR, by = "ech")
+}
+
+# dat <- join(mean_Meso_frais_24)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_24.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_25)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_25.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_26)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_26.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_2425)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_2425.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_frais_242526)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_frais_242526.csv"),row.names = FALSE)
+
+
+# dat <- join(mean_Meso_sec_24_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_26_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_26_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_DIADE.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_242526_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_242526_DIADE.csv"),row.names = FALSE)
+# 
+# dat <- join(mean_Meso_sec_24_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_AGAP.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_AGAP.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_AGAP.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_sec_24_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_24_TOT.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_25_TOT.csv"),row.names = FALSE)
+# dat <- join(mean_Meso_sec_2425_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_sec_2425_TOT.csv"),row.names = FALSE)
+
+
+# dat <- join(mean_Meso_lyoph_25_DIADE) 
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_DIADE.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_lyoph_25_AGAP) 
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_AGAP.csv"),row.names = FALSE)
+#
+# dat <- join(mean_Meso_lyoph_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_mean_Meso_lyoph_25_TOT.csv"),row.names = FALSE)
+
+
+# dat <- join_HR(mean_HR_24_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_DIADE.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_DIADE)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_DIADE.csv"),row.names = FALSE)
+# 
+# dat <- join_HR(mean_HR_24_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_AGAP.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_AGAP.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_AGAP)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_AGAP.csv"),row.names = FALSE)
+# 
+# dat <- join_HR(mean_HR_24_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_24_TOT.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_25_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_TOT.csv"),row.names = FALSE)
+# dat <- join_HR(mean_HR_2425_TOT)
+# write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_2425_TOT.csv"),row.names = FALSE)
+
+
+
+
+
+file <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_sec_2425_DIADE_O.csv")) %>% 
+  mutate(ech = as.numeric(str_extract(ech, "\\d+")),
+         rep = as.numeric(rep))
+
+# write_xlsx(file,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_O.xlsx"))
+# write.csv(file, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_O.csv"),row.names = FALSE)
+
+  
+dat <- join(file)
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE_repet.csv"),row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### MEAN OUTLIERS
+
+HR_25_DIADE_mean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv")) %>%
+  select(-campagne, -source, -etat, -rep) %>%
+  group_by(ech) %>%
+  summarise(across(everything(), ~ mean(.x, na.rm = TRUE))) %>% 
+  mutate(ech = as.character(ech))
+
+ 
+dat <- inner_join(HR_25_DIADE_mean, Y_HR, by = "ech")
+write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"),row.names = FALSE)
+```
+
+
+## CV
+```{r echo=FALSE, warning=FALSE, results='asis'}
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R "))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_AG.R"))
+
+source(paste0(d0,"vitaspec_R/vitaspec_preCV.R"))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/new_preCV.R"))
+source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/new_new_preCV.R"))
+
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/compile_spectres.R"))
+source(paste0(d0,"vitaspec_R/Rosa_vitaSPEC/get_best_wold.R"))
+
+rpd <- rchemo::rpd
+S0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_VitaSPEC/Results/test_pretraitements/"
+
+fm_all=list()
+id_model=list()
+#idparam <- "meso_frais"
+idparam <- "meso_silica"
+set.seed(123)
+
+# ag2 <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/ag.csv"),
+#                  sep=";", 
+#                  header=TRUE, 
+#                  dec=",")
+# ag3 <- ag2$x
+
+dat2 <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat_sec_DIADE_matrix.csv"),
+                  sep = ",",
+                  header = TRUE,
+                  dec = ".")
+dat3 <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/modele_pls/dat_sec_DIADE_matrix.csv"))
+
+#source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/list_pre_beta_carot.R"))
+ncomp = 15
+compose_etudie <- ag[-c(3:20)]
+print(compose_etudie)
+
+for (k in compose_etudie){
+files <- paste0(S0,k)
+
+  if (!dir.exists(files)) {
+    dir.create(files, recursive = TRUE)}
+}
+
+  compose_etudie %>%
+    walk(function(ag1) {
+      print(ag1)
+      datok <- dat %>%
+        filter(!is.na(.data[[ag1]]))
+      
+      y_vals <- as.numeric(datok[[ag1]])
+      x_mat  <- as.matrix(datok$x)
+
+      # try({
+      #   vitaspec_preCV(
+      #     x = x_mat,
+      #     y = y_vals,
+      #     list_pre = list_pre_test_AG,
+      #     ncomp = ncomp, 
+      #     titl = "Meso_sec",
+      #     y_name = ag1,
+      #   )
+      # })
+      try({
+        new_new_preCV(
+          data = datok,
+          x = x_mat,
+          y = y_vals,
+          list_pre = list_pre_test_AG,
+          ncomp = ncomp,
+          seg = 10,
+          titl = "Meso_sec",
+          y_name = ag1,
+          rep = 50,
+          sortie = "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/ROSA_VitaSPEC/Results/test_pretraitements/")
+        })
+    })
+
+```
+
+## comparaison pretraitements
+```{r}
+d0 <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/"
+SEC <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/SEC/"
+HR <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/HR_sd_mad/"
+FRAIS <- "vitaspec_R/ROSA_vitaSPEC/Results/test_pretraitements/175pretrait/FRAIS/"
+
+ncomp = 15
+compose_etudie <- ag_HR#ag #ag_HR
+
+V <- HR
+
+for (k in compose_etudie){
+files <- k
+
+  list_tab <- list.files(paste0(d0,V,files),
+                         pattern = "\\.xlsx$",
+                         full.names = FALSE)
+  list_tab_clean <- gsub("\\.xlsx$", "", list_tab)
+  
+  for (i in 1:length(list_tab_clean)){
+    tab <- readxl::read_excel(paste0(d0,V,files,"/",list_tab_clean[i],".xlsx"))
+    colnames(tab)[1] <- "Repetition"
+    colnames(tab)[2] <- "Pretraitement"
+  
+    tab_moy <- tab %>% 
+      distinct(Pretraitement, Repetition, .keep_all = TRUE) %>% 
+      group_by(Pretraitement) %>%
+      summarise(
+        onesigma_Ncomp = paste(onesigma_Ncomp, collapse = ", "),
+        Wold_Ncomp = paste(Wold_Ncomp, collapse = ", "),
+        across(-c(Repetition, onesigma_Ncomp, Wold_Ncomp), ~ mean(.x, na.rm = TRUE)),
+        .groups = "drop"
+      )
+    write_xlsx(tab_moy, paste0(d0,V,files,"/",list_tab_clean[i],"_moy",".xlsx"))
+  
+    tab_R2 <- tab_moy %>% 
+      select(Pretraitement, ends_with("R2") & -contains ("cv"))
+    write_xlsx(tab_R2, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2",".xlsx"))
+    
+    tab_R2cv <- tab_moy %>% 
+      select(Pretraitement, contains ("R2cv"))
+    write_xlsx(tab_R2cv, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_R2cv",".xlsx"))
+    
+    tab_RMSEP <- tab_moy %>% 
+      select(Pretraitement, contains("RMSEcv"))
+    write_xlsx(tab_RMSEP, paste0(d0,V,files,"/",list_tab_clean[i],"_moy_RMSEcv",".xlsx"))
+    
+    tab_diff <- tab_moy
+    for(d in 0:ncomp) {
+      col_r2   <- paste0("LV", d, "_R2")
+      col_adj  <- paste0("LV", d, "_R2cv")
+      col_diff <- paste0("LV", d, "_diff")
+  
+      if (col_r2 %in% names(tab_diff) && col_adj %in% names(tab_diff)) {
+        tab_diff <- tab_diff %>% 
+          mutate(!!col_diff := .data[[col_r2]] - .data[[col_adj]])
+      } else {
+        message(paste(d, "colonnes non trouvées"))
+      }
+    }
+  
+    tab_diff <- tab_diff %>% 
+      select(-contains("RMSEcv")) %>% 
+      select(Pretraitement,contains("diff")) %>% 
+      write_xlsx(paste0(d0,V,files,"/",list_tab_clean[i],"_moy_diff",".xlsx"))
+  }
+}
+```
+ 
+## Calibration finale
+```{r, echo=FALSE, warning=FALSE, results='asis'}
+param=read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+#source(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/calibrations/list_pre_test_carot.R"))
+
+  
+fm_all=list()
+id_model=list()
+# idparam <- "meso_silica"
+# idparam <- "meso_frais"
+idparam <- "HR"
+
+ncomp <- 15
+compose_etudie <- ag_HR#ag#ag_HR
+
+dat <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean_sd_mad.csv"),
+                  sep = ",",
+                  header = TRUE,
+                  dec = ".")
+
+compose_etudie %>% 
+  walk(function(ag1) {
+    print(ag1)
+    datok <- dat %>% 
+      filter(!is.na(.data[[ag1]]))
+  
+    y_vals <- as.numeric(datok[[ag1]])
+    x_mat <- as.matrix(datok %>% select(starts_with("x", ignore.case = FALSE)))
+    seg <- 10
+    
+    current_param <- param %>%
+      filter(str_detect(Cal_data, stringr::fixed(idparam)),  
+             str_trim(Propriete) == str_trim(ag1))
+
+    if (nrow(current_param) == 0) {
+      warning(paste("error no", idparam, "for", ag1))
+    } else {
+      p <- eval(parse(text = current_param$pre))
+      n_lv <- current_param$nvl
+      
+      xp = pre(x_mat, p)
+      df_temp <- data.frame(y = y_vals)
+      df_temp$xp <- xp
+      
+      n <- nrow(datok)
+      segs <- cvsegments(n, seg)
+      
+      fm_finale <- plsr(y ~ xp, data = df_temp, ncomp = ncomp, scale = FALSE, validation = "CV", segments = segs)
+    
+      fm_all <<- append(fm_all, list(fm_finale))
+      id_model <<- id_model %>%
+      bind_rows(tibble(Propriete = ag1,
+                       Condition = idparam))
+      
+      res_rmsep <- RMSEP(fm_finale, estimate = "CV")$val[1, 1, -1] 
+      res_r2_cv <- R2(fm_finale, estimate = "CV")$val[1, 1, -1]
+      res_r2 <- R2(fm_finale, estimate = "train")$val[1, 1, -1]
+      x_comps <- 1:(length(res_r2))
+      
+      nom_pdf <- paste0(d0,"vitaspec_R/ROSA_VitaSPEC/save/", "graphiques_",ag1, ".pdf")
+      pdf(file = nom_pdf, width = 8, height = 6)
+      
+      ## graph 1
+      par(mar = c(5, 4, 4, 4) + 0.3)
+      
+      # recup nom pre
+      titre_elements <- c()
+
+      n_etapes <- ifelse(is.matrix(p), nrow(p), length(p))
+      
+      for (i in 1:n_etapes) {
+        if (is.matrix(p)) {
+          nom <- p[i, 1][[1]]
+          args <- p[i, 2][[1]]
+        } else {
+          nom <- p[[i]][[1]]
+          args <- p[[i]][[2]]
+        }
+        if (is.null(args) || (is.character(args) && all(args == ""))) {
+          titre_elements <- c(titre_elements, nom)
+        } else {
+          args_txt <- paste0("c(", paste(args, collapse = ","), ")")
+          titre_elements <- c(titre_elements, paste0(nom, "_", args_txt))
+        }
+      }
+      texte_p <- paste(titre_elements, collapse = "_")
+    
+      bestncomp_global <- selectNcomp(fm_finale, method = "onesigma", plot = TRUE, 
+                                    main = ag1)
+      mtext(paste0("Prétraitement : ",texte_p), side = 3, line = 0.5, cex = 0.75)
+    
+      par(new = TRUE)
+    
+      # R2
+      plot(x_comps, res_r2, type = "b", col = "#90C987", pch = 17, lty = 2, lwd = 2,
+         axes = FALSE, xlab = "", ylab = "", ylim = c(0, 1)) 
+    
+      # ADJR2
+      lines(x_comps, res_r2_cv, type = "b", col = "#4eb265", pch = 16, lty = 1, lwd = 2)
+    
+      # axe
+      axis(4, col = "black", col.axis = "black")
+      mtext("R2", side = 4, line = 2.5, col = "black", cex = 0.9)
+    
+      # legende
+      legend("top", bty = "n", cex = 0.8,
+             legend = c("RMSEcv", "R2", "R2cv"), 
+            col = c("black", "#90C987", "#4eb265"), 
+            pch = c(1, 17, 16), 
+            lty = c(1, 2, 1),
+            lwd = c(1, 2, 2))
+      
+      ## graph2
+      valeur_r2_cv <- round(res_r2_cv[n_lv], 3)
+      valeur_rmsecv <- round(res_rmsep[n_lv], 3)
+      
+      texte <- paste0("n_comp = ", n_lv,
+                      "\nR2_cv = ", valeur_r2_cv, 
+                      "\nRMSEcv = ", valeur_rmsecv,
+                      "\nn_ech = ", n)
+      
+      valeurs_predites <- as.vector(fm_finale$validation$pred[, 1, ncomp])
+      
+      df_plot <- data.frame(Mesuree = y_vals, 
+                            Predite = valeurs_predites)
+      
+      graph_2 <- ggplot(df_plot, aes(x = Predite, y = Mesuree)) +
+        geom_point(shape = 1, alpha = 0.6) +
+        geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+        geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 0.5) +
+        annotate("text", 
+                 x = -Inf, y = Inf,          
+                 hjust = 0, vjust = 1.5,  
+                 label = texte, 
+                 size = 4.5) +
+        labs(title = paste("Prédictions vs Mesures :", ag1),
+             x = "Valeurs Prédites",
+             y = "Valeurs Mesurées")
+      print(graph_2)
+      
+      dev.off()
+    }
+    }
+    )
+save(fm_all, id_model, file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
+```
+
+## nouveaux Y sur 2024-2025
+```{r}
+library(ggpmisc)
+library(ggrepel)
+
+## comparaison valeurs des Y
+new_carot <- read.xlsx(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/new_carot_fruits.xlsx")) %>% 
+  mutate(ech = sub("-.*", "", code_nirs)) %>% 
+  select(-c(1,2))
+old_carot <- read.table(paste0(d0,"vitaspec_R/analyses_ref_csv/Partie 1.3.csv"),
+                     sep=";", 
+                     header=TRUE, 
+                     dec=",") %>%
+   mutate(ech = sub("-.*", "", code_nirs)) %>% 
+   select(-c(1,2))
+
+new_carot_commun <- semi_join(new_carot, old_carot, by = "ech")
+new_carot_reste <- anti_join(new_carot, old_carot, by = "ech")
+
+old_carot <- old_carot %>%
+  filter(ech %in% new_carot_commun$ech) %>%
+  mutate(Origine = "Old") %>% 
+  rename(trans.alpha.carotene = trans.alpha.carotne,
+         total.beta.carotene = total.beta.carotenes,
+         total.carotene = total.carotenes)
+new_carot_commun <- new_carot_commun %>%
+  mutate(Origine = "New") %>% 
+  rename(trans.alpha.carotene = `trans-alpha-carotène`,
+         trans.beta.carotene = `trans-beta-carotène`,
+         X13.cis.beta.carotene = `13.cis-beta-carotène`,
+         X9.cis.beta.carotene = `9.cis-beta-carotène`,
+         total.beta.carotene = `total.beta-carotènes`,
+         total.carotene = total.carotènes)
+data_plot <- bind_rows(old_carot, new_carot_commun)
+
+data_long <- data_plot %>%
+  pivot_longer(
+    cols = -c(ech, Origine), 
+    names_to = "Variable", 
+    values_to = "Valeur")
+
+variables <- unique(data_long$Variable)
+
+tab_diff_moy <- data_plot %>%
+  pivot_longer(cols = -c(ech, Origine), names_to = "Variable", values_to = "Valeur") %>%
+  pivot_wider(names_from = Origine, values_from = Valeur) %>%
+  mutate(diff = Old - New) %>%
+  group_by(Variable) %>%
+  summarise(diff_moy = sum(diff, na.rm = TRUE) / n(), .groups = "drop") %>%
+  pivot_wider(names_from = Variable, values_from = diff_moy) %>% 
+  relocate(trans.alpha.carotene,trans.beta.carotene,X9.cis.beta.carotene,X13.cis.beta.carotene,total.beta.carotene,total.carotene)
+
+
+#graph comparaison old/new
+mon_theme <- theme_bw() + 
+  theme(
+    plot.title = element_text(size = 14, hjust = 0, face = "bold", margin = margin(b = 15)),
+    strip.background = element_rect(fill = "gray85", color = "black"),
+    strip.text = element_text(size = 11, color = "black"),
+    panel.border = element_rect(color = "black", fill = NA),
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_line(color = "gray95"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 6),
+    legend.position = "bottom")
+
+p_page1 <- data_long %>%
+  filter(Variable %in% variables[1:3]) %>%
+  ggplot(aes(x = ech, y = Valeur, color = Origine, fill = Origine)) +
+  geom_line(aes(group = ech), color = "black", linewidth = 0.5) +
+  geom_point(shape = 21, size = 2, color = "black", alpha = 0.8) +
+  facet_wrap(~ Variable, scales = "free", ncol = 1) + 
+  labs(title = "Comparaison old vs new", x = "Échantillons", y = "Valeur") +
+  mon_theme
+p_page2 <- data_long %>%
+  filter(Variable %in% variables[4:6]) %>%
+  ggplot(aes(x = ech, y = Valeur, color = Origine, fill = Origine)) +
+  geom_line(aes(group = ech), color = "black", linewidth = 0.5) +
+  geom_point(shape = 21, size = 2, color = "black", alpha = 0.8) +
+  facet_wrap(~ Variable, scales = "free", ncol = 1) + 
+  labs(title = "Comparaison old vs new", x = "Échantillons", y = "Valeur") +
+  mon_theme
+
+# pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/graphique_comparaison_new_carot_fruits.pdf"), 
+#     width = 16,  
+#     height = 10)  
+# print(p_page1) 
+# print(p_page2)
+# dev.off()
+
+#regression old/new
+data_scatter <- data_plot %>%
+  pivot_longer(cols = -c(ech, Origine), names_to = "Variable", values_to = "Valeur") %>%
+  pivot_wider(names_from = Origine, values_from = Valeur) %>% 
+  mutate(ech_clean = sub("^M", "", ech))
+p3 <- ggplot(data_scatter, aes(x = Old, y = New)) +
+  geom_point(shape = 1, alpha = 0.6) +
+  geom_text_repel(aes(label = ech_clean), 
+                  size = 3,            #taille du texte
+                  segment.color = 'grey80', # ligne de liaison
+                  force = 1,           
+                  max.overlaps = 15) +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  geom_smooth(method = "lm", color = "blue", se = FALSE, linewidth = 0.5) +
+  stat_poly_eq(aes(label = after_stat(rr.label)), 
+               formula = y ~ x, 
+               parse = TRUE, 
+               label.x = "left", 
+               label.y = "top") +
+  facet_wrap(~ Variable, scales = "free", ncol = 3) + 
+  theme_bw() +
+  labs(
+    title = "Comparaison Old vs New",
+    x = "Old",
+    y = "New"
+  )
+
+pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/pred_vs_mesure_new_carot_scatter.pdf"), 
+    width = 16,  
+    height = 10)  
+print(p3) 
+dev.off()
+
+
+#graph histo
+data_plot_graph <- data_plot %>%
+  pivot_longer(cols = -c(ech, Origine), names_to = "compose", values_to = "Valeur") %>%
+  pivot_wider(names_from = Origine, values_from = Valeur) %>%
+  mutate(diff = Old - New) %>%
+  group_by(compose) %>%
+  summarise(
+    diff_moy = mean(diff, na.rm = TRUE),
+    min_diff = min(diff, na.rm = TRUE),
+    valeurs_inchangees = sum(round(diff) == 0, na.rm = TRUE), 
+    .groups = "drop") %>%
+  mutate(Sens = ifelse(diff_moy > 0, "Positif", "Négatif"))
+
+
+p2 <- ggplot(data_plot_graph, aes(x = compose, y = diff_moy, fill = Sens)) +
+  geom_col(color = "black", width = 0.7) +
+  geom_hline(yintercept = 0, color = "black", size = 1) +
+  geom_text(aes(y = ifelse(diff_moy > 0, diff_moy, 0), 
+                label = paste0("inchangés : ", valeurs_inchangees)),
+            vjust = -0.8, size = 3.5, fontface = "italic", color = "darkgray") +
+  geom_text(aes(y = ifelse(diff_moy < 0, diff_moy, 0), 
+                label = paste0("min : ", round(min_diff, 2))),
+            vjust = 1.8, size = 3.5, fontface = "italic", color = "black") +
+  
+  scale_fill_manual(values = c("Négatif" = "#90C987", "Positif" = "#4eb265")) +
+  scale_y_continuous(expand = expansion(mult = c(0.15, 0.15))) +
+  labs(title = "Différence moyenne",
+       subtitle = "Calculée comme : valeur Old - valeur New",
+       y = "Différence moyenne",
+       x = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 11, face = "bold"),
+    axis.title.y = element_text(size = 12),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    legend.position = "bottom")
+
+# pdf(file = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/save/graphique_difference_carot.pdf"), 
+#     width = 16,  
+#     height = 10)  
+# print(p2) 
+# dev.off()
+
+
+## comparaison nouveaux Y/pred
+pred_silica <- readxl::read_excel(paste0(d0,"pred/Pobe_24-25_NIRS_Meso_Silica_pred_moy.xlsx"))
+pred_silica2 <- pred_silica %>% 
+  select(-c(2:10)) %>% 
+  mutate(ech = sub("-.*", "", ech)) %>% 
+  rename(trans.alpha.carotene = trans.alpha.carotne,
+         total.beta.carotene = total.beta.carotenes,
+         total.carotene = total.carotenes) %>% 
+  select(-c(8))
+         
+new_carot_reste <- new_carot_reste %>% 
+  rename(trans.alpha.carotene = `trans-alpha-carotène`,
+         trans.beta.carotene = `trans-beta-carotène`,
+         X13.cis.beta.carotene = `13.cis-beta-carotène`,
+         X9.cis.beta.carotene = `9.cis-beta-carotène`,
+         total.beta.carotene = `total.beta-carotènes`,
+         total.carotene = total.carotènes)
+
+pred_carot_reste <- semi_join(pred_silica2, new_carot_reste, by = "ech")
+
+pred_carot_reste_long <- pred_carot_reste %>%
+  pivot_longer(
+    cols = -ech,
+    names_to = "Compose",   
+    values_to = "Predite"    
+  )
+
+new_carot_reste_long <- new_carot_reste %>%
+  pivot_longer(
+    cols = -ech,
+    names_to = "Compose",
+    values_to = "Mesuree"
+  )
+
+data_graph <- inner_join(pred_carot_reste_long, new_carot_reste_long, by = c("ech", "Compose"))
+
+#GRAPH
+p <- ggplot(data_graph, aes(x = Predite, y = Mesuree)) +
+  geom_point(shape = 1, alpha = 0.6) +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.5) +
+  stat_poly_eq(aes(label = after_stat(rr.label)), 
+               formula = y ~ x, 
+               parse = TRUE, 
+               label.x = "left", 
+               label.y = "top") +
+  facet_wrap(~ Compose, scales = "free", ncol = 3) + 
+  theme_bw() +
+  labs(
+    title = "Mesocarpe - 24_25 - Nouvelles analyses carot",
+    x = "Teneur Prédite par SPIR",
+    y = "Teneur Mesuree"
+  )
+
+# ggsave("pred_vs_mesure_new_carot.pdf", plot = p, path = paste0(d0,"vitaspec_R/ROSA_vitaSPEC/save"),width = 12, height = 8)
+
+```
+
+
+## prediction de nouveaux échantillons 2026 
+### METHODE 1 - SEC
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+idparam <- "meso_silica" 
+titre <- "SEC_26_NIRS_R4_Methode1_Meso_Frais_AGAP"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260225_Vitaspec_Pobe_AGAP")
+spnew <- asd_read_dir(f) 
+spnew <- spnew[!grepl("^[^-]+-S", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    régime = str_extract(spectrum, "^[^-]+"),                           # R5
+    code1  = str_extract(spectrum, "(?<=-)[^-]+"),                      # L1H / L2H / L3H / L1M / L2M / L3M / pareil pour O
+    zone   = substr(code1, 1, 2),                                       # L1 / L2 / L3 / O1 / O2 / O3
+    lumière = substr(code1, 1, 1),                                      # L / O
+    code2  = substr(str_extract(spectrum, "(?<=-)[^-]+$"), 1, 3),       # SE1 / SE2 / SK1 / SK2
+    zone_régime = paste0("z",substr(code1, 2, 2)),                      # z1 / z2 / z3
+    posi_epillet = substr(code1, 3, 3),                                 # H / M
+    fruit = paste0("fruit",substr(code2,3,3)),                          # fruit1 / fruit2
+    tissu = substr(code2, 2, 2),                                        # E / K
+    de_ht_en_bas = as.numeric(str_extract(spectrum, "[1-9][0-9]*$")),   # 1 à 15
+    `#fruit` = paste0(régime, "-", code1, str_extract(code2, "[0-9]")), # code petits pots
+    ech = paste(régime, code1, code2, sep = "-")) %>%                   #ex : R5-L1H-FE1
+  relocate(spectrum, régime, code1, zone, lumière, zone_régime, code2, posi_epillet, fruit, tissu, de_ht_en_bas,`#fruit`, ech)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+
+  prop <- param_filtre$Propriete[i]
+
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+
+  n_lv <- param_filtre$nvl[i]
+  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
+  pred_val <- as.vector(pred_array)
+  pred <- pred %>%
+    mutate(!!prop := pred_val)
+}
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
+
+```
+
+### METHODE 1 - FRAIS
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+# idparam <- "meso_silica" 
+idparam <- "meso_frais" 
+titre <- "SEC_26_NIRS_R3_Methode1_Meso_Frais_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260224_Vitaspec_Pobe_DIADE")
+spnew <- asd_read_dir(f) 
+spnew <- spnew[!grepl("^[^-]+-F", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    régime = str_extract(spectrum, "^[^-]+"),                           # R5
+    code1  = str_extract(spectrum, "(?<=-)[^-]+"),                      # L1H / L2H / L3H / L1M / L2M / L3M / pareil pour O
+    zone   = substr(code1, 1, 2),                                       # L1 / L2 / L3 / O1 / O2 / O3
+    lumière = substr(code1, 1, 1),                                      # L / O
+    code2  = substr(str_extract(spectrum, "(?<=-)[^-]+$"), 1, 3),       # FE1 / FE2 / FK1 / FK2
+    zone_régime = paste0("z",substr(code1, 2, 2)),                      # z1 / z2 / z3
+    posi_epillet = substr(code1, 3, 3),                                 # H / M
+    fruit = paste0("fruit",substr(code2,3,3)),                          # fruit1 / fruit2
+    tissu = substr(code2, 2, 2),                                        # E / K
+    de_ht_en_bas = as.numeric(substr(spectrum, nchar(spectrum)-4, nchar(spectrum))),    # 1 à 15
+    `#fruit` = paste0(régime, "-", code1, str_extract(code2, "[0-9]")), # code petits pots
+    ech = paste(régime, code1, code2, sep = "-")) %>%                   #ex : R5-L1H-FE1
+  relocate(spectrum, régime, code1, zone, lumière, zone_régime, code2, posi_epillet, fruit, tissu, de_ht_en_bas,`#fruit`, ech)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
+```
+
+### METHODE 2 - SEC
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+
+idparam <- "meso_silica" 
+titre <- "SEC_26_NIRS_R3_Methode2_Meso_Sec"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260304_Vitaspec_S_DIADE")
+spnew <- asd_read_dir(f) 
+spnew <- spnew[grepl("^[^-]+-S", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("[0-9]+$", "", spectrum))             #ex : R5-S1-E
+
+#prediction 
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  
+  prop <- param_filtre$Propriete[i]
+  
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  
+  n_lv <- param_filtre$nvl[i] 
+  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
+  pred_val <- as.vector(pred_array)
+  pred <- pred %>% 
+    mutate(!!prop := pred_val)
+}
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+#fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
+
+
+```
+
+### METHODE 2 - FRAIS
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+idparam <- "meso_frais" 
+titre <- "SEC_26_NIRS_R3_Methode2_Meso_Frais_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260224_Vitaspec_Pobe_DIADE")
+spnew <- asd_read_dir(f) 
+spnew <- spnew[grepl("^[^-]+-F", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = str_replace(spectrum, "^(.*?F)([A-Z]).*?P(.*?)0{4}[^0]*$", "\\1\\3-\\2"),        #ex : R5-F1-E
+         de_ht_en_bas = as.numeric(substr(spectrum, nchar(spectrum)-4, nchar(spectrum))))
+
+
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
+```
+
+
+
+### MANIP - A / B / C - FRAIS
+```{r}
+
+```
+
+### S-stock
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+
+idparam <- "meso_silica" 
+titre <- "STOCK_26_NIRS_R5_1m_Meso_Sec"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260409_VitaSpec_S_stock_DIADE")
+spnew <- asd_read_dir(f)
+spnew <- spnew[grepl("^[^-]+-S", rownames(spnew)),]
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    régime = str_extract(spectrum, "^[^-]+"),                           # R3 / R4 / R5
+    copaux = str_extract(spectrum, "(?<=-)[^-]+(?=-)"),                 # S1 / S2 / ... / S15
+    conservation = str_split_i(spectrum, "-", 3),                       # T27 / T4 / Tm20
+    tissu = str_extract(spectrum, "(?<=-)[A-Za-z](?=[^-]*$)"),          # K / E
+    de_ht_en_bas = as.numeric(str_extract(spectrum, "[0-9]+$")),        # 1 / 2 / ... / 15
+    `#fruit` = paste0(régime, "-", copaux),                             # code petits pots
+    ech = paste0(régime,"-",copaux,"-",tissu)) %>%                      #ex : R5-S4-E / R4-S28-K
+  relocate(spectrum, régime, copaux, conservation, tissu, de_ht_en_bas,`#fruit`, ech)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  prop <- param_filtre$Propriete[i]
+   
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  
+  n_lv <- param_filtre$nvl[i] 
+  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
+  pred_val <- as.vector(pred_array)
+  pred <- pred %>% 
+    mutate(!!prop := pred_val)
+}
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/STOCK_sec/", titre, "_pred_stats.xlsx"))
+```
+
+## prediction de 2024-2025 - FRAIS
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_frais"))
+
+idparam <- "meso_frais" 
+titre <- "FRAIS_25_NIRS_Meso_Frais"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20250224_Vitaspec_Pobe")
+spnew <- asd_read_dir(f) 
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("^([^-]+).*-([^0-]+).*$", "\\1-\\2",spectrum))
+
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_frais/", titre, "_pred_stats.xlsx"))
+```
+
+## prediction de 2024 - 2025 - SEC
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_sec_DIADE"))
+
+idparam <- "meso_silica" 
+titre <- "SEC_25_NIRS_Meso_SEC_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20250313_Vitaspec_S_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("^([^-]+).*-([^0-]+).*$", "\\1-\\2",spectrum))
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/meso_sec/", titre, "_pred_stats.xlsx"))
+```
+
+
+## prediction de nouveaux échantillons 2026 - HR
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
+
+# C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
+# dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
+# tab_HR_moy <- dat_HR_25_DIADE_clean %>% 
+#   select(-c(campagne, source, etat, rep)) %>% 
+#   group_by(ech) %>%
+#   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+# write_xlsx(tab_HR_moy,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_test.xlsx"))
+
+idparam <- "HR" 
+titre <- "HR_318_to_408"
+# titre <- "HR_271_to_317_DIADE"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260410_Vitaspec_HR_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("[0-9]+$", "", spectrum))
+# pred <- tibble(spectrum = rownames(spnew)) %>% 
+#   mutate(
+#     rep = as.numeric(str_extract(spectrum, "\\d$")),
+#     serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
+#     ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
+#     ech = as.numeric(str_extract(spectrum, "^[^-]+"))
+#   ) %>%
+#   relocate(spectrum, ech, rep, serie_collecte, ech_serie)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  prop <- param_filtre$Propriete[i]
+   
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  imodel <- imodel[1]
+  
+  n_lv <- param_filtre$nvl[i] 
+  pred_array <- predict(fm_all[[imodel]], newdata = spnx, ncomp = n_lv)
+  pred_val <- as.vector(pred_array)
+  pred <- pred %>% 
+    mutate(!!prop := pred_val)
+}
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+compose <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(compose), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(compose)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_stats.xlsx"))
+```
+#TEST
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
+
+# C POUR VOIR COMBIEN IL Y A D'INDIV PAR COMPOSE ET CHANGER LE FICHIER PARAM
+# dat_HR_25_DIADE_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean.csv"))
+# tab_HR_moy <- dat_HR_25_DIADE_clean %>% 
+#   select(-c(campagne, source, etat, rep)) %>% 
+#   group_by(ech) %>%
+#   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+# write_xlsx(tab_HR_moy,paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_test.xlsx"))
+
+idparam <- "HR" 
+titre <- "HR_318_to_408"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+
+f <- paste0(d0, "spectres/20260410_Vitaspec_HR_DIADE")
+spnew <- asd_read_dir(f)
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(
+    rep = as.numeric(str_extract(spectrum, "\\d$")),
+    serie_collecte = as.numeric(str_replace(spectrum, "^[^-]+-[^-]+-([^-]+)-.*", "\\1")),
+    ech_serie = as.numeric(str_replace(spectrum, ".*-(\\d+)0000\\d$", "\\1")),
+    ech = as.numeric(str_extract(spectrum, "^[^-]+"))
+  ) %>%
+  relocate(spectrum, ech, rep, serie_collecte, ech_serie)
+  
+# predictions
+nag <- nrow(param_filtre)
+
+# Initialisation du journal
+journal_erreurs <- data.frame(
+  spectrum = character(),
+  propriete = character(),
+  message_erreur = character(),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  prop <- param_filtre$Propriete[i]
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  n_lv <- param_filtre$nvl[i]
+
+  # --- NOUVELLE STRATÉGIE : DÉTECTION GLOBALE DES NaN ---
+
+  # 1. On cherche à quelle étape a lieu la conversion log (ref2abs)
+  idx_ref2abs <- which(p[,1] == "ref2abs")
+
+  spectres_valides <- rep(TRUE, nrow(spnew))
+
+  if(length(idx_ref2abs) > 0) {
+    # On crée une mini-chaîne de prétraitement qui s'arrête juste après le log
+    p_test <- p[1:idx_ref2abs, , drop = FALSE]
+
+    # On l'applique sur toute la matrice (en supprimant l'affichage du warning attendu)
+    test_mat <- suppressWarnings(pre(spnew, p_test))
+
+    # On identifie les lignes qui ont produit des NA ou NaN
+    spectres_valides <- apply(test_mat, 1, function(x) !any(is.na(x) | is.nan(x)))
+
+    # On enregistre les coupables dans le journal
+    if(any(!spectres_valides)) {
+      noms_bad <- rownames(spnew)[!spectres_valides]
+      journal_erreurs <- rbind(journal_erreurs, data.frame(
+        spectrum = noms_bad,
+        propriete = prop,
+        message_erreur = "Valeurs négatives générées par 'adj' entrainant un NaN lors du log()",
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+
+  # 2. PRÉDICTION SÉCURISÉE SUR LES BONS SPECTRES UNIQUEMENT
+  valeurs_predites <- rep(NA, nrow(spnew))
+
+  if (any(spectres_valides)) {
+    # On isole la matrice saine (qui ne plantera plus dans sder/snv)
+    spnew_bon <- spnew[spectres_valides, , drop = FALSE]
+
+    # On applique la vraie chaîne complète
+    tryCatch({
+      spnx_bon <- pre(spnew_bon, p)
+      pred_array_bon <- predict(fm_all[[imodel]], newdata = spnx_bon, ncomp = n_lv)
+      valeurs_predites[spectres_valides] <- as.vector(pred_array_bon)
+
+    }, error = function(e) {
+      # Au cas où une autre erreur mathématique imprévue surviendrait
+      message(paste("Erreur inattendue sur :", prop, "-", e$message))
+    })
+  }
+
+  # On injecte les résultats (les spectres en erreur auront simplement des NA)
+  pred <- pred %>%
+    mutate(!!prop := valeurs_predites)
+}
+
+# --- AFFICHAGE DU BILAN ---
+cat("\n--- 🛑 BILAN DES SPECTRES REJETÉS (NaN) ---\n")
+if(nrow(journal_erreurs) > 0) {
+  print(table(journal_erreurs$propriete)) # Affiche un résumé par molécule
+} else {
+  cat("Aucun spectre n'a posé problème.\n")
+}
+
+if(nrow(journal_erreurs) > 0) {
+  print(journal_erreurs)
+}
+
+# fichier moy par échantillon
+compose <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(compose), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+# fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(compose)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR/", titre, "_pred_stats.xlsx"))
+```
+
+## prediction de 2024-2025 - HR
+```{r}
+load(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/models/Vitaspec_fruit_model_def_HR_DIADE_clean_2"))
+
+MAT <- read.table(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_sd_mad.csv"),
+                     sep=",", 
+                     header=TRUE, 
+                     dec=".")
+# write_xlsx(MAT, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DIADE.xlsx"))
+
+idparam <- "HR" 
+titre <- "HR_1_to_317"
+
+param <- read.csv(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/calibrations/Vitaspec_fruit_param.csv"))
+
+# spectres a predire
+MAT_matrix <- as.matrix(MAT[, 7:ncol(MAT)])
+
+# noms_echantillons <- paste(MAT$source, MAT$etat, MAT$ech, MAT$rep, sep = "_") --> combine les colonnes de métadonnées pour créer un nom unique (ex: "DIADE_HR_1_1")
+noms_echantillons <- paste(MAT$source, MAT$etat, MAT$ech, MAT$rep, sep = "_")
+rownames(MAT_matrix) <- noms_echantillons
+
+longueurs_onde <- 350:(350 + ncol(MAT_matrix) - 1)
+colnames(MAT_matrix) <- as.character(longueurs_onde)
+
+
+spnew <- MAT_matrix
+
+param_filtre <- param %>% 
+  filter(grepl(idparam, Cal_data))
+
+# fichier prédiction
+
+pred <- tibble(spectrum = rownames(spnew)) %>% 
+  mutate(ech = sub("[0-9]+$", "", spectrum))
+
+#prediction 
+nag <- nrow(param_filtre)
+
+
+erreur_info <- list() # stocke les erreur
+
+for (i in 1:nag) {
+  p <- eval(parse(text = param_filtre$pre[i]))
+  spnx <- pre(spnew, p)
+  
+  prop <- param_filtre$Propriete[i]
+  
+  imodel <- which(grepl(idparam, id_model$Condition) & grepl(prop, id_model$Propriete))
+  
+  if (length(imodel) == 0) next
+  imodel <- imodel[1]
+  
+  if (is.null(fm_all[[imodel]])) next
+  
+  # detecteur crash
+  col_spnx <- ncol(spnx)
+  col_mod <- length(fm_all[[imodel]]$Xmeans)
+  
+  if (col_spnx != col_mod) {
+    erreur_info$molecule <- prop
+    erreur_info$col_spnx <- col_spnx
+    erreur_info$col_mod <- col_mod
+    break 
+  }
+  
+  nvl <- param_filtre$nvl[i] 
+  pred_val <- predict(fm_all[[imodel]], spnx, ncomp = nvl)
+  
+  pred <- pred %>% 
+    mutate(!!prop := as.vector(pred_val))
+}
+
+# affichage error
+cat("molécule qui plante :", erreur_info$molecule, "\n")
+cat("colonnes dans le spectre :", erreur_info$col_spnx, "\n")
+cat("colonnes attendues par le modèle :", erreur_info$col_mod, "\n")
+
+pred <- pred %>%
+  relocate(ech, .after = last_col())
+
+# fichier moy par échantillon
+mes_molecules <- param_filtre$Propriete
+
+pred_moy <- pred %>%
+  group_by(ech) %>%
+  summarise(across(any_of(mes_molecules), ~ mean(.x, na.rm = TRUE)), .groups = "drop")
+
+#fichier stats descriptives
+pred_stats <- pred %>%
+  select(ech, any_of(mes_molecules)) %>%
+  pivot_longer(cols = -ech, names_to = "Variable", values_to = "Valeur") %>%
+  group_by(ech, Variable) %>%
+  summarise(
+    mean = mean(Valeur, na.rm = TRUE),
+    sd   = sd(Valeur, na.rm = TRUE),
+    min  = min(Valeur, na.rm = TRUE),
+    max  = max(Valeur, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+#export
+write_xlsx(pred, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred.xlsx"))
+write_xlsx(pred_moy, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred_moy.xlsx"))
+write_xlsx(pred_stats, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/predictions/HR", titre, "_pred_stats.xlsx"))
+```
+
+## plot differences sec vs frais
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+
+file1 <- readxl::read_excel(paste0(d0,"pred/Pobe_24-25_NIRS_Meso_Frais_pred_moy_out-lier.xlsx"))
+file2 <- readxl::read_excel(paste0(d0,"pred/Pobe_24-25_NIRS_Meso_Silica_pred_moy_out-lier.xlsx"))
+
+
+# file1_clean <- file1 %>%
+#   mutate(ech = str_replace(ech, "^[^-]+-([^-]+)-.(.*)$", "\\1-\\2"))
+# 
+# file2_clean <- file2 %>%
+#   mutate(ech = str_replace(ech, "^[^-]+-([^-]+)-.(.*)$", "\\1-\\2"))
+
+file1_clean <- file1 %>%
+  mutate(ech = sub("-[^-]+$", "", ech))
+
+file2_clean <- file2 %>%
+  mutate(ech = sub("-[^-]+$", "", ech))
+
+
+df_compare <- inner_join(file1_clean, file2_clean, by = "ech", suffix = c("_frais", "_sec"))
+
+
+colonnes_communes <- intersect(names(file1), names(file2))
+molecules <- setdiff(colonnes_communes, "ech")
+
+
+pdf("Meso_frais_vs_sec_2024-2025_out-lier.pdf", width = 8, height = 6)
+
+for (mol in molecules) {
+  
+  col_x <- paste0(mol, "_frais") # abscisse = fichier 1
+  col_y <- paste0(mol, "_sec")   # ordonnée = fichier 2
+  
+  df_plot <- df_compare %>%
+    select(x = !!sym(col_x), y = !!sym(col_y)) %>%
+    mutate(
+        x = as.numeric(gsub(",", ".", x)),
+        y = as.numeric(gsub(",", ".", y))) %>%
+    drop_na()
+  
+
+  if (nrow(df_plot) > 0) {
+    
+   
+    r2 <- summary(lm(y ~ x, data = df_plot))$r.squared
+    
+   
+    p <- ggplot(df_plot, aes(x = x, y = y)) +
+      geom_point(shape = 1, alpha = 0.6) +
+      
+      geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.5) +
+     
+      geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+      
+      annotate(
+        "text",
+        x = min(df_plot$x), 
+        y = max(df_plot$y), 
+        label = paste0("R² = ", round(r2, 3)), 
+        hjust = 0, vjust = 1, fontface = "bold", size = 5
+      ) +
+      
+      labs(
+        title = paste("Comparaison Frais vs Sec :", mol),
+        x = paste(mol, "Prédit sur FRAIS"),
+        y = paste(mol, "Prédit sur SEC"),
+        caption = "Ligne rouge : y=x"
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(face = "bold", size = 14),
+        axis.title = element_text(face = "bold")
+      )
+    
+  
+    print(p)
+  }
+}
+dev.off()
+
+```
+
+## DETECTION OUTLIER
+
+# plot detct outlier sur spectre bruts
+```{r}
+library(tidyverse)
+library(dplyr)
+library(rchemo)
+library(writexl)
+library(tidyverse)
+library(FactoMineR) 
+library(factoextra)
+library(ggrepel)
+
+
+outlier <- tribble(
+  ~ech, ~rep,
+  139, 6,
+  215, 1,
+  204, 1,
+  33, 1, 
+  33, 2,
+  33, 3,
+  33, 4,
+  33, 5,
+  233, 1,
+  233, 2,
+  233, 3,
+  233, 4,
+  233, 5,
+  157, 1,
+  157, 2,
+  157, 3,
+  157, 4,
+  157, 5,
+  164, 1,
+  164, 2,
+  164, 3,
+  164, 4,
+  164, 5,
+  161, 1,
+  161, 2,
+  161, 3,
+  161, 4,
+  161, 5
+)
+
+df_spectres <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>% 
+  anti_join(outlier, by = c("ech", "rep"))
+
+id_spectres <- paste(df_spectres$ech, df_spectres$rep, sep = "_")
+
+df_pca <- df_spectres %>% select(starts_with("x."))
+rownames(df_pca) <- make.unique(id_spectres)
+
+# La fonction PCA() de FactoMineR fait tout le travail.
+# scale.unit = FALSE : Très important en NIRS ! On ne veut pas standardiser 
+# les variables (longueurs d'onde) car elles ont toutes la même unité et la 
+# variance brute a un sens physique. On fait juste une ACP centrée.
+# ncp = 5 : On garde 5 dimensions
+# graph = FALSE : On empêche l'affichage des graphiques R de base (moches)
+res_pca <- PCA(df_pca, scale.unit = FALSE, ncp = 5, graph = FALSE)
+
+
+
+p_base <- fviz_pca_ind(res_pca,
+             geom = "point",             # Uniquement les points !
+             col.ind = "contrib",        
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             title = "ACP - Nuage des Spectres - Focus Top 30 Leviers"
+             )
+
+# 2. L'astuce : Le graphique p_base contient toutes les coordonnées et contributions 
+# calculées par factoextra dans p_base$data. On va isoler le top 30.
+top_30_data <- p_base$data %>%
+  arrange(desc(contrib)) %>%
+  slice(1:30)
+
+# 3. On superpose les étiquettes de ce top 30 sur le graphique de base
+p_ind <- p_base +
+  geom_text_repel(
+    data = top_30_data,
+    aes(x = x, y = y, label = name), # 'name' est la colonne interne contenant tes id
+    size = 3,
+    box.padding = 0.5,
+    max.overlaps = Inf,              # Force l'affichage de ces 30 labels sans exception
+    color = "black"                  # On met le texte en noir pour bien le lire
+  )
+
+print(p_ind)
+
+
+
+# -- Graphique 2 : Diagnostic des contributions (La méthode dure) --
+# Si un spectre contribue de manière disproportionnée à la création d'un axe
+# (par exemple, 1 spectre crée 5% de l'axe à lui tout seul sur 1580 spectres), 
+# c'est un outlier qui a tordu le modèle.
+p_contrib <- fviz_contrib(res_pca, choice = "ind", axes = 1:2, top = 20, 
+                          title = "Top 20 des spectres qui dominent l'ACP (Outliers potentiels)")
+print(p_contrib)
+nom_rapport_pdf <- paste0(d0, "spectres_outlier_sur_bruts_2.pdf")
+
+pdf(nom_rapport_pdf, width = 10, height = 7)
+print(p_ind)      
+print(p_contrib)  
+
+dev.off()
+
+
+
+res_ind <- get_pca_ind(res_pca)
+
+# Seuil mathématique théorique de contribution équitable : 100% / nombre_individus
+seuil_contrib <- 100 / nrow(df_pca)
+
+df_diagnostic <- data.frame(
+  Spectre = rownames(df_pca),
+  # Contribution sur le plan 1-2
+  Contribution = res_ind$contrib[,1] + res_ind$contrib[,2], 
+  # Qualité de représentation sur le plan 1-2 (1 = parfait, 0 = mauvais)
+  Qualite_Cos2 = res_ind$cos2[,1] + res_ind$cos2[,2] 
+)
+
+# On définit notre règle pour étiqueter les suspects :
+# Si la contribution est > à 3 fois le seuil théorique normal
+df_diagnostic <- df_diagnostic %>%
+  mutate(
+    Diagnostic = case_when(
+      Contribution > (3 * seuil_contrib) ~ "Point Levier (Forte Contribution)",
+      Qualite_Cos2 < 0.1 ~ "Spectre de Mauvaise Qualité (Faible Cos2)",
+      TRUE ~ "Normal"
+    )
+  )
+
+# Affichage des spectres suspects
+spectres_suspects <- df_diagnostic %>% filter(Diagnostic != "Normal") %>% arrange(desc(Contribution))
+
+cat("\n--- Bilan FactoMineR ---\n")
+print(table(df_diagnostic$Diagnostic))
+cat("\nVoici le top des spectres leviers à inspecter visuellement :\n")
+print(head(spectres_suspects, 10))
+
+
+liste_a_exporter <- spectres_suspects %>%
+  separate(Spectre, into = c("Echantillon", "Repetition"), sep = "_", remove = FALSE) %>%
+  select(Spectre, Echantillon, Repetition, Diagnostic, Contribution, Qualite_Cos2) %>%
+  arrange(desc(Contribution))
+
+nom_fichier_excel <- paste0(d0, "spectres_outlier_sur_bruts_2.xlsx")
+
+write_xlsx(liste_a_exporter, nom_fichier_excel)
+
+
+cat("\n--- Extraction des coordonnées de l'ACP ---\n")
+
+df_coords <- as.data.frame(res_pca$ind$coord[, 1:2])
+colnames(df_coords) <- c("Dim1", "Dim2")
+
+df_coords_final <- df_coords %>%
+  mutate(ID_Complet = rownames(df_coords)) %>%
+  separate(ID_Complet, into = c("ech", "rep"), sep = "_", remove = FALSE) %>%
+  select(ID_Complet, ech, rep, Dim1, Dim2)
+
+nom_fichier_coords <- paste0(d0, "coordonnees_individus_ACP.xlsx")
+write_xlsx(df_coords_final, nom_fichier_coords)
+
+
+## stat dim
+coord <- readxl::read_excel(paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/acp/coordonnees_individus_ACP.xlsx"))
+
+tab_variance <- coord %>%
+  group_by(ech) %>%
+  summarise(
+    var_Dim1 = var(Dim1, na.rm = TRUE), 
+    var_Dim2 = var(Dim2, na.rm = TRUE), 
+    nb_rep = n()                      
+  ) %>%
+  arrange(as.numeric(ech))
+tab_variance <- tab_variance %>% 
+  mutate(dist_2 = var_Dim1^2 + var_Dim2^2,
+         dist = sqrt(dist_2)) %>% 
+  arrange(desc(dist))
+
+# write_xlsx(tab_variance, paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/acp/tab_variance_ACP.xlsx"))
+
+
+
+
+```
+
+```{r}
+### acp trié : 
+
+echantillons_a_garder <- c(121, 163, 271, 177, 20, 9, 305, 232, 138, 76, 172, 148, 
+                           162, 130, 37, 206, 53, 168, 156, 170, 143, 77, 120, 258, 
+                           197, 308, 134, 266, 82)
+
+df_spectres <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE.csv")) %>% 
+  anti_join(outlier, by = c("ech", "rep")) %>%
+  filter(ech %in% echantillons_a_garder)
+
+id_spectres <- paste(df_spectres$ech, df_spectres$rep, sep = "_")
+
+df_pca <- df_spectres %>% select(starts_with("x."))
+rownames(df_pca) <- make.unique(id_spectres)
+
+
+res_pca <- PCA(df_pca, scale.unit = FALSE, ncp = 5, graph = FALSE)
+
+top_30_data <- p_base$data %>%
+  arrange(desc(contrib)) %>%
+  slice(1:30)
+
+p_ind <- fviz_pca_ind(res_pca,
+             geom = c("point", "text"),  
+             repel = TRUE,               
+             max.overlaps = Inf,         
+             labelsize = 3,              
+             col.ind = "contrib",        
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             title = "ACP - 30 ech score distance hypothénus les + élevé"
+             )
+print(p_ind)
+
+
+p_contrib <- fviz_contrib(res_pca, choice = "ind", axes = 1:2, top = 20, 
+                          title = "Top 20 spectres qui dominent l'ACP")
+print(p_contrib)
+nom_rapport_pdf <- paste0(d0, "spectres_outlier_sur_bruts_2.pdf")
+
+pdf(nom_rapport_pdf, width = 10, height = 7)
+print(p_ind)      
+print(p_contrib)  
+
+dev.off()
+
+
+res_ind <- get_pca_ind(res_pca)
+
+# Seuil mathématique théorique de contribution équitable : 100% / nombre_individus
+seuil_contrib <- 100 / nrow(df_pca)
+
+df_diagnostic <- data.frame(
+  Spectre = rownames(df_pca),
+  # Contribution sur le plan 1-2
+  Contribution = res_ind$contrib[,1] + res_ind$contrib[,2], 
+  # Qualité de représentation sur le plan 1-2 (1 = parfait, 0 = mauvais)
+  Qualite_Cos2 = res_ind$cos2[,1] + res_ind$cos2[,2] 
+)
+
+# On définit notre règle pour étiqueter les suspects :
+# Si la contribution est > à 3 fois le seuil théorique normal
+df_diagnostic <- df_diagnostic %>%
+  mutate(
+    Diagnostic = case_when(
+      Contribution > (3 * seuil_contrib) ~ "Point Levier (Forte Contribution)",
+      Qualite_Cos2 < 0.1 ~ "Spectre de Mauvaise Qualité (Faible Cos2)",
+      TRUE ~ "Normal"
+    )
+  )
+
+ggsave(filename = paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/acp/pca_trie.pdf"), 
+       plot = p_ind, 
+       width = 10, 
+       height = 7)
+
+```
+
+
+# plot outliers 1
+```{r}
+library(nirsextra)
+library(tidyverse)
+
+dossier_parent <- paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers")
+
+liste_dossiers <- list.dirs(dossier_parent, full.names = TRUE, recursive = FALSE)
+
+nom_fichier_pdf <- paste0(d0, "vitaspec_R/ROSA_vitaSPEC/Data/outliers/outliers_spectres_bruts.pdf")
+pdf(nom_fichier_pdf, width = 8, height = 5.5)
+
+for (dossier_asd in liste_dossiers) {
+  
+  nom_dossier <- basename(dossier_asd)
+  
+  fichiers <- list.files(dossier_asd, pattern = "\\.asd$", full.names = TRUE)
+  
+  if (length(fichiers) == 0) {
+    next
+  }
+  
+  liste_spectres <- list()
+  
+  for (i in seq_along(fichiers)) {
+    sp <- asd_read(fichiers[i])
+    
+    valeurs <- sp$spectrum / sp$reference
+    
+    wl <- sp$wavelength
+    if(is.null(wl)) wl <- seq(350, 2500, length.out = length(valeurs))
+    
+    liste_spectres[[i]] <- data.frame(
+      x_value = wl,
+      y_value = as.numeric(valeurs),
+      Spectre = paste0("Spectre_", i)
+    )
+  }
+  
+  df_total <- bind_rows(liste_spectres)
+  
+  graphique_brut <- ggplot(df_total, aes(x = x_value, y = y_value, group = Spectre)) +
+    
+    geom_line(color = "#005b96", linewidth = 0.3, alpha = 0.8) +
+    
+    labs(
+      title = paste(nom_dossier, "- spectres bruts"), 
+      x = "x-value",
+      y = "y-value"
+    ) +
+    
+    theme_bw() +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      
+      panel.border = element_rect(color = "darkgrey", fill = NA, linewidth = 1),
+      
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 16, margin = margin(b = 20)),
+      
+      axis.title.x = element_text(margin = margin(t = 15), size = 13),
+      axis.title.y = element_text(margin = margin(r = 15), size = 13),
+      
+      axis.text = element_text(size = 11, color = "black")
+    )
+  
+  print(graphique_brut)
+}
+dev.off()
+
+```
+
+
+#plot oultiers tot
+```{r}
+library(tidyverse)
+
+df_spectres <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/Meso_frais_26.csv")) %>%
+  mutate(ech = as.character(ech))
+
+df_long <- df_spectres %>%
+  pivot_longer(
+    cols = starts_with("x."), 
+    names_to = "point_mesure", 
+    values_to = "y_value") %>%
+  mutate(
+    num_point = as.numeric(str_remove(point_mesure, "x.")),
+    x_value = 350 + (num_point - 1) * ((2500 - 350) / (2151 - 1)),
+    id_spectre = paste(ech, rep, sep = "_")
+  )
+
+liste_echantillons <- unique(df_long$ech)
+
+nom_fichier_pdf <- "Spectres_bruts_par_ech_FRAIS.pdf"
+pdf(nom_fichier_pdf, width = 8, height = 5.5)
+
+for (echantillon_id in liste_echantillons) {
+  
+  df_ech <- df_long %>% filter(ech == echantillon_id)
+  
+  df_labels <- df_ech %>%
+    group_by(id_spectre) %>%
+    filter(x_value == max(x_value)) %>%
+    slice(1) %>% 
+    ungroup()
+  
+  etat_ech <- df_ech$etat[1]
+  titre_graphique <- paste0(etat_ech, "_", echantillon_id, " - spectres bruts")
+  
+  graphique_brut <- ggplot(df_ech, aes(x = x_value, y = y_value, group = id_spectre)) +
+    
+    geom_line(color = "#005b96", linewidth = 0.3, alpha = 0.8) +
+    
+    geom_text(
+      data = df_labels,      
+      aes(label = rep),      
+      nudge_x = 40,          
+      size = 3.5,            
+      color = "black",       
+      hjust = 0,            
+      fontface = "bold") +
+    
+    scale_x_continuous(expand = expansion(mult = c(0.02, 0.08))) +
+    
+    labs(
+      title = titre_graphique,
+      x = "x-value",
+      y = "y-value"
+    ) +
+    
+    theme_bw() +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "darkgrey", fill = NA, linewidth = 1),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 16, margin = margin(b = 20)),
+      axis.title.x = element_text(margin = margin(t = 15), size = 13),
+      axis.title.y = element_text(margin = margin(r = 15), size = 13),
+      axis.text = element_text(size = 11, color = "black")
+    )
+  print(graphique_brut)
+}
+dev.off()
+
+```
+
+
+# MAD - plot detect outlier sur pred + gestion de la liste MAD (scripts "MAD")
+```{r}
+nb_modeles_rejet_max = "23"
+nb_modeles_rejet = "7"
+Z_seuil = 4.5
+
+#source(..........)
+
+
+## on enlève les spectres flag
+supr <- readxl::read_excel(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/data/outliers/mad/liste_spectres_a_supprimer_",nb_modeles_rejet,"_Z",Z_seuil,".xlsx")) %>%
+  mutate(Echantillon = as.integer(Echantillon),
+         Repetition = as.integer(Repetition))
+
+HR_clean <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean.csv"))
+
+HR_clean2 <- anti_join(HR_clean, supr, by = c("ech" = "Echantillon", "rep" = "Repetition"))
+
+lignes_fantomes <- anti_join(supr, HR_clean, by = c("Echantillon" = "ech", "Repetition" = "rep"))
+cat("lignes fantomes :", nrow(lignes_fantomes), "\n")
+
+# write.csv(HR_clean, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/outliers/mad/HR_25_DIADE_clean_sd_mad.csv"),row.names = FALSE)
+# write.csv(HR_clean, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/X/HR_25_DIADE_clean_sd_mad.csv"),row.names = FALSE)
+
+
+HR_clean2 <- HR_clean2 %>% 
+  mutate(ech = as.character(ech))
+
+# HR_25_DIADE_clean_sd_mad <- HR_clean2 %>% 
+#   select(-campagne, -source, -etat, -rep) %>%
+#   group_by(ech) %>%
+#   summarise(across(everything(), ~ mean(.x, na.rm = TRUE)))
+# 
+# HR_25_DIADE_out_ok <- inner_join(HR_25_DIADE_clean_sd_mad, Y_HR, by = "ech")
+# write.csv(HR_25_DIADE_out_ok, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_HR_25_DIADE_clean_sd_mad.csv"),row.names = FALSE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

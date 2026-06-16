@@ -1,0 +1,12 @@
+{
+    "Compose": "trans.beta.carotene",
+    "Meilleurs_Parametres": "{}",
+    "Metriques": {
+        "Rc": 0.9646,
+        "Rp": 0.6989,
+        "RMSEC": 98.9742,
+        "RMSECV": 0.0,
+        "RMSEP": 173.765,
+        "RPD": 1.3072
+    }
+}

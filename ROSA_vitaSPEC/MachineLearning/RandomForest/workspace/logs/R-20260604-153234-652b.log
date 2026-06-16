@@ -1,0 +1,16 @@
+2026-06-04T15:32:34+0200 [INFO ] ========================================================================================================================
+2026-06-04T15:32:34+0200 [INFO ] Starting Nirs4all run(s) with 1 pipeline(s) on 1 dataset(s) (1 total runs).
+2026-06-04T15:32:34+0200 [INFO ] ========================================================================================================================
+2026-06-04T15:32:34+0200 [INFO ] Run 1/1: pipeline 'config_2f910927' on dataset 'dataset'
+2026-06-04T15:32:34+0200 [INFO ] [Dataset] dataset (regression)
+Features (samples=160, sources=1):
+- Source 0: (160, 1, 2151), processings=['raw'], min=0.007, max=0.895, mean=0.255, var=0.038
+Targets: (samples=160, targets=1, processings=['numeric'])
+- numeric: min=31.5, max=59.7, mean=42.668
+Indexes:
+- partition - "train", processings - ['raw'], excluded - False: 160 samples
+2026-06-04T15:32:34+0200 [INFO ] Starting pipeline config_2f910927 on dataset dataset
+2026-06-04T15:32:34+0200 [WARNING] ReducerTransformer: shape (160, 2151) -> (160, 0)
+2026-06-04T15:32:34+0200 [ERROR] Pipeline config_2f910927 on dataset dataset failed: Pipeline step 3 failed: Step execution failed: Found array with 0 feature(s) (shape=(160, 0)) while a minimum of 1 is required.
+2026-06-04T15:32:34+0200 [INFO ] Cleaned up 2 artifacts from failed run
+2026-06-04T15:32:34+0200 [ERROR] Dataset 'dataset' failed: Pipeline step 3 failed: Step execution failed: Found array with 0 feature(s) (shape=(160, 0)) while a minimum of 1 is required.

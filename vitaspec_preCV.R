@@ -1,0 +1,143 @@
+# temporaire : r2 fais main
+r2 <- function(pred, obs) {
+  obs <- as.numeric(obs)
+  pred <- as.numeric(pred)
+  return(1 - sum((obs - pred)^2, na.rm = TRUE) / sum((obs - mean(obs, na.rm = TRUE))^2, na.rm = TRUE))
+}
+
+vitaspec_preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, y_name = "", plotLV=TRUE, plotYY=TRUE, verb = FALSE)  {
+
+mes_couleurs <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999", "#000000")
+# From a list of pretraitments, make cross-validation of data set with different pretr. and plot pred vs obs for best LV
+  
+r2_tt=matrix(nrow=ncomp+1,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-6)  #
+fmtt=list()
+pftot=NULL
+
+# nseq=20
+# seqlo=seq(1,2150,nseq)
+# nseq=length(seqlo)
+r2_tt=matrix(nrow=ncomp,ncol=length(list_pre))  # matrix(nrow=ncomp+1,ncol=nseq-6)  #
+fmtt=list()
+fmttn=list()
+for (j in 1:length(list_pre)) {  # 1:
+  # print(paste0("Prétraitement ",j, "/",length(list_pre),"\n"))
+  if (verb) {cat(paste0("Prétraitement ", j, "/", length(list_pre), "\n"))}
+  # p=rbind(list('adj',''),list('red',c(seqlo[j],2151-seqlo[j+6],1)),list('sder',c(1,3,15)))
+  # print(seqlo[j])
+  # print(2151-seqlo[j+4])
+  # dat$xp=pre(dat$x,p)
+  xp=pre(x,list_pre[[j]])
+
+  # generate sgm list for Leave-one-out
+  # segm <- list(rep1 = as.list(1:nrow(xp)))
+  segm <- segmkf(n = nrow(xp), K = 10)
+  if (fun=="lwplsr") {
+    pars=mpars(nlvdis = 5, diss = "mahal", h = c(1, Inf), k = c(10, 20))
+    fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+  }
+  else {
+    fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
+  }
+# browser()
+  fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
+  r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
+  pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])
+  dim(pf)=c(1,2*ncol(pf))
+  pf=paste0(pf, collapse = "_")
+  pftot=c(pftot,pf)
+}
+best_pre_lo=which(r2_tt == max(r2_tt[2:14,]), arr.ind = TRUE)[1,]
+if (plotLV) {
+  matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], 
+          ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+  title(paste(y_name, titl, sep = " - "))
+  
+  pftot_wrap <- sapply(pftot, function(x) {
+    paste(strwrap(x, width = 60), collapse = "\n")
+  })
+  
+  opar <- par(no.readonly = TRUE) 
+  
+  par(mar = c(0, 0, 0, 0)) 
+  
+  plot.new() 
+  
+  legend("center", 
+         legend = pftot_wrap, 
+         col = mes_couleurs[1:ncol(r2_tt)], 
+         lty = 1, 
+         lwd = 2, 
+         cex = 0.8, 
+         bty = "n", 
+         y.intersp = 1.5)
+  
+  par(opar) 
+  
+  # opar <- par(no.readonly = TRUE) 
+  # 
+  # layout(matrix(c(1, 2), nrow = 1), widths = c(0.70, 0.30))
+  # 
+  # par(mar = c(5, 4, 4, 0) + 0.1) 
+  # matplot(r2_tt, type = 'l', lty = 1, col = mes_couleurs[1:ncol(r2_tt)], ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+  # title(paste(y_name, titl, sep = " - "))
+  # 
+  # par(mar = c(5, 0, 4, 1) + 0.1) 
+  # plot.new() 
+  # 
+  # pftot_wrap <- sapply(pftot, function(x) {
+  #   paste(strwrap(x, width = 30), collapse = "\n")
+  # })
+  # 
+  # 
+  # legend("left", 
+  #        legend = pftot_wrap, 
+  #        col = mes_couleurs[1:ncol(r2_tt)], 
+  #        lty = 1, 
+  #        cex = 0.7, 
+  #        bty = "n",
+  #        y.intersp = 0.5, 
+  #        x.intersp = 1.25)
+  # 
+  # par(opar)
+}
+fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
+txtpre= pftot[best_pre_lo[2]]  # txtpre= disp_pre(dat$x,list_pre[[best_pre_lo[2]]])
+cat(
+  "Pré :", txtpre, "\n\n",
+  "R2     :", round(mser(fm)$cor2, 2), "\n\n",
+  "SEP    :", round(mser(fm)$sep, 2), "\n\n\n"
+)
+
+if (plotYY) {
+  fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
+  plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
+  abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
+  fit <- lm(fm1$yp ~ fm1$yref)
+  abline(fit, col = "blue")
+  summary_fit <- summary(fit)
+  r_squared <- summary_fit$r.squared
+  # legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(txtpre)),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  title(paste(y_name, titl, sep = " - "))
+}
+}
+
+
+disp_pre=function(x,pre1) {
+  txt=NULL
+  for (i in 1:nrow(pre1)) {
+    if (pre1[i,1] == "adj") {}
+    if (pre1[i,1] == "snv") {txt=paste0(txt,"SNV")}
+    if (pre1[i,1] == "red") {
+      txt=paste0(txt,"RANGE:",min(as.numeric(attributes(x)[2]$dimnames[[2]])), "-",max(as.numeric(attributes(x)[2]$dimnames[[2]])),"nm")
+    }
+    if (pre1[i,1] == "sder") {
+      if (pre1[i,2][[1]][1] == 1) {txtorder= "1ere"}
+      if (pre1[i,2][[1]][1] == 2) {txtorder= "2nde"}
+      txt=paste0(txt,"DERIV.",txtorder, " (","poly=",pre1[i,2][[1]][2],";","window=",pre1[i,2][[1]][2],")")
+    }
+    if (length(txt)>0 & i<nrow(pre1)) {txt=paste0(txt," + ")}
+  }
+  return(txt)
+}

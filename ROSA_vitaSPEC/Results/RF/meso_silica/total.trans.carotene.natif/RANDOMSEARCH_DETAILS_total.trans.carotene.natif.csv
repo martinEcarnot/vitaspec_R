@@ -1,0 +1,172 @@
+Compose;ID_Pretraitement;Code_R_Pretraitement;Meilleurs_Hyperparam_RF;Rc;RMSEC;RMSECV
+total.trans.carotene.natif;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));Erreur extraction;0.9776;151.0018;0.0
+total.trans.carotene.natif;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9799;144.5347;0.0
+total.trans.carotene.natif;3;list('adj',''), list('red',c(1,1300,1));Erreur extraction;0.9816;147.5769;0.0
+total.trans.carotene.natif;4;list('adj',''),list('red',c(950,700,1)),list('snv','');Erreur extraction;0.8658;383.2461;0.0
+total.trans.carotene.natif;5;list('adj',''),list('red',c(950,750,1)),list('snv','');Erreur extraction;0.8407;408.4598;0.0
+total.trans.carotene.natif;6;list('adj',''), list('red',c(1,1000,1)), list('snv','');Erreur extraction;0.9794;145.8306;0.0
+total.trans.carotene.natif;7;list('adj',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.9749;165.1598;0.0
+total.trans.carotene.natif;8;list('adj',''), list('red',c(1,1200,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9872;123.9127;0.0
+total.trans.carotene.natif;9;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 9));Erreur extraction;0.9839;134.7728;0.0
+total.trans.carotene.natif;10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 15));Erreur extraction;0.9836;135.7184;0.0
+total.trans.carotene.natif;11;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.983;139.2297;0.0
+total.trans.carotene.natif;12;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.9833;136.8964;0.0
+total.trans.carotene.natif;13;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.9836;135.6953;0.0
+total.trans.carotene.natif;14;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.9839;137.1181;0.0
+total.trans.carotene.natif;15;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 25));Erreur extraction;0.9837;136.3045;0.0
+total.trans.carotene.natif;16;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 31));Erreur extraction;0.9834;136.3711;0.0
+total.trans.carotene.natif;17;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 5));Erreur extraction;0.9848;128.6995;0.0
+total.trans.carotene.natif;18;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 9));Erreur extraction;0.9857;122.9084;0.0
+total.trans.carotene.natif;19;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 11));Erreur extraction;0.9839;132.2895;0.0
+total.trans.carotene.natif;20;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 15));Erreur extraction;0.9849;131.3536;0.0
+total.trans.carotene.natif;21;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 21));Erreur extraction;0.9855;128.0314;0.0
+total.trans.carotene.natif;22;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 25));Erreur extraction;0.9847;129.8796;0.0
+total.trans.carotene.natif;23;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 31));Erreur extraction;0.9842;133.3414;0.0
+total.trans.carotene.natif;24;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 2, 35));Erreur extraction;0.9843;132.9595;0.0
+total.trans.carotene.natif;25;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 5));Erreur extraction;0.9845;127.406;0.0
+total.trans.carotene.natif;26;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));Erreur extraction;0.9852;124.4346;0.0
+total.trans.carotene.natif;27;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 11));Erreur extraction;0.9805;142.7625;0.0
+total.trans.carotene.natif;28;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 15));Erreur extraction;0.9853;128.8933;0.0
+total.trans.carotene.natif;29;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 21));Erreur extraction;0.9849;131.4848;0.0
+total.trans.carotene.natif;30;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 25));Erreur extraction;0.9771;151.8723;0.0
+total.trans.carotene.natif;31;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 31));Erreur extraction;0.9854;125.3616;0.0
+total.trans.carotene.natif;32;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 35));Erreur extraction;0.9845;128.6374;0.0
+total.trans.carotene.natif;33;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 9));Erreur extraction;0.9686;177.2456;0.0
+total.trans.carotene.natif;34;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 11));Erreur extraction;0.9823;137.392;0.0
+total.trans.carotene.natif;35;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 15));Erreur extraction;0.9857;127.301;0.0
+total.trans.carotene.natif;36;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 21));Erreur extraction;0.9792;150.9638;0.0
+total.trans.carotene.natif;37;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 25));Erreur extraction;0.985;124.0744;0.0
+total.trans.carotene.natif;38;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 31));Erreur extraction;0.9854;119.3544;0.0
+total.trans.carotene.natif;39;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 2, 35));Erreur extraction;0.9804;142.0318;0.0
+total.trans.carotene.natif;40;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 9));Erreur extraction;0.9687;176.7112;0.0
+total.trans.carotene.natif;41;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 11));Erreur extraction;0.9822;137.8753;0.0
+total.trans.carotene.natif;42;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 15));Erreur extraction;0.9859;126.7847;0.0
+total.trans.carotene.natif;43;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 21));Erreur extraction;0.9788;152.3987;0.0
+total.trans.carotene.natif;44;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 25));Erreur extraction;0.9853;122.2336;0.0
+total.trans.carotene.natif;45;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 31));Erreur extraction;0.9856;119.9851;0.0
+total.trans.carotene.natif;46;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2, 3, 35));Erreur extraction;0.9791;142.572;0.0
+total.trans.carotene.natif;47;list('adj',''), list('red',c(1,1400,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9833;129.7605;0.0
+total.trans.carotene.natif;48;list('adj',''),list('red',c(40,1300,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.9806;141.8122;0.0
+total.trans.carotene.natif;49;list('adj',''), list('red',c(800,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9091;353.4464;0.0
+total.trans.carotene.natif;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.8896;372.2593;0.0
+total.trans.carotene.natif;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8816;374.4893;0.0
+total.trans.carotene.natif;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8983;370.3972;0.0
+total.trans.carotene.natif;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.8938;365.5565;0.0
+total.trans.carotene.natif;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));Erreur extraction;0.8572;407.9525;0.0
+total.trans.carotene.natif;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));Erreur extraction;0.872;402.9489;0.0
+total.trans.carotene.natif;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8666;399.7331;0.0
+total.trans.carotene.natif;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));Erreur extraction;0.841;409.2723;0.0
+total.trans.carotene.natif;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));Erreur extraction;0.8434;406.7269;0.0
+total.trans.carotene.natif;59;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,25));Erreur extraction;0.845;404.9205;0.0
+total.trans.carotene.natif;60;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.8655;383.9716;0.0
+total.trans.carotene.natif;61;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,11));Erreur extraction;0.8404;415.3734;0.0
+total.trans.carotene.natif;62;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8403;413.9531;0.0
+total.trans.carotene.natif;63;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.8374;415.9947;0.0
+total.trans.carotene.natif;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.8373;415.3958;0.0
+total.trans.carotene.natif;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8924;366.0203;0.0
+total.trans.carotene.natif;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9022;357.861;0.0
+total.trans.carotene.natif;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.8604;404.6496;0.0
+total.trans.carotene.natif;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');Erreur extraction;0.9834;133.4046;0.0
+total.trans.carotene.natif;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');Erreur extraction;0.9849;129.6025;0.0
+total.trans.carotene.natif;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');Erreur extraction;0.9764;154.0113;0.0
+total.trans.carotene.natif;75;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,21)), list('snv','');Erreur extraction;0.9839;131.055;0.0
+total.trans.carotene.natif;76;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('snv','');Erreur extraction;0.9754;165.5939;0.0
+total.trans.carotene.natif;77;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,21)), list('snv','');Erreur extraction;0.9608;195.4857;0.0
+total.trans.carotene.natif;78;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.9813;142.5927;0.0
+total.trans.carotene.natif;79;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3');Erreur extraction;0.9813;142.5927;0.0
+total.trans.carotene.natif;80;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.8078;436.3437;0.0
+total.trans.carotene.natif;81;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.8081;436.3421;0.0
+total.trans.carotene.natif;82;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.8054;437.1674;0.0
+total.trans.carotene.natif;83;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.8082;436.4915;0.0
+total.trans.carotene.natif;84;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.879;377.9655;0.0
+total.trans.carotene.natif;85;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.8505;407.6927;0.0
+total.trans.carotene.natif;86;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 21));Erreur extraction;0.9809;143.2605;0.0
+total.trans.carotene.natif;87;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 2, 25));Erreur extraction;0.9809;143.3128;0.0
+total.trans.carotene.natif;88;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.981;143.1284;0.0
+total.trans.carotene.natif;89;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));Erreur extraction;0.9784;151.3505;0.0
+total.trans.carotene.natif;90;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 11));Erreur extraction;0.9781;149.6426;0.0
+total.trans.carotene.natif;91;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));Erreur extraction;0.985;131.871;0.0
+total.trans.carotene.natif;92;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 21));Erreur extraction;0.9764;155.2124;0.0
+total.trans.carotene.natif;93;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 15));Erreur extraction;0.9859;126.6016;0.0
+total.trans.carotene.natif;94;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2, 3, 21));Erreur extraction;0.9788;152.3987;0.0
+total.trans.carotene.natif;95;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(1, 3, 15));Erreur extraction;0.985;131.871;0.0
+total.trans.carotene.natif;96;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2, 3, 21));Erreur extraction;0.9788;152.3987;0.0
+total.trans.carotene.natif;97;list('adj',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.9816;147.5769;0.0
+total.trans.carotene.natif;98;list('adj',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7973;473.3602;0.0
+total.trans.carotene.natif;99;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 2, 15));Erreur extraction;0.9818;146.8033;0.0
+total.trans.carotene.natif;100;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(0, 3, 21));Erreur extraction;0.9819;146.3482;0.0
+total.trans.carotene.natif;101;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 5));Erreur extraction;0.986;130.6951;0.0
+total.trans.carotene.natif;102;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 11));Erreur extraction;0.9861;128.69;0.0
+total.trans.carotene.natif;103;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 15));Erreur extraction;0.9856;129.6253;0.0
+total.trans.carotene.natif;104;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 21));Erreur extraction;0.9853;129.7998;0.0
+total.trans.carotene.natif;105;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 2, 31));Erreur extraction;0.9857;129.0183;0.0
+total.trans.carotene.natif;106;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 5));Erreur extraction;0.9864;130.4808;0.0
+total.trans.carotene.natif;107;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 11));Erreur extraction;0.9862;129.0636;0.0
+total.trans.carotene.natif;108;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 15));Erreur extraction;0.9801;148.7509;0.0
+total.trans.carotene.natif;109;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 21));Erreur extraction;0.9839;134.3619;0.0
+total.trans.carotene.natif;110;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1, 3, 31));Erreur extraction;0.9852;130.4333;0.0
+total.trans.carotene.natif;111;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 11));Erreur extraction;0.985;138.4288;0.0
+total.trans.carotene.natif;112;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));Erreur extraction;0.9837;143.3367;0.0
+total.trans.carotene.natif;113;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 21));Erreur extraction;0.9845;131.4774;0.0
+total.trans.carotene.natif;114;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 31));Erreur extraction;0.9778;154.6854;0.0
+total.trans.carotene.natif;115;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 11));Erreur extraction;0.9854;136.5913;0.0
+total.trans.carotene.natif;116;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 15));Erreur extraction;0.982;147.1039;0.0
+total.trans.carotene.natif;117;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 21));Erreur extraction;0.9846;130.7906;0.0
+total.trans.carotene.natif;118;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 3, 31));Erreur extraction;0.9775;155.5376;0.0
+total.trans.carotene.natif;119;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.8847;365.6212;0.0
+total.trans.carotene.natif;120;list('adj',''), list('red',c(950,750,1)), list('msc',''), list('sder',c(1,3,21));Erreur extraction;0.8756;371.8688;0.0
+total.trans.carotene.natif;121;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('msc','');Erreur extraction;0.9801;148.7509;0.0
+total.trans.carotene.natif;122;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,3,15)), list('msc','');Erreur extraction;0.982;147.1039;0.0
+total.trans.carotene.natif;123;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2');Erreur extraction;0.969;175.3093;0.0
+total.trans.carotene.natif;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3');Erreur extraction;0.969;175.3093;0.0
+total.trans.carotene.natif;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.9748;154.2597;0.0
+total.trans.carotene.natif;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9861;132.219;0.0
+total.trans.carotene.natif;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));Erreur extraction;0.9782;159.3939;0.0
+total.trans.carotene.natif;128;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1));Erreur extraction;0.9663;189.7065;0.0
+total.trans.carotene.natif;129;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv','');Erreur extraction;0.9805;143.7397;0.0
+total.trans.carotene.natif;130;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv','');Erreur extraction;0.8445;411.0666;0.0
+total.trans.carotene.natif;131;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.9855;129.4862;0.0
+total.trans.carotene.natif;132;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.9856;128.8912;0.0
+total.trans.carotene.natif;133;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.9856;128.9549;0.0
+total.trans.carotene.natif;134;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.9779;155.306;0.0
+total.trans.carotene.natif;135;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.9853;124.5626;0.0
+total.trans.carotene.natif;136;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.9794;147.2106;0.0
+total.trans.carotene.natif;137;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.9785;149.5552;0.0
+total.trans.carotene.natif;138;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.9858;128.6437;0.0
+total.trans.carotene.natif;139;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.9856;128.7184;0.0
+total.trans.carotene.natif;140;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,2,11));Erreur extraction;0.9805;142.6515;0.0
+total.trans.carotene.natif;141;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9835;130.2547;0.0
+total.trans.carotene.natif;142;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,21));Erreur extraction;0.9846;127.7084;0.0
+total.trans.carotene.natif;143;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,15));Erreur extraction;0.9852;128.8108;0.0
+total.trans.carotene.natif;144;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9856;126.6262;0.0
+total.trans.carotene.natif;145;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.9835;130.2547;0.0
+total.trans.carotene.natif;146;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.98;142.905;0.0
+total.trans.carotene.natif;147;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.9789;145.383;0.0
+total.trans.carotene.natif;148;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.9856;126.6262;0.0
+total.trans.carotene.natif;149;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 21));Erreur extraction;0.8472;411.2704;0.0
+total.trans.carotene.natif;150;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 25));Erreur extraction;0.8485;409.1429;0.0
+total.trans.carotene.natif;151;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 27));Erreur extraction;0.8446;413.317;0.0
+total.trans.carotene.natif;152;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 2, 31));Erreur extraction;0.844;413.6729;0.0
+total.trans.carotene.natif;153;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 15));Erreur extraction;0.8456;410.4531;0.0
+total.trans.carotene.natif;154;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 17));Erreur extraction;0.8463;409.5182;0.0
+total.trans.carotene.natif;155;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 19));Erreur extraction;0.8463;410.6881;0.0
+total.trans.carotene.natif;156;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0, 3, 21));Erreur extraction;0.8432;413.4273;0.0
+total.trans.carotene.natif;157;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,31));Erreur extraction;0.8455;412.7821;0.0
+total.trans.carotene.natif;158;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,15));Erreur extraction;0.8824;382.1607;0.0
+total.trans.carotene.natif;159;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,25));Erreur extraction;0.844;415.3096;0.0
+total.trans.carotene.natif;160;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1,3,31));Erreur extraction;0.8618;399.053;0.0
+total.trans.carotene.natif;161;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));Erreur extraction;0.8572;410.3622;0.0
+total.trans.carotene.natif;162;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2');Erreur extraction;0.9853;124.0843;0.0
+total.trans.carotene.natif;163;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2');Erreur extraction;0.8079;449.5804;0.0
+total.trans.carotene.natif;164;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.8456;414.116;0.0
+total.trans.carotene.natif;165;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(0, 3, 21));Erreur extraction;0.9781;147.8347;0.0
+total.trans.carotene.natif;166;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1,3,15));Erreur extraction;0.9852;125.8638;0.0
+total.trans.carotene.natif;167;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(2,3,15));Erreur extraction;0.9853;129.016;0.0
+total.trans.carotene.natif;168;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc','');Erreur extraction;0.9663;189.7065;0.0
+total.trans.carotene.natif;169;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('msc','');Erreur extraction;0.7924;474.0989;0.0
+total.trans.carotene.natif;170;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(1,3,15));Erreur extraction;0.9783;150.9474;0.0
+total.trans.carotene.natif;171;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15));Erreur extraction;0.9864;123.799;0.0
+total.trans.carotene.natif;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));Erreur extraction;0.9751;158.7886;0.0
+total.trans.carotene.natif;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');Erreur extraction;0.9843;136.8282;0.0
+total.trans.carotene.natif;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));Erreur extraction;0.9774;156.7173;0.0
+total.trans.carotene.natif;175;list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('sder',c(1,3,31)), list('snv','');Erreur extraction;0.9798;144.5319;0.0
