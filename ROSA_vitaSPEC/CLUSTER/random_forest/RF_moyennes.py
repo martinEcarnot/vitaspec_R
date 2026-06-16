@@ -386,8 +386,8 @@ if meilleur_modele_joblib is not None:
                 champion_row = df_compose.loc[df_compose["RMSECV"].idxmin()]
                 ax_rob.scatter(
                     champion_row["RMSECV"], champion_row["RMSEC"],
-                    color="crimson", s=70, edgecolor="black", linewidth=1.5,
-                    label="Champion Absolu", zorder=5
+                    color='none', s=70, edgecolor="black", linewidth=1.5,
+                    label="meilleur pretraitement", zorder=5
                 )
 
                 # y=x
@@ -510,7 +510,7 @@ if meilleur_modele_joblib is not None:
                 ax_stem.plot(x_values, importances, marker='o', markersize=2, color=couleur_barres, linestyle='None')
                 ax_stem.axhline(y=0, color='gray', linewidth=0.8, linestyle='-')
 
-                nom_modele_court = "RF : {compose}"
+                nom_modele_court = "RF"
                 ax_stem.set_title(f"{nom_modele_court} : {compose}", fontsize=16, fontweight='bold', pad=15, fontfamily='serif')
                 ax_stem.set_ylabel("Importance", fontsize=14, fontfamily='serif')
                 ax_stem.set_xlabel("Longueurs d'ondes (nm)", fontsize=12, fontfamily='serif')

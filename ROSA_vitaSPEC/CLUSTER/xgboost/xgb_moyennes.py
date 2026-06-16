@@ -134,9 +134,8 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
             try:
                 nirs4all.run(dataset=(X, y), pipeline=pipeline_intercept)
             except Exception as e_run:
-                if "0 feature" in str(e_run):
-                    raise ValueError("le prétraitement a supprimé tout le spectre")
-                pass 
+                # si ca crash
+                raise ValueError(f"crash nirs4all pendant l'application : {e_run}")
                 
             if 'X_transforme' in panier_donnees:
                 X_transforme = panier_donnees['X_transforme']
@@ -146,8 +145,9 @@ for id_pre, chaine_r_brute in enumerate(liste_pretraitements_r):
         else:
             X_transforme = X
             
-        if X_transforme.shape[1] == 0:
-            raise ValueError(f"le pretraitement a supprime toutes les variables du spectre")
+        # securite
+        if X_transforme is None or X_transforme.shape[1] == 0:
+            raise ValueError("pretraitement a supprimer tout le spectre")
 
         ## train avec scikit learn
         random_search = RandomizedSearchCV(
@@ -371,8 +371,8 @@ if meilleur_modele_joblib is not None:
                 champion_row = df_compose.loc[df_compose["RMSECV"].idxmin()]
                 ax_rob.scatter(
                     champion_row["RMSECV"], champion_row["RMSEC"],
-                    color="crimson", s=70, edgecolor="black", linewidth=1.5,
-                    label="Champion Absolu", zorder=5
+                    color='none', s=70, edgecolor="black", linewidth=1.5,
+                    label="meilleur pretraitement", zorder=5
                 )
 
                 # y=x
