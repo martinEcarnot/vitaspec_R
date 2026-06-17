@@ -103,6 +103,7 @@ df_test_externe.to_csv(chemin_test_externe, index=False)
 # mat x et y
 y = df_train_val[compose].values.astype(float) + np.random.normal(0, 1e-5, size=len(df_train_val))
 X = df_train_val[col_spectres].values
+X[X <= 0] = 1e-5
 
 # variables pour traquer le meilleur prétraitement
 meilleur_rmsecv_global = float("inf")
@@ -480,8 +481,7 @@ if meilleur_modele_joblib is not None:
                     if points_lost > 0:
                         x_values = x_values[points_lost : -points_lost]
 
-                recherche_sk_finale = trouver_search_cv(meilleur_modele_joblib)
-                fitted_xgb = recherche_sk_finale.best_estimator_
+                fitted_xgb = meilleur_modele_joblib.best_estimator_
                 importances = fitted_xgb.feature_importances_
 
                 # securite

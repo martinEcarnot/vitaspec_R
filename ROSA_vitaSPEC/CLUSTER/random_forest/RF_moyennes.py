@@ -103,6 +103,7 @@ df_test_externe.to_csv(chemin_test_externe, index=False)
 # matrices x et y
 y = df_train_val[compose].values.astype(float) + np.random.normal(0, 1e-5, size=len(df_train_val))
 X = df_train_val[col_spectres].values
+X[X <= 0] = 1e-5
 
 # variables pour traquer le meilleur prétraitement
 meilleur_rmsecv_global = float("inf")
@@ -342,7 +343,7 @@ if meilleur_modele_joblib is not None:
             "Identifiant_Ech": df_train_val.iloc[val_idx]['ech'].values if 'ech' in df_train_val.columns else val_idx,
             "Valeur_Mesuree": y_val_f,
             "Valeur_Predite": preds_val_f,
-            "Ecart_Mesure": y_val_f - preds_val_f
+            "Ecart_Mesure": y_val_f - preds_val_f,
             "SEP": np.abs(y_val_f - preds_val_f)
         })
         df_fold.to_csv(dossier_compose / f"DETAILS_CV_FOLD_{fold_idx+1}_{compose}.csv", sep=";", index=False)
