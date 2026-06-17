@@ -42,8 +42,12 @@ __pycache__/
 ROSA_vitaSPEC/CLUSTER/random_forest/workspaces_isoles
 ROSA_vitaSPEC/CLUSTER/random_forest/moyennes/workspaces_isoles
 ROSA_vitaSPEC/CLUSTER/random_forest/repetitions/workspaces_isoles
-ROSA_vitaSPEC/CLUSTER/random_forest/workspace/
+ROSA_vitaSPEC/CLUSTER/random_forest/workspace
 ROSA_vitaSPEC/CLUSTER/xgboost/workspaces_isoles
 ROSA_vitaSPEC/CLUSTER/xgboost/moyennes/workspaces_isoles
 ROSA_vitaSPEC/CLUSTER/xgboost/repetitions/workspaces_isoles
-ROSA_vitaSPEC/CLUSTER/xgboost/workspace/
+ROSA_vitaSPEC/CLUSTER/xgboost/workspace
+ROSA_vitaSPEC/CLUSTER/pls/workspaces_isoles
+ROSA_vitaSPEC/CLUSTER/pls/moyennes/workspaces_isoles
+ROSA_vitaSPEC/CLUSTER/pls/repetitions/workspaces_isoles
+ROSA_vitaSPEC/CLUSTER/pls/workspace
