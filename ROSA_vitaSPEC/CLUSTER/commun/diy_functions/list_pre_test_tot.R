@@ -88,10 +88,10 @@ list_pre_test_tot = list(
   rbind(list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15))),
   rbind(list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15))),
   
-  rbind(list('adj',''), list('red',c(1100,1600,1)), list('snv',''), list('sder',c(1,3,15))),
-  rbind(list('adj',''), list('red',c(1100,1600,1)), list('snv',''), list('sder',c(1,3,21))),
-  rbind(list('adj',''), list('red',c(1100,1600,1)), list('snv',''), list('sder',c(2,3,15))),
-  rbind(list('adj',''), list('red',c(1100,1600,1)), list('snv',''), list('sder',c(2,3,21))),
+  rbind(list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(1,3,15))),
+  rbind(list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(1,3,21))),
+  rbind(list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,15))),
+  rbind(list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,21))),
   
   #######################################################################################
   rbind(list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','')),

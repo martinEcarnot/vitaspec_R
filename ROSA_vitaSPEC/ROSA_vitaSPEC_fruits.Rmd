@@ -745,7 +745,7 @@ write.csv(dat, paste0(d0,"vitaspec_R/ROSA_vitaSPEC/Data/dat/dat_Meso_sec_2425_DI
 
 
 
-
+file <- read.csv(paste0(d0,"vitaspec_R/ROSA_vitaSPEC/CLUSTER/commun/dat_HR_25_DIADE_clean_repet.csv"))
 
 
 
