@@ -1,0 +1,16 @@
+{
+  "Compose": "trans.alpha.carotene",
+  "Pretraitement_Gagnant": "rbind(list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,15)))",
+  "Nombre_VL_Optimal": 3,
+  "Metriques_Internes": {
+    "Rc": 0.7184,
+    "R2cv": 0.6848,
+    "RMSEC": 82.6608,
+    "RMSECV": 87.4478
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": 0.858,
+    "RMSEP_Externe": 61.0496,
+    "RPD_Externe": 2.699
+  }
+}

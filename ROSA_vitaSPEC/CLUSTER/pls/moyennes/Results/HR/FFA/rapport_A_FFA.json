@@ -1,0 +1,16 @@
+{
+  "Compose": "FFA",
+  "Pretraitement_Gagnant": "rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))",
+  "Nombre_VL_Optimal": 7,
+  "Metriques_Internes": {
+    "Rc": 0.9234,
+    "R2cv": 0.895,
+    "RMSEC": 1.8233,
+    "RMSECV": 2.135
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": 0.9406,
+    "RMSEP_Externe": 1.795,
+    "RPD_Externe": 4.1732
+  }
+}

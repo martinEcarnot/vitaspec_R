@@ -35,7 +35,7 @@ df_data <- read.csv(path_data, header = TRUE, sep = ",", dec = ".", stringsAsFac
 
 # Equivalent du nettoyage Python
 df_data <- df_data %>% select(-matches("^(campagne|source|etat)$"))
-df_data[[compose]] <- as.numeric(df_data[[compose]])
+df_data[[compose]] <- suppressWarnings(as.numeric(df_data[[compose]]))
 df_propre <- df_data %>% filter(!is.na(.data[[compose]]))
 
 col_spectres <- grep("^x\\.[0-9]+", names(df_propre), value = TRUE)
@@ -46,41 +46,31 @@ if (length(col_spectres) == 0) {
 
 message(nrow(df_propre), " echantillons et ", length(col_spectres), " longueurs d'ondes valides trouves.")
 
-# %% CHARGEMENT DES PARAMETRES OPTIMAUX (A L'EPREUVE DES BALLES)
+# %% CHARGEMENT DES PARAMETRES OPTIMAUX (LA METHODE INFAILLIBLE)
 path_params <- file.path(d0, "commun", "meilleurs_parametres_pls.csv")
 if (!file.exists(path_params)) {
   stop(paste("Fichier des parametres introuvable a l'adresse :", path_params))
 }
 
-# Lecture ligne par ligne pour court-circuiter les problemes d'encodage
+# Lecture du fichier comme un simple texte
 lignes <- readLines(path_params, warn = FALSE)
-lignes <- lignes[trimws(lignes) != ""] # Retirer les lignes vides
+lignes <- lignes[trimws(lignes) != ""] # Destruction immediate des lignes vides
 
 # Detection du separateur
-sep_char <- if(grepl(";", lignes[1])) ";" else ","
+sep_char <- if(any(grepl(";", lignes))) ";" else ","
 
-# === LA MAGIE EST ICI : quote = "" et comment.char = "" ===
-# On interdit a R d'interpreter les guillemets. Il va couper a chaque point-virgule, un point c'est tout.
-df_params_all <- read.table(text = lignes, sep = sep_char, header = TRUE, 
-                            stringsAsFactors = FALSE, check.names = FALSE, 
-                            quote = "", comment.char = "")
+# Decoupage chirurgical ligne par ligne
+liste_decoupee <- strsplit(lignes, split = sep_char)
 
-# Rattrapage d'urgence si echec du separateur
-if(ncol(df_params_all) < 4) {
-  sep_char <- if(sep_char == ";") "," else ";"
-  df_params_all <- read.table(text = lignes, sep = sep_char, header = TRUE, 
-                              stringsAsFactors = FALSE, check.names = FALSE, 
-                              quote = "", comment.char = "")
-}
+# Reconstruction en forcant 4 colonnes quoiqu'il arrive
+df_params_all <- data.frame(
+  idparam = sapply(liste_decoupee, function(x) x[1]),
+  compose = sapply(liste_decoupee, function(x) x[2]),
+  pretraitement = sapply(liste_decoupee, function(x) x[3]),
+  ncomp = sapply(liste_decoupee, function(x) x[4]),
+  stringsAsFactors = FALSE
+)
 
-if(ncol(df_params_all) < 4) {
-  stop(paste("ERREUR CSV : 4 colonnes attendues, mais seulement", ncol(df_params_all), "trouvee(s). Le separateur n'est pas reconnu."))
-}
-
-# Forcage des noms pour detruire tout caractere BOM invisible
-names(df_params_all)[1:4] <- c("idparam", "compose", "pretraitement", "ncomp")
-
-# === LE NETTOYEUR EXTREME ===
 # Cette fonction ecrase la casse, les espaces et les guillemets pour garantir la correspondance
 nettoyer_txt <- function(x) { tolower(trimws(gsub('["\']', '', as.character(x)))) }
 
@@ -94,23 +84,24 @@ df_param_comp <- df_params_all %>%
   filter(idparam_clean == idparam_cible & compose_clean == compose_cible)
 
 if (nrow(df_param_comp) == 0) {
-  message("\n--- DEBUG FATAL CSV ---")
-  message("L'algorithme cherchait exactement : idparam='", idparam_cible, "' | compose='", compose_cible, "'")
-  message("\nVoici les valeurs reellement lues dans la colonne 'compose' du CSV :")
-  message(paste(unique(df_params_all$compose_clean), collapse=", "))
-  stop("Echec de l'association CSV. Comparez les noms affiches ci-dessus.")
+  stop("Echec de l'association CSV. Le compose demande n'existe pas dans la liste.")
 }
 
+# Extraction Pretraitement
 code_pretraitement_gagnant <- as.character(df_param_comp$pretraitement[1])
+code_pretraitement_gagnant <- gsub('"', '', code_pretraitement_gagnant) 
 code_pretraitement_gagnant <- trimws(code_pretraitement_gagnant)
-
-# Nettoyage des doubles guillemets qui auraient pu fuiter
-code_pretraitement_gagnant <- gsub('^"|"$', '', code_pretraitement_gagnant) 
-
-opt_ncomp <- as.integer(df_param_comp$ncomp[1])
 
 if (is.na(code_pretraitement_gagnant) || code_pretraitement_gagnant == "") {
   stop("ERREUR CRITIQUE : La chaine de pretraitement extraite du CSV est vide.")
+}
+
+# Extraction du nombre de Variables Latentes
+ncomp_brut <- as.character(df_param_comp$ncomp[1])
+opt_ncomp <- as.integer(gsub("[^0-9]", "", ncomp_brut))
+
+if (is.na(opt_ncomp) || opt_ncomp < 1) {
+  stop(paste("ERREUR CRITIQUE : Le ncomp extrait est invalide. Valeur lue :", ncomp_brut))
 }
 
 # %% ISOLOIR TRAIN / TEST
@@ -136,16 +127,14 @@ nettoyer_matrice <- function(df_part, col_spec, nom_compos) {
   X_tmp[] <- lapply(X_tmp, function(x) as.numeric(as.character(x)))
   X_mat <- as.matrix(X_tmp)
   
-  # Jitter leger (10^-6)
+  # Jitter leger
   bruit <- matrix(rnorm(length(X_mat), mean = 0, sd = 1e-6), 
                   nrow = nrow(X_mat), ncol = ncol(X_mat))
   X_mat <- X_mat + bruit
   
-  # NAs et Infs
   X_mat[!is.finite(X_mat)] <- 1e-9
   X_mat[X_mat <= 0] <- 1e-9
   
-  # Flatlines
   sds <- apply(X_mat, 1, sd)
   idx_valides <- which(sds > 1e-10)
   y_val <- as.numeric(df_part[[nom_compos]])
@@ -172,8 +161,8 @@ df_test_externe <- test_clean$df
 # %% PRETRAITEMENT UNIQUE 
 message("\n--- TELEMETRIE PRETRAITEMENT ---")
 message("Chaine lue depuis CSV : ", code_pretraitement_gagnant)
+message("Ncomp (Variables latentes) : ", opt_ncomp)
 
-# Execution securisee
 etapes_pre <- eval(parse(text = code_pretraitement_gagnant))
 
 message("Dim X_train : ", nrow(X_train), " lignes x ", ncol(X_train), " colonnes")
@@ -270,31 +259,45 @@ rapport_champion <- list(
 write_json(rapport_champion, file.path(dir_results, paste0("rapport_A_", compose, ".json")), auto_unbox = TRUE, pretty = TRUE)
 
 # %% GENERATION DES GRAPHES
+message("\nGeneration des graphiques en cours...")
+
 wavelen <- as.numeric(gsub("^x\\.", "", col_spectres))
 coef_values <- as.vector(coef(mod_final, ncomp = opt_ncomp, intercept = FALSE))
 
-g1 <- ggplot(df_preds_ext_export, aes(x = Valeur_Predite, y = Vraie_Valeur)) +
-  geom_point(shape = 1, size = 3, color = "black") +
-  geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.8) +
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-  labs(title = paste("PLS Predictions vs Mesures :", compose),
-       subtitle = paste0("R2p = ", round(r2p_ext, 3), " | RMSEp = ", round(rmsep_ext, 3), " | RPD = ", round(rpd_ext, 3)),
-       x = "Valeurs predites", y = "Valeurs mesurees") +
-  theme_minimal()
-
-df_stem <- data.frame(Wavelength = wavelen, Coef = coef_values)
-g2 <- ggplot(df_stem, aes(x = Wavelength, y = Coef)) +
-  geom_segment(aes(x = Wavelength, xend = Wavelength, y = 0, yend = Coef), color = "#4169E1", size = 0.4) +
-  geom_point(color = "#4169E1", size = 1) +
-  geom_hline(yintercept = 0, color = "gray") +
-  labs(title = paste("PLS - Vecteur des coefficients :", compose),
-       x = "Longueurs d'ondes (nm)", y = "Intensite du Coefficient") +
-  theme_bw() +
-  theme(text = element_text(family = "serif"))
-
-ggsave(file.path(dir_results, paste0("RAPPORT_GRAPHIQUES_", compose, ".pdf")), 
-       plot = marrangeGrob(list(g1, g2), nrow=1, ncol=1), width = 8, height = 6)
-ggsave(file.path(dir_results, paste0("RAPPORT_GRAPHIQUES_", compose, ".png")), 
-       plot = grid.arrange(g1, g2, ncol = 1), width = 8, height = 11)
+tryCatch({
+  g1 <- ggplot(df_preds_ext_export, aes(x = Valeur_Predite, y = Vraie_Valeur)) +
+    geom_point(shape = 1, size = 3, color = "black") +
+    geom_smooth(method = "lm", formula = y ~ x, color = "blue", se = FALSE, linewidth = 0.8) +
+    geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+    labs(title = paste("PLS Predictions vs Mesures :", compose),
+         subtitle = paste0("R2p = ", round(r2p_ext, 3), " | RMSEp = ", round(rmsep_ext, 3), " | RPD = ", round(rpd_ext, 3)),
+         x = "Valeurs predites", y = "Valeurs mesurees") +
+    theme_minimal()
+  
+  df_stem <- data.frame(Wavelength = wavelen, Coef = coef_values)
+  g2 <- ggplot(df_stem, aes(x = Wavelength, y = Coef)) +
+    geom_segment(aes(x = Wavelength, xend = Wavelength, y = 0, yend = Coef), color = "#4169E1", linewidth = 0.4) +
+    geom_point(color = "#4169E1", size = 1) +
+    geom_hline(yintercept = 0, color = "gray") +
+    labs(title = paste("PLS - Vecteur des coefficients :", compose),
+         x = "Longueurs d'ondes (nm)", y = "Intensite du Coefficient") +
+    theme_bw()
+  
+  # Export PDF Native
+  pdf(file.path(dir_results, paste0("RAPPORT_GRAPHIQUES_", compose, ".pdf")), width = 8, height = 6)
+  print(g1)
+  print(g2)
+  dev.off()
+  
+  # Export PNG Native
+  png(file.path(dir_results, paste0("RAPPORT_GRAPHIQUES_", compose, ".png")), width = 800, height = 1100, res = 100)
+  grid.arrange(g1, g2, ncol = 1)
+  dev.off()
+  
+  message("-> Graphiques generes avec succes.")
+  
+}, error = function(e) {
+  message("-> ERREUR LORS DE LA GENERATION DES GRAPHIQUES : ", e$message)
+})
 
 message(paste0("\nFin de l'execution pour ", compose, ". Tous les fichiers ont ete enregistres."))
