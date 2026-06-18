@@ -11,7 +11,7 @@ import random
 import nirs4all
 from sklearn.base import BaseEstimator, RegressorMixin
 
-# seed globale
+# seed
 SEED = 42
 np.random.seed(SEED)
 random.seed(SEED)
@@ -47,7 +47,7 @@ idparam = sys.argv[3]
 
 DATA = d0 / "commun" / fichier_data
 
-## Lecture du fichier R pretraitements
+## Lecture du fichier pretraitements (param)
 list_pre_tot = d0 / "commun" / "diy_functions" / "list_pre_test_tot.R"
 with open(list_pre_tot, "r", encoding="utf-8") as f:
     contenu_r = f.read()
