@@ -1,6 +1,6 @@
 Compose;ID_Pretraitement;Code_R_Pretraitement;Meilleurs_Hyperparam_XGB;Rc;R2cv;RMSEC;RMSECV
-eau;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8805;0.0003;3.263
-eau;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.7, 'n_estimators': 300, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.8};1.0;0.8742;0.0003;3.3478
+eau;1;list('adj',''), list('snv',''), list('sder',c(1,3,5));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8827;0.0003;3.2326
+eau;2;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.7, 'n_estimators': 300, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.8};1.0;0.8732;0.0003;3.3602
 eau;3;list('adj',''), list('red',c(1,1300,1));{'subsample': 1.0, 'n_estimators': 500, 'max_depth': 5, 'learning_rate': 0.01, 'colsample_bytree': 0.3};0.9921;0.5243;1.4551;6.5091
 eau;4;list('adj',''),list('red',c(950,700,1)),list('snv','');{'subsample': 0.8, 'n_estimators': 300, 'max_depth': 7, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8594;0.0005;3.5391
 eau;5;list('adj',''),list('red',c(950,750,1)),list('snv','');{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8595;0.0004;3.5373
@@ -52,8 +52,8 @@ eau;50;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(
 eau;51;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(1,3,15));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9997;0.8902;0.2274;3.1271
 eau;52;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9973;0.8677;0.7122;3.4324
 eau;53;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));{'subsample': 1.0, 'n_estimators': 300, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.8};0.9994;0.887;0.3458;3.1728
-eau;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));{'subsample': 1.0, 'n_estimators': 500, 'max_depth': 5, 'learning_rate': 0.01, 'colsample_bytree': 0.3};0.9995;0.8705;0.3732;3.3961
-eau;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8747;0.037;3.3412
+eau;54;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(1,3,15));{'subsample': 0.8, 'n_estimators': 500, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.8};1.0;0.8712;0.0003;3.3863
+eau;55;list('adj',''),list('red',c(950,20,1)),list('snv',''),list('sder',c(2,3,15));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8755;0.0366;3.3299
 eau;56;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9983;0.8772;0.5706;3.3064
 eau;57;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,15));{'subsample': 0.7, 'n_estimators': 300, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.8};1.0;0.8574;0.0008;3.5632
 eau;58;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(0,3,21));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8555;0.0004;3.5875
@@ -66,6 +66,10 @@ eau;64;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(1
 eau;65;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9982;0.875;0.5834;3.3363
 eau;66;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9983;0.8675;0.5689;3.4348
 eau;67;list('adj',''), list('red',c(1000,750,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9981;0.862;0.592;3.5061
+eau;68;list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(1,3,15));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9999;0.8737;0.1522;3.3535
+eau;69;list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(1,3,21));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9998;0.8776;0.1701;3.3015
+eau;70;list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,15));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8743;0.0805;3.3453
+eau;71;list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,21));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9999;0.8589;0.096;3.5445
 eau;72;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,11)), list('snv','');{'subsample': 0.7, 'n_estimators': 300, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.8};1.0;0.8964;0.0005;3.0381
 eau;73;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,2,15)), list('snv','');{'subsample': 0.7, 'n_estimators': 300, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.8};1.0;0.8928;0.0005;3.09
 eau;74;list('adj',''), list('red',c(1,1300,1)), list('sder',c(1,3,15)), list('snv','');{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 10, 'learning_rate': 0.1, 'colsample_bytree': 0.5};1.0;0.8941;0.0003;3.0708
@@ -122,6 +126,6 @@ eau;124;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'
 eau;125;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(1,3,15));{'subsample': 0.8, 'n_estimators': 200, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8839;0.0532;3.2151
 eau;126;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','2'), list('sder',c(2,3,15));{'subsample': 0.9, 'n_estimators': 200, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};0.9988;0.882;0.4641;3.2421
 eau;127;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('detr','3'), list('sder',c(2,4,31));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8811;0.0671;3.2538
-eau;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));{'subsample': 0.8, 'n_estimators': 200, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8815;0.0435;3.2482
+eau;172;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));{'subsample': 0.9, 'n_estimators': 300, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.5};1.0;0.8824;0.0029;3.2361
 eau;173;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8655;0.0548;3.4612
 eau;174;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','3'), list('sder',c(2,4,25));{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3};1.0;0.8756;0.0589;3.3284

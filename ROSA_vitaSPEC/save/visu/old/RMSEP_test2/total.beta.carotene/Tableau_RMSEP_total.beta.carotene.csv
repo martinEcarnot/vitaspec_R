@@ -1,0 +1,4 @@
+"Methode";"Compose";"meso_silica";"meso_frais";"HR"
+"pls";"total.beta.carotene";200,0679;233,5036;118,2587
+"random_forest";"total.beta.carotene";181,0637;224,8757;108,4107
+"xgboost";"total.beta.carotene";205,0545;249,2899;81,4097

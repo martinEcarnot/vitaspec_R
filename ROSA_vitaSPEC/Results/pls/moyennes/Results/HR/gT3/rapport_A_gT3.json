@@ -1,0 +1,16 @@
+{
+  "Compose": "gT3",
+  "Pretraitement_Gagnant": "rbind(list('adj',''),list('snv',''),list('sder',c(2,3,15)))",
+  "Nombre_VL_Optimal": 7,
+  "Metriques_Internes": {
+    "Rc": 0.4898,
+    "R2cv": 0.0116,
+    "RMSEC": 79.6643,
+    "RMSECV": 110.8797
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": 0.1759,
+    "RMSEP_Externe": 93.2743,
+    "RPD_Externe": 1.1204
+  }
+}

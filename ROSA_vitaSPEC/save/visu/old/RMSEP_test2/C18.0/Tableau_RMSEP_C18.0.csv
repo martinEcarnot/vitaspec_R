@@ -1,0 +1,4 @@
+"Methode";"Compose";"meso_silica";"meso_frais";"HR"
+"pls";"C18.0";1,0189;1,0243;0,4882
+"random_forest";"C18.0";0,9522;1,0944;0,4503
+"xgboost";"C18.0";1,0909;1,15;0,4582

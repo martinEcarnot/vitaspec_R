@@ -1,16 +1,16 @@
 {
     "Compose": "C18.1n9",
-    "Pretraitement_Gagnant": "list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15))",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,15))",
     "Meilleurs_Parametres": "{'subsample': 0.7, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.3}",
     "Metriques_Internes": {
         "Rc": 1.0,
-        "R2cv": 0.749,
-        "RMSEC": 0.0046,
-        "RMSECV": 1.4496
+        "R2cv": 0.7566,
+        "RMSEC": 0.0054,
+        "RMSECV": 1.4276
     },
     "Crash_Test_Externe": {
-        "R2p_Externe": 0.7274,
-        "RMSEP_Externe": 1.3574,
-        "RPD_Externe": 1.9482
+        "R2p_Externe": 0.7872,
+        "RMSEP_Externe": 1.1993,
+        "RPD_Externe": 2.205
     }
 }

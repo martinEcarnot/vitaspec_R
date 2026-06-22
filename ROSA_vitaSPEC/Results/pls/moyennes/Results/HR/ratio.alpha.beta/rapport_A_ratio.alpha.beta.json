@@ -1,0 +1,16 @@
+{
+  "Compose": "ratio.alpha.beta",
+  "Pretraitement_Gagnant": "rbind(list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 2, 31)))",
+  "Nombre_VL_Optimal": 3,
+  "Metriques_Internes": {
+    "Rc": 0.1037,
+    "R2cv": 0.0228,
+    "RMSEC": 0.1278,
+    "RMSECV": 0.1334
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": -0.0406,
+    "RMSEP_Externe": 0.1273,
+    "RPD_Externe": 0.997
+  }
+}

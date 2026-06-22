@@ -1,0 +1,4 @@
+"Methode";"Compose";"meso_frais";"meso_silica";"HR"
+"pls";"trans.beta.carotene";0,7708;0,6785;0,7661
+"random_forest";"trans.beta.carotene";0,6805;0,6627;0,8584
+"xgboost";"trans.beta.carotene";0,5771;0,5427;0,7774

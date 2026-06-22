@@ -1,0 +1,16 @@
+{
+  "Compose": "C18.1n7",
+  "Pretraitement_Gagnant": "rbind(list('adj',''),list('red',c(800,750,1)),list('snv',''),list('sder',c(2,3,15)))",
+  "Nombre_VL_Optimal": 3,
+  "Metriques_Internes": {
+    "Rc": 0.2671,
+    "R2cv": 0.0877,
+    "RMSEC": 0.5627,
+    "RMSECV": 0.6278
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": -0.2359,
+    "RMSEP_Externe": 0.5986,
+    "RPD_Externe": 0.9149
+  }
+}

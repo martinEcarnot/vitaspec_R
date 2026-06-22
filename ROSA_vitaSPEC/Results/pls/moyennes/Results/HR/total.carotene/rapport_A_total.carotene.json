@@ -1,0 +1,16 @@
+{
+  "Compose": "total.carotene",
+  "Pretraitement_Gagnant": "rbind(list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(0, 3, 17)))",
+  "Nombre_VL_Optimal": 3,
+  "Metriques_Internes": {
+    "Rc": 0.7482,
+    "R2cv": 0.7239,
+    "RMSEC": 230.3982,
+    "RMSECV": 241.25
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": 0.8319,
+    "RMSEP_Externe": 174.8509,
+    "RPD_Externe": 2.4807
+  }
+}

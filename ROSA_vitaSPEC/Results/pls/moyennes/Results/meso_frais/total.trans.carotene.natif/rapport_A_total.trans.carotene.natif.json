@@ -1,0 +1,16 @@
+{
+  "Compose": "total.trans.carotene.natif",
+  "Pretraitement_Gagnant": "rbind(list('adj',''),list('snv',''),list('sder',c(1,3,5)))",
+  "Nombre_VL_Optimal": 2,
+  "Metriques_Internes": {
+    "Rc": 0.6855,
+    "R2cv": 0.5719,
+    "RMSEC": 363.1772,
+    "RMSECV": 423.7131
+  },
+  "Crash_Test_Externe": {
+    "R2p_Externe": 0.6923,
+    "RMSEP_Externe": 392.434,
+    "RPD_Externe": 1.8335
+  }
+}

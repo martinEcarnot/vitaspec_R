@@ -1,0 +1,4 @@
+"Methode";"Compose";"meso_frais";"meso_silica";"HR"
+"pls";"eau";0,8838;0,8886;NA
+"random_forest";"eau";0,9085;0,7957;NA
+"xgboost";"eau";0,9181;0,866;NA

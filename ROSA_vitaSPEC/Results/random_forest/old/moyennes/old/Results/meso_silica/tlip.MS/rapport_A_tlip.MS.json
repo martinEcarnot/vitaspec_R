@@ -1,0 +1,16 @@
+{
+    "Compose": "tlip.MS",
+    "Pretraitement_Gagnant": "list('adj',''), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None}",
+    "Metriques_Internes": {
+        "Rc": 0.9788,
+        "R2cv": 0.5557,
+        "RMSEC": 1.2745,
+        "RMSECV": 3.3987
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.5827,
+        "RMSEP_Externe": 3.3037,
+        "RPD_Externe": 1.5745
+    }
+}

@@ -1,0 +1,4 @@
+"Methode";"Compose";"meso_frais";"meso_silica";"HR"
+"pls";"ratio.alpha.natif";0,0817;0,0849;0,0372
+"random_forest";"ratio.alpha.natif";0,0858;0,0854;0,04
+"xgboost";"ratio.alpha.natif";0,0951;0,0865;0,0344
