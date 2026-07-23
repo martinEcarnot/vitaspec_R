@@ -1,0 +1,11 @@
+Iteration;Seed;Pretraitement;Hyperparametres;R2cv;RMSECV;R2p_Externe;RMSEP_Externe;RPD_Externe
+1;799535;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': 20, 'max_features': 'log2', 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 100};0.495;26.304;0.2847;33.553;1.2026
+2;552031;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100};0.5472;26.4739;-0.0182;30.5145;1.0079
+3;934575;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': 20, 'max_features': 'log2', 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 200};0.4189;25.99;0.4789;34.6578;1.4089
+4;499760;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 100};0.5636;25.3139;0.1681;31.7213;1.1151
+5;730603;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 'log2', 'min_samples_leaf': 4, 'min_samples_split': 5, 'n_estimators': 100};0.4198;30.6179;0.2228;17.602;1.1537
+6;577767;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 5, 'n_estimators': 300};0.4799;28.7003;-0.3856;24.7081;0.8641
+7;994843;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 200};0.4557;27.6929;0.2269;33.2777;1.1567
+8;946178;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 200};0.6121;22.636;0.0993;39.8867;1.0717
+9;775806;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 500};0.4233;27.8978;0.3737;32.0399;1.2852
+10;321838;list('adj',''), list('red',c(1,1000,1)), list('snv','');{'max_depth': None, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 500};0.4166;30.3002;0.3083;23.6452;1.223

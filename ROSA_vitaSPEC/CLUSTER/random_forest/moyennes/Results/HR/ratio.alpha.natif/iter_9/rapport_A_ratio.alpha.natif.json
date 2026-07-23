@@ -1,0 +1,16 @@
+{
+    "Compose": "ratio.alpha.natif",
+    "Pretraitement_Gagnant": "list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1,3,25))",
+    "Meilleurs_Parametres": "{'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20}",
+    "Metriques_Internes": {
+        "Rc": 0.9683,
+        "R2cv": 0.2459,
+        "RMSEC": 0.0158,
+        "RMSECV": 0.0363
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": -0.0381,
+        "RMSEP_Externe": 0.0451,
+        "RPD_Externe": 0.9982
+    }
+}

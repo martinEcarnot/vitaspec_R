@@ -1,0 +1,16 @@
+{
+    "Compose": "ratio.beta.natif",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(1100,600,1)), list('snv',''), list('sder',c(2,3,21))",
+    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': None}",
+    "Metriques_Internes": {
+        "Rc": 0.9751,
+        "R2cv": 0.2162,
+        "RMSEC": 0.0157,
+        "RMSECV": 0.037
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": -0.0496,
+        "RMSEP_Externe": 0.0435,
+        "RPD_Externe": 0.9927
+    }
+}

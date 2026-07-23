@@ -1,0 +1,16 @@
+{
+    "Compose": "lycopene",
+    "Pretraitement_Gagnant": "list('adj',''), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20}",
+    "Metriques_Internes": {
+        "Rc": 0.9747,
+        "R2cv": 0.5609,
+        "RMSEC": 3.0051,
+        "RMSECV": 7.221
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.5757,
+        "RMSEP_Externe": 5.7005,
+        "RPD_Externe": 1.5614
+    }
+}

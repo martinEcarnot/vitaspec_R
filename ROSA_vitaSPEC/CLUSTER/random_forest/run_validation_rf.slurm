@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH --job-name=RF_val              
+#SBATCH --cpus-per-task=5              
+#SBATCH --mem=8G                        
+#SBATCH -p cpu-dedicated                 
+#SBATCH -A dedicated-cpu@cirad-normal    
+#SBATCH -t 48:00:00                      
+#SBATCH --output=/storage/simple/users/ecarnotm/logs/RF_val_%j.out
+#SBATCH --error=/storage/simple/users/ecarnotm/logs/RF_val_%j.err
+
+COMPOSE=$1
+DATA=$2
+ID_PARAM=$3
+
+echo "execution validation de $COMPOSE"
+
+# nettoyage + Miniconda + Env virtuel
+module purge
+source /storage/replicated/cirad_users/ecarnotm/miniconda3/etc/profile.d/conda.sh
+conda activate env_nirs_v2
+
+# dossier racine
+DOSSIER_RACINE="/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/random_forest/moyennes"
+
+# sous dossier (isolation du workspace)
+mkdir -p "$DOSSIER_RACINE/workspaces_isoles/work_val_${ID_PARAM}_${COMPOSE}"
+cd "$DOSSIER_RACINE/workspaces_isoles/work_val_${ID_PARAM}_${COMPOSE}"
+
+# execution (on pointe vers le nouveau script)
+python ../../../validation_finale_rf.py "$COMPOSE" "$DATA" "$ID_PARAM"
+
+echo "fin validation de $COMPOSE"

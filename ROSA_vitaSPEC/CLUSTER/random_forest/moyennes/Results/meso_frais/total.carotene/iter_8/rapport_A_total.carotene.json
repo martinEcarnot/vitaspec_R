@@ -1,0 +1,16 @@
+{
+    "Compose": "total.carotene",
+    "Pretraitement_Gagnant": "list('adj',''), list('snv',''), list('sder',c(1,3,5))",
+    "Meilleurs_Parametres": "{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 10}",
+    "Metriques_Internes": {
+        "Rc": 0.9712,
+        "R2cv": 0.7167,
+        "RMSEC": 199.5459,
+        "RMSECV": 406.9194
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.8454,
+        "RMSEP_Externe": 248.4459,
+        "RPD_Externe": 2.5864
+    }
+}

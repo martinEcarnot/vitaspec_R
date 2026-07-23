@@ -1,0 +1,16 @@
+{
+    "Compose": "total.toco",
+    "Pretraitement_Gagnant": "list('adj',''), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20}",
+    "Metriques_Internes": {
+        "Rc": 0.9656,
+        "R2cv": 0.254,
+        "RMSEC": 104.5608,
+        "RMSECV": 243.8036
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.1174,
+        "RMSEP_Externe": 340.812,
+        "RPD_Externe": 1.0826
+    }
+}

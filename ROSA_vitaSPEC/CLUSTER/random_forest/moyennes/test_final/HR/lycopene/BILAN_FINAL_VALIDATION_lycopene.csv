@@ -1,0 +1,11 @@
+Iteration;Seed;Pretraitement;Hyperparametres;R2cv;RMSECV;R2p_Externe;RMSEP_Externe;RPD_Externe
+1;278454;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 20, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500};0.5575;6.6039;0.4465;9.689;1.3671
+2;15667;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5618;6.767;0.4009;9.2389;1.314
+3;609443;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200};0.5625;6.6799;0.4421;9.2383;1.3617
+4;359341;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': None, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500};0.5229;7.1395;0.6442;6.8515;1.705
+5;502152;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': None, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5101;7.087;0.5468;8.2923;1.5109
+6;629888;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 10, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5222;7.5143;0.5865;5.7939;1.5818
+7;880150;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 20, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5584;6.2802;0.4419;10.2536;1.3614
+8;344630;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 10, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5745;7.148;0.523;5.7539;1.4727
+9;754911;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 10, 'max_features': 0.3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100};0.5144;7.8156;0.6516;3.4771;1.7232
+10;703669;list('adj',''), list('snv',''), list('sder',c(2,3,15));{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200};0.4976;7.9392;0.6835;3.951;1.808

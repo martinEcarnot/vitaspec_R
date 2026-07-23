@@ -1,0 +1,16 @@
+{
+    "Compose": "total.T3",
+    "Pretraitement_Gagnant": "list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1))",
+    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 20}",
+    "Metriques_Internes": {
+        "Rc": 0.9776,
+        "R2cv": 0.2311,
+        "RMSEC": 84.5001,
+        "RMSECV": 205.4721
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": -0.0449,
+        "RMSEP_Externe": 215.2908,
+        "RPD_Externe": 0.995
+    }
+}

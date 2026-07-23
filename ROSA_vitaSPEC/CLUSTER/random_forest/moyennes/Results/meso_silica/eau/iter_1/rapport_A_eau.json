@@ -1,0 +1,16 @@
+{
+    "Compose": "eau",
+    "Pretraitement_Gagnant": "list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.3, 'max_depth': 10}",
+    "Metriques_Internes": {
+        "Rc": 0.9809,
+        "R2cv": 0.6991,
+        "RMSEC": 2.2103,
+        "RMSECV": 5.3133
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.6929,
+        "RMSEP_Externe": 5.2776,
+        "RPD_Externe": 1.8355
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "Compose": "trans.alpha.carotene",
+    "Pretraitement_Gagnant": "list('adj',''), list('ref2abs',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2,3,15))",
+    "Meilleurs_Parametres": "{'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': None}",
+    "Metriques_Internes": {
+        "Rc": 0.9795,
+        "R2cv": 0.682,
+        "RMSEC": 80.2722,
+        "RMSECV": 202.5961
+    },
+    "Crash_Test_Externe": {
+        "R2p_Externe": 0.5101,
+        "RMSEP_Externe": 266.1897,
+        "RPD_Externe": 1.4531
+    }
+}
