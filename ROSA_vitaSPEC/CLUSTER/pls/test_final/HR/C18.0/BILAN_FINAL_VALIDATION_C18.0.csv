@@ -1,0 +1,11 @@
+"Iteration";"Seed";"Pretraitement";"Variables_Latentes";"R2cv";"RMSECV";"R2p_Externe";"RMSEP_Externe";"RPD_Externe"
+1;290762;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1201;0.6507;0.073;0.7279;1.0564
+2;979611;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.2383;0.619;-0.0562;0.7347;0.9897
+3;421705;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1321;0.6576;0.2578;0.6324;1.1806
+4;360675;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1893;0.6551;0.2757;0.5375;1.1951
+5;333328;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.119;0.6107;0.1184;0.7703;1.0832
+6;412653;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1209;0.6542;0.3406;0.6123;1.2526
+7;357175;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.2367;0.5978;0.0472;0.797;1.042
+8;550130;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1338;0.6921;0.2449;0.4728;1.1705
+9;95970;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1643;0.6518;0.0244;0.6892;1.0298
+10;38649;"rbind(list('adj',''),list('red',c(950,750,1)),list('snv',''),list('sder',c(2,3,15)))";5;0.1617;0.6671;0.1148;0.5853;1.081
