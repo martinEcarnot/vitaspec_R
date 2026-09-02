@@ -1,0 +1,11 @@
+Iteration;Pretraitement_Gagnant;R2p_Externe;RMSEP_Externe;RPD_Externe;RMSECV
+1;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));0.2124;97.1278;1.1461;90.4772
+2;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));0.1996;79.5914;1.1369;94.6045
+3;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));-0.3891;127.8067;0.863;90.3674
+4;list('adj',''), list('red',c(800,1100,1)), list('snv',''), list('sder',c(2,3,21));-0.2566;113.5549;0.9073;88.3558
+5;list('adj',''), list('red',c(1,1300,1)), list('sder',c(2,4,21)), list('snv','');0.0735;88.1147;1.0567;100.8892
+6;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 15));0.0948;120.1448;1.069;94.1205
+7;list('snv',''),list('sder',c(1,3,9)),list('red',c(10,10,1));-0.063;77.2703;0.9865;97.2049
+8;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('sder',c(1, 3, 9));-0.1332;95.0427;0.9555;89.9736
+9;list('adj',''), list('red',c(1,1300,1)), list('msc',''), list('sder',c(2, 2, 15));0.1809;122.7952;1.1238;87.3009
+10;list('adj',''), list('red',c(1,1300,1)), list('snv',''), list('detr','2'), list('sder',c(1, 3, 9));0.3225;100.4203;1.2357;94.3154

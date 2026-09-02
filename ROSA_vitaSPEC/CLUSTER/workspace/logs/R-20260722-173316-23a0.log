@@ -1,0 +1,22 @@
+2026-07-22T17:33:17+0200 [INFO ] ========================================================================================================================
+2026-07-22T17:33:17+0200 [INFO ] Starting Nirs4all run(s) with 1 pipeline(s) on 1 dataset(s) (1 total runs).
+2026-07-22T17:33:17+0200 [INFO ] ========================================================================================================================
+2026-07-22T17:33:17+0200 [INFO ] Run 1/1: pipeline 'config_f4c49015' on dataset 'dataset'
+2026-07-22T17:33:17+0200 [INFO ] [Dataset] dataset (regression)
+Features (samples=164, sources=1):
+- Source 0: (164, 1, 2151), processings=['raw'], min=0.004, max=0.991, mean=0.606, var=0.097
+Targets: (samples=164, targets=1, processings=['numeric'])
+- numeric: min=37.271, max=329.524, mean=133.348
+Indexes:
+- partition - "train", processings - ['raw'], excluded - False: 164 samples
+2026-07-22T17:33:17+0200 [INFO ] Starting pipeline config_f4c49015 on dataset dataset
+2026-07-22T17:33:17+0200 [WARNING] ReducerTransformer: shape (164, 2151) -> (164, 850)
+2026-07-22T17:33:18+0200 [WARNING] WARNING: Using test set as validation set (no folds provided)
+2026-07-22T17:33:18+0200 [INFO ] Interceptor rmse ↓ - [d7ba00d9-a906-44]
+2026-07-22T17:33:19+0200 [INFO ] ================================================================================
+2026-07-22T17:33:19+0200 [INFO ] REFIT MODE: Single criterion
+2026-07-22T17:33:19+0200 [INFO ] Criteria: 1 criterion/criteria
+2026-07-22T17:33:19+0200 [INFO ] ================================================================================
+2026-07-22T17:33:19+0200 [INFO ] No cross-validation detected. The trained model is already the final model. Skipping refit.
+2026-07-22T17:33:19+0200 [INFO ] Preparing to print results for dataset 'dataset': 2 predictions
+2026-07-22T17:33:19+0200 [INFO ] ========================================================================================================================

@@ -1,0 +1,6 @@
+Iteration;Pretraitement_Gagnant;R2p_Externe;RMSEP_Externe;RPD_Externe;RMSECV
+1;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));0.5417;0.9347;1.5025;0.733
+2;list('adj',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,15));0.6822;0.7233;1.8042;0.7484
+3;list('adj',''), list('red',c(1000,700,1)), list('snv',''), list('sder',c(2,3,15));0.4441;0.9235;1.3642;0.7234
+4;list('adj',''), list('ref2abs',''), list('red',c(950,750,1)), list('snv',''), list('sder',c(2,3,21));0.6103;0.6437;1.6293;0.7936
+5;list('adj',''), list('red',c(950,650,1)), list('snv',''), list('sder',c(2,3,15));0.4821;0.8877;1.4133;0.6837
