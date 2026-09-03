@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # %% IMPORTATIONS
 import pandas as pd
 import sys
@@ -6,256 +8,196 @@ from pathlib import Path
 import joblib
 import json
 import numpy as np
+import warnings
 
 import nirs4all
 from sklearn.base import BaseEstimator, RegressorMixin
 
-## pathing
-d0 = Path(
-    "/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/"
-)
+# Masquer les warnings scikit-learn lies aux versions
+warnings.filterwarnings("ignore", category=UserWarning)
+
+## Pathing de base
+d0 = Path("/storage/replicated/cirad_users/ecarnotm/data/vitaspec_R/ROSA_vitaSPEC/CLUSTER/")
 sys.path.append(str((d0 / "commun").resolve()))
 sys.path.append(str((d0 / "random_forest").resolve()))
 
 ## Fonctions maison
 from diy_functions.pre_translation import pre_translation
 
+# %% CONFIGURATION
+DOSSIER_MATRICES = d0 / "commun" / "MATRICE_Compilees_CSV"
+DOSSIER_MODELES_PACK = d0 / "PRODUCTION" / "modeles_pack" / "random_forest"
 
-# %% GESTION DES ARGUMENTS
+# Dossier principal ou seront crees les sous-dossiers de resultats
+DOSSIER_SORTIE_GLOBAL = d0 / "PRODUCTION" / "PREDICTIONS_FINALES"
+DOSSIER_SORTIE_GLOBAL.mkdir(parents=True, exist_ok=True)
 
-# verif
-if len(sys.argv) < 3:
-    print("error miss arguments.")
-    sys.exit(1)
+# Mettre a False si tu veux UNIQUEMENT le fichier du tissu identifie dans le titre
+PREDIRE_LES_3_TISSUS = True  
 
-fichier_data = sys.argv[1]
-idparam = sys.argv[2]
+# Correspondance Nom de dossier de modeles -> Nom du fichier de sortie
+TISSUS_MAPPING = {
+    "HR": "HR",
+    "meso_frais": "meso_frais",
+    "meso_silica": "meso_sec"
+}
 
-DATA = d0 / "commun" / fichier_data
-dossier_resultats = d0 / "random_forest" / "moyennes" / "Results" / idparam
+# %% BOUCLE SUR TOUTES LES MATRICES
+fichiers_csv = list(DOSSIER_MATRICES.glob("*.csv"))
+print(f"==> {len(fichiers_csv)} matrices spectrales trouvees dans {DOSSIER_MATRICES.name}.\n")
+print("==> MODELE UTILISE : RANDOM FOREST\n")
 
-if not dossier_resultats.exists():
-    print(f"error pas de {dossier_resultats}")
-    sys.exit(1)
-
-
-# %% CHARGEMENT DU DATASET GLOBAL
-
-df_data = pd.read_csv(DATA)
-
-# extrac spectres
-col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
-
-col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
-
-df_data[col_spectres] = df_data[col_spectres].apply(pd.to_numeric, errors='coerce')
-df_data = df_data.replace([np.inf, -np.inf], np.nan)
-
-## destection NA
-std_spectres = df_data[col_spectres].std(axis=1)
-
-mask_nan = df_data[col_spectres].isna().any(axis=1)
-mask_flat = (std_spectres == 0)
-
-# Un spectre est invalide s'il a un trou OU s'il est tout plat
-mask_invalid = mask_nan | mask_flat
-
-df_anomalies = df_data[mask_invalid].copy()
-
-# tableau spectre invalides
-cols_id_presentes = [col for col in ["ech", "rep", "num_spectre", "campagne"] if col in df_data.columns]
-
-if len(df_anomalies) > 0:
-    df_recap_enleves = df_anomalies[cols_id_presentes].copy()
+for fichier_matrice in fichiers_csv:
+    nom_matrice = fichier_matrice.stem
     
-    raisons = []
-    vars_nan_list = []
+    # 1. Filtre sur le nom des fichiers pour determiner le tissu natif
+    tissu_natif = None
     
-    for index, row in df_anomalies.iterrows():
-        if mask_flat.loc[index]:
-            raisons.append("spectre invalide (flatline / division par zero)")
-            vars_nan_list.append("Toutes (ecart-type nul)")
-        else:
-            raisons.append("NaN")
-            colonnes_fautives = row[col_spectres][row[col_spectres].isna()].index.tolist()
-            texte_fautives = ", ".join(colonnes_fautives[:10])
-            vars_nan_list.append(texte_fautives)
-            
-    df_recap_enleves["raison_suppression"] = raisons
-    df_recap_enleves["variables_NaN"] = vars_nan_list
-else:
-    ligne_propre = {col: ["aucun"] for col in cols_id_presentes}
-    ligne_propre["raison_suppression"] = ["aucune anomalie"]
-    ligne_propre["variables_NaN"] = ["aucune"]
-    df_recap_enleves = pd.DataFrame(ligne_propre)
-
-# Save
-dossier_inf = d0 / "random_forest" / "moyennes" / "predictions"
-dossier_inf.mkdir(parents=True, exist_ok=True)
-chemin_recap_modalite = dossier_inf / f"spectres_NaN_{idparam}.csv"
-
-df_recap_enleves.to_csv(chemin_recap_modalite, sep=";", index=False)
-try:
-    df_recap_enleves.to_excel(chemin_recap_modalite.with_suffix('.xlsx'), index=False)
-except ModuleNotFoundError:
-    pass
-
-print(f"{idparam} : {len(df_anomalies)} spectres retires")
-
-
-# garde les spectres sans NaN
-df_data = df_data[~mask_invalid].reset_index(drop=True)
-
-X_global = df_data[col_spectres].values
-
-# tableau de pred
-colonnes_identifiants = [col for col in ["ech", "rep", "campagne", "etat", "source"] if col in df_data.columns]
-
-if colonnes_identifiants:
-    df_predictions_globales = df_data[colonnes_identifiants].copy()
-else:
-    df_predictions_globales = pd.DataFrame({"ID_Ligne": range(1, len(df_data) + 1)})
-
-# 'y' factice car nirs4all demande un tuple (X, y) 
-y_dummy = np.zeros(len(X_global))
-
-print(f" {X_global.shape[0]} ech sur {X_global.shape[1]} longueurs d'ondes\n")
-print(f"spectres : {X_global.shape[0]} ech sur {X_global.shape[1]} longueurs d'ondes.\n")
-
-
-# %% BOUCLE SUR TOUS LES COMPOSES
-
-# on liste les dossiers
-dossiers_composes = [d for d in dossier_resultats.iterdir() if d.is_dir()]
-print(f"{len(dossiers_composes)} dossiers (composes) trouves dans : {dossier_resultats.name}")
-
-# compteur 
-nb_succes = 0
-
-for dossier_compose in dossiers_composes:
-    compose = dossier_compose.name
-    chemin_modele = dossier_compose / f"modele_RF_A_{compose}.joblib"
-    chemin_json = dossier_compose / f"rapport_A_{compose}.json"
-    
-    # Verif meilleur mod
-    if not chemin_modele.exists() or not chemin_json.exists():
-        print(f"{compose:<20} ignore mod ou json manquant")
+    if "_Vitaspec_S" in nom_matrice:
+        tissu_natif = "meso_silica"
+    elif "_Vitaspec_HR" in nom_matrice:
+        tissu_natif = "HR"
+    elif "_Vitaspec_Pobe" in nom_matrice:
+        tissu_natif = "meso_frais"
+        
+    # Si aucun tag n'est reconnu, on ignore la matrice
+    if tissu_natif is None:
+        print(f"{'='*60}")
+        print(f" MATRICE : {nom_matrice} (IGNORE : aucun tag HR/S/Pobe detecte)")
         continue
         
+    print(f"{'='*60}")
+    print(f" MATRICE : {nom_matrice} (Detecte : {tissu_natif})")
+    print(f"{'='*60}")
+    
+    # Creation du sous-dossier au nom de la matrice en entree
+    dossier_out_matrice = DOSSIER_SORTIE_GLOBAL / nom_matrice
+    dossier_out_matrice.mkdir(parents=True, exist_ok=True)
+    
+    # 2. Chargement et nettoyage des donnees de la matrice
     try:
-        # chargement mod
-        modele = joblib.load(chemin_modele)
-        with open(chemin_json, "r", encoding="utf-8") as f:
-            rapport = json.load(f)
-            
-        code_pre_gagnant = rapport["Pretraitement_Gagnant"]
-        etapes_pretraitement = pre_translation(code_pre_gagnant)
+        df_data = pd.read_csv(fichier_matrice, sep=None, engine='python')
+    except Exception as e:
+        print(f" Erreur de lecture de la matrice {nom_matrice}: {e}")
+        continue
         
-        # pretrait
-        if len(etapes_pretraitement) > 0:
-            panier_inf = {}
+    col_spectres = [col for col in df_data.columns if str(col).startswith("x.")]
+    df_data[col_spectres] = df_data[col_spectres].apply(pd.to_numeric, errors='coerce')
+    
+    # Exclusion stricte des spectres avec NaN ou flatlines
+    std_spectres = df_data[col_spectres].std(axis=1)
+    mask_invalid = df_data[col_spectres].isna().any(axis=1) | (std_spectres == 0)
+    df_propre = df_data[~mask_invalid].reset_index(drop=True)
+    
+    X_global = df_propre[col_spectres].values
+    y_dummy = np.zeros(len(X_global))
+    
+    colonnes_identifiants = [col for col in ["ech", "rep", "campagne", "etat", "source"] if col in df_propre.columns]
+    
+    # 3. Definition des tissus a predire pour cette matrice
+    tissus_a_predire = list(TISSUS_MAPPING.keys()) if PREDIRE_LES_3_TISSUS else [tissu_natif]
+        
+    # 4. Boucle sur les dossiers de Modeles (HR, meso_frais, meso_silica)
+    for tissu_modele in tissus_a_predire:
+        dossier_tissu_pack = DOSSIER_MODELES_PACK / tissu_modele
+        
+        if not dossier_tissu_pack.exists():
+            print(f" [Avertissement] Le dossier RF pour {tissu_modele} est introuvable.")
+            continue
             
-            class InterceptorInference(BaseEstimator, RegressorMixin):
-                def fit(self, X_t, y_t, **kwargs):
-                    panier_inf['X_transforme'] = X_t
-                    return self
-                def predict(self, X_t):
-                    return np.zeros(len(X_t))
-                    
-            pipeline_inf = etapes_pretraitement + [{"model": InterceptorInference()}]
+        print(f"\n   -> Application des modeles RF du tissu : {tissu_modele}")
+        
+        # Initialisation du tableau de resultats pour ce tissu
+        if colonnes_identifiants:
+            df_predictions_tissu = df_propre[colonnes_identifiants].copy()
+        else:
+            df_predictions_tissu = pd.DataFrame({"ID_Ligne": range(1, len(df_propre) + 1)})
             
-            predictions = []
+        # 5. Boucle sur chaque compose chimique
+        for dossier_compose in dossier_tissu_pack.iterdir():
+            if not dossier_compose.is_dir():
+                continue
             
-            # On boucle sur chaque spectre individuellement
-            for i in range(len(X_global)):
-                X_seul = X_global[i].reshape(1, -1)
+            compose = dossier_compose.name
+            
+            # Recherche des 10 modeles (.joblib) dans ce dossier
+            modeles_joblib = list(dossier_compose.rglob("*.joblib"))
+            if len(modeles_joblib) == 0:
+                continue
+                
+            predictions_des_10_modeles = []
+            
+            # 6. Boucle sur les 10 modeles du compose
+            for chemin_mod in modeles_joblib:
+                fichiers_json = list(chemin_mod.parent.glob("*.json"))
+                if not fichiers_json:
+                    continue
+                chemin_json = fichiers_json[0]
                 
                 try:
-                    # Traitement nirs4all
-                    panier_inf = {}
-                    class InterceptorInference(BaseEstimator, RegressorMixin):
-                        def fit(self, X_t, y_t, **kwargs):
-                            panier_inf['X_transforme'] = X_t
-                            return self
-                        def predict(self, X_t): return np.zeros(len(X_t))
+                    modele = joblib.load(chemin_mod)
+                    with open(chemin_json, "r", encoding="utf-8") as f:
+                        rapport = json.load(f)
+                        
+                    code_pre_gagnant = rapport.get("Pretraitement_Gagnant", "")
+                    etapes_pretraitement = pre_translation(code_pre_gagnant)
                     
-                    pipeline_inf = etapes_pretraitement + [{"model": InterceptorInference()}]
-                    nirs4all.run(dataset=(X_seul, y_dummy[:1]), pipeline=pipeline_inf)
+                    # Transformation NIRS4ALL
+                    if len(etapes_pretraitement) > 0:
+                        panier_inf = {}
+                        class InterceptorInference(BaseEstimator, RegressorMixin):
+                            def fit(self, X_t, y_t, **kwargs):
+                                panier_inf['X_transforme'] = X_t
+                                return self
+                            def predict(self, X_t): return np.zeros(len(X_t))
+                        
+                        pipeline_inf = etapes_pretraitement + [{"model": InterceptorInference()}]
+                        
+                        try:
+                            nirs4all.run(dataset=(X_global, y_dummy), pipeline=pipeline_inf)
+                            X_propre = panier_inf.get('X_transforme', X_global)
+                            preds = modele.predict(X_propre)
+                        except Exception:
+                            # Fallback Ligne par Ligne si crashe
+                            preds = []
+                            for i in range(len(X_global)):
+                                X_seul = X_global[i].reshape(1, -1)
+                                panier_seul = {}
+                                class InterceptorSeul(BaseEstimator, RegressorMixin):
+                                    def fit(self, X_t, y_t, **kwargs):
+                                        panier_seul['X_transforme'] = X_t
+                                        return self
+                                    def predict(self, X_t): return np.zeros(len(X_t))
+                                pipe_seul = etapes_pretraitement + [{"model": InterceptorSeul()}]
+                                
+                                try:
+                                    nirs4all.run(dataset=(X_seul, y_dummy[:1]), pipeline=pipe_seul)
+                                    preds.append(modele.predict(panier_seul['X_transforme'])[0])
+                                except Exception:
+                                    preds.append(np.nan)
+                            preds = np.array(preds)
+                    else:
+                        preds = modele.predict(X_global)
+                        
+                    predictions_des_10_modeles.append(preds)
                     
-                    X_propre = panier_inf.get('X_transforme', X_seul)
-                    
-                    # pred
-                    pred_val = modele.predict(X_propre)[0]
-                    predictions.append(pred_val)
-                    
-                except Exception:
-                    # Si un spectre explose, on le remplace par NaN et on continue
-                    predictions.append(np.nan)
-        else:
-            predictions = modele.predict(X_global)
+                except Exception as e:
+                    print(f"      [Erreur] Modele {chemin_mod.name} ignore : {e}")
+            
+            # 7. Calcul de la moyenne finale pour ce compose
+            if len(predictions_des_10_modeles) > 0:
+                moyenne_finale_compose = np.nanmean(predictions_des_10_modeles, axis=0)
+                df_predictions_tissu[f"{compose}_predit"] = moyenne_finale_compose
+                print(f"      - {compose:<20} : OK (Moyenne de {len(predictions_des_10_modeles)} modeles RF)")
+            else:
+                print(f"      - {compose:<20} : ECHEC (Aucun modele valide)")
         
-        # on ajoute la colonne
-        nom_colonne = f"{compose}_predit"
-        df_predictions_globales[nom_colonne] = predictions
+        # 8. Sauvegarde du fichier du tissu avec la mention RF
+        nom_fichier_sortie = f"predictions_RF_{TISSUS_MAPPING[tissu_modele]}.csv"
+        chemin_sortie_csv = dossier_out_matrice / nom_fichier_sortie
         
-        print(f"{compose:<20}  pred reussie")
-        nb_succes += 1
+        df_predictions_tissu.to_csv(chemin_sortie_csv, sep=";", index=False)
         
-    except Exception as e:
-        print(f"{compose:<20} error ({e})")
-
-print("-" * 50)
-
-# %% SAUVEGARDE DU TABLEAU GLOBAL
-
-if nb_succes > 0:
-    dossier_inf = d0 / "random_forest" / "moyennes" / "predictions"
-    dossier_inf.mkdir(parents=True, exist_ok=True)
-
-    chemin_csv_final = dossier_inf / f"{idparam}_pred.csv"
-    df_predictions_globales.to_csv(chemin_csv_final, sep=";", index=False)
-
-    try:
-        chemin_excel_final = dossier_inf / f"{idparam}_pred.xlsx"
-        df_predictions_globales.to_excel(chemin_excel_final, index=False)
-        msg_excel = f" et .xlsx"
-    except ModuleNotFoundError:
-        msg_excel = ""
-else:
-    print("\n error aucune pred")
-
-## moy + stats descriptives
-if 'ech' in df_predictions_globales.columns:
-
-    # isole uniquement les colonnes predites (on retire 'ech', 'rep', etc.)
-    colonnes_chimiques = [col for col in df_predictions_globales.columns if col not in colonnes_identifiants]
-
-    # tableau moy
-    df_moyennes = df_predictions_globales.groupby('ech')[colonnes_chimiques].mean().reset_index()
-
-    df_moyennes.columns = [str(col).replace('_predit', '') for col in df_moyennes.columns]
-
-    chemin_moyennes_csv = dossier_inf / f"{idparam}_pred_moy.csv"
-    df_moyennes.to_csv(chemin_moyennes_csv, sep=";", index=False)
-
-
-    # tableau stats descriptives
-    df_long = df_predictions_globales.melt(
-        id_vars=['ech'], 
-        value_vars=colonnes_chimiques,
-        var_name='Variable', 
-        value_name='Valeur'
-    )
-    
-    # clean
-    df_long['Variable'] = df_long['Variable'].str.replace('_predit', '')
-
-    df_stats = df_long.groupby(['ech', 'Variable'])['Valeur'].agg(
-        mean='mean',
-        sd='std',
-        min='min',
-        max='max'
-    ).reset_index()
-
-    chemin_stats_csv = dossier_inf / f"{idparam}_stats_descriptives.csv"
-    df_stats.to_csv(chemin_stats_csv, sep=";", index=False)
+print("\n" + "="*60)
+print(" TERMINE ! Toutes les matrices valides ont ete traitees avec la methode RF.")
+print("="*60)

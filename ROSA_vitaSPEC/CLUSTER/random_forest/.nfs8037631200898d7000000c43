@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Nettoyage"
+dos2unix run_pred.slurm
+
+sbatch run_pred.slurm
+
+echo "Job envoyé"
