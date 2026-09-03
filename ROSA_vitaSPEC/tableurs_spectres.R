@@ -13,7 +13,7 @@ library(nirsextra)
 dossier_parent <- "C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/spectres"
 
 # On cree un dossier de sortie propre a l'interieur du dossier parent pour ne rien melanger
-dossier_sortie <- file.path(dossier_parent, "Matrices_Compilees_CSV")
+dossier_sortie <- file.path("C:/Users/U108-N806/Documents/STAGE_M2_ROSA_NIRS/VitaSPEC/vitaspec_R/CLUSTER/commun/Matrices_Compilees_CSV")
 if (!dir.exists(dossier_sortie)) dir.create(dossier_sortie)
 
 
