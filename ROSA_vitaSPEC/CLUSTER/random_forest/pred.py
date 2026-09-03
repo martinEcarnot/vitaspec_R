@@ -25,7 +25,7 @@ sys.path.append(str((d0 / "random_forest").resolve()))
 from diy_functions.pre_translation import pre_translation
 
 # %% CONFIGURATION
-DOSSIER_MATRICES = d0 / "commun" / "MATRICE_Compilees_CSV"
+DOSSIER_MATRICES = d0 / "commun" / "Matrices_Compilees_CSV"
 DOSSIER_MODELES_PACK = d0 / "PRODUCTION" / "modeles_pack" / "random_forest"
 
 # Dossier principal ou seront crees les sous-dossiers de resultats
@@ -120,29 +120,19 @@ for fichier_matrice in fichiers_csv:
             
             compose = dossier_compose.name
             
-            # Recherche des 10 modeles (.joblib) dans ce dossier
-            modeles_joblib = list(dossier_compose.rglob("*.joblib"))
+            # On cherche directement les .joblib dans le dossier du composé
+            modeles_joblib = sorted(list(dossier_compose.glob("*.joblib")))
             if len(modeles_joblib) == 0:
                 continue
                 
             predictions_des_10_modeles = []
+            noms_iterations = []
             
-            # 6. Boucle sur les 10 modeles du compose
+            # 5. Boucle sur les 10 modeles .joblib
             for chemin_mod in modeles_joblib:
-                fichiers_json = list(chemin_mod.parent.glob("*.json"))
-                if not fichiers_json:
-                    continue
-                chemin_json = fichiers_json[0]
-                
                 try:
                     modele = joblib.load(chemin_mod)
-                    with open(chemin_json, "r", encoding="utf-8") as f:
-                        rapport = json.load(f)
-                        
-                    code_pre_gagnant = rapport.get("Pretraitement_Gagnant", "")
-                    etapes_pretraitement = pre_translation(code_pre_gagnant)
                     
-                    # Transformation NIRS4ALL
                     if len(etapes_pretraitement) > 0:
                         panier_inf = {}
                         class InterceptorInference(BaseEstimator, RegressorMixin):
@@ -158,7 +148,7 @@ for fichier_matrice in fichiers_csv:
                             X_propre = panier_inf.get('X_transforme', X_global)
                             preds = modele.predict(X_propre)
                         except Exception:
-                            # Fallback Ligne par Ligne si crashe
+                            # Fallback ligne par ligne
                             preds = []
                             for i in range(len(X_global)):
                                 X_seul = X_global[i].reshape(1, -1)
@@ -180,6 +170,11 @@ for fichier_matrice in fichiers_csv:
                         preds = modele.predict(X_global)
                         
                     predictions_des_10_modeles.append(preds)
+                    
+                    # Extraction propre de l'itération depuis le nom du fichier (ex: modele_prod_iter_1.joblib -> iter_1)
+                    match_iter = re.search(r'(iter_\d+)', chemin_mod.name)
+                    nom_iter = match_iter.group(1) if match_iter else chemin_mod.stem
+                    noms_iterations.append(nom_iter)
                     
                 except Exception as e:
                     print(f"      [Erreur] Modele {chemin_mod.name} ignore : {e}")
