@@ -31,7 +31,7 @@ for (j in 1:length(list_pre)) {  # 1:
   else {
     fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO 
   }
-browser()
+# browser()
   fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
   r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
   pf=t(list_pre[[j]])  # # list(seqlo[j], 2151-seqlo[j+4])
@@ -62,8 +62,9 @@ if (plotYY) {
   abline(fit, col = "blue")
   summary_fit <- summary(fit)
   r_squared <- summary_fit$r.squared
+  secv=sep(fm1$yp,fm1$yref)
   # legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(pre :  .(txtpre)),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
-  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+  legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(SECV : .(round(secv, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
   title(titl)
   
 }
